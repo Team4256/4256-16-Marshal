@@ -19,9 +19,11 @@ public class DBJoystick extends Joystick {
 	public static int NORTH_WEST = 315;
 	boolean toggleState = false;
 	boolean previousState = false;
+	double port;
 	
 	public DBJoystick(int port) {
 		super(port);
+		this.port = port;
 	}
 	
 	protected DBJoystick(int port, int numAxisTypes, int numButtonTypes) {

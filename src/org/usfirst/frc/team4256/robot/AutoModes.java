@@ -35,23 +35,28 @@ public class AutoModes {
 	///////////////////MODES//////////////////
 
 	public static void oneBall(boolean fromPortcullis) {
-		Robot.intakeLifter.liftDown();
+
+		Robot.intakeLifter.liftDownAutomatic();
 		syncAimRotator();
 		if(startingBarrier == Obstacle.portcullis) {
-			moveToLimitSwitch(ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
-			Robot.intakeLifter.liftUp();
+			moveToLimitSwitch(ROBOT_SPEED, Robot.intake.stagingLimitSwitch/*change limit switch*/, 3000);
+			Robot.intakeLifter.liftUpAutomatic();
+
 			moveForwardForTime(ROBOT_SPEED, 2000);
 		}else{
 			moveForwardForTime(ROBOT_SPEED, 2000);
 		}
-		Robot.intakeLifter.liftUp();
+
+		Robot.intakeLifter.liftUpAutomatic();
+
 		Timer.delay(500);
 		Robot.launcher.fire();
 	}
 	
 	public static void twoBall() {
 		//oneBall();
-		Robot.intakeLifter.liftDown();
+
+		Robot.intakeLifter.liftDownAutomatic();
 		moveForwardForTime(-ROBOT_SPEED, 2000);
 		rotateToGyroPosition(270);
 		moveForwardForTime(ROBOT_SPEED, 1000);

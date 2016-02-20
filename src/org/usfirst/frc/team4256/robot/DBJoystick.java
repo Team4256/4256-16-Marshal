@@ -46,9 +46,13 @@ public class DBJoystick extends Joystick {
 	public static int WEST = 270;
 	public static int NORTH_WEST = 315;
 	
-	
-	boolean toggleState = false;
-	boolean previousState = false;
+
+//	boolean toggleState = false;
+//	boolean previousState = false;
+
+	boolean toggleState[] = new boolean[getButtonCount()];
+	boolean previousState[] = new boolean[getButtonCount()];
+
 	double port;
 	
 	public DBJoystick(int port) {
@@ -66,17 +70,17 @@ public class DBJoystick extends Joystick {
 	}
 	
 	public boolean getRawToggle(int whichButton){
-		boolean currentState = super.getRawButton(whichButton);
-		if (currentState && (currentState != previousState)){
-			if (toggleState){
-				toggleState = false;
-			}else{
-				toggleState = true;
+		return toggleState[whichButton];
+	}
+	
+	public void updateToggle() {
+		for (int i = 1; i < previousState.length; i++) {
+			boolean currentState = this.getRawButton(i);
+			if (currentState && (currentState != previousState[i])){
+				toggleState[i] = !toggleState[i];
 			}
+			previousState[i] = currentState;
 		}
-		currentState = previousState;
-		return toggleState;
-		//false false false false true true true true false false false
 	}
 	
 	public boolean axisPressed(int axis) {

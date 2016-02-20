@@ -13,59 +13,84 @@ public class Lifter {
 	public DigitalInput lowerLimitSwitch;
 	
 	public double currentLifterSpeed = 0;
+	public boolean isMovingAutomatically = false;
 	
-	public Lifter(int lifterLeftPort, int lifterRightPort, int upperLimitSwitchPort, int lowerLimitSwitchPort) {
+//	public Lifter(int lifterLeftPort, int lifterRightPort, int upperLimitSwitchPort, int lowerLimitSwitchPort)
+	public Lifter(int lifterLeftID, int lifterRightID){
 		//Initialize motors
-		lifterLeft = new CANTalon(lifterLeftPort);
-		lifterRight = new CANTalon(lifterRightPort);
+		lifterLeft = new CANTalon(lifterLeftID);
+		lifterRight = new CANTalon(lifterRightID);
+		
 		
 		//Initialize limit switches
-		upperLimitSwitch = new DigitalInput(upperLimitSwitchPort);
-		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort);
+//		upperLimitSwitch = new DigitalInput(upperLimitSwitchPort);
+//		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort);
 		
-		
+		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+		lifterRight.set(lifterLeft.getDeviceID());
+		lifterLeft.enableLimitSwitch(true, true);
 	}
 	
-	private void set(double speed) {
+	private void set(double speed, boolean automatic) {
+		currentLifterSpeed = speed;
+		isMovingAutomatically = automatic;
 		lifterLeft.set(speed);
-		lifterRight.set(speed);
+//		lifterRight.set(speed);
 	}
 	
-	public void liftUp() {
-		currentLifterSpeed = LIFTER_MOTOR_SPEED;
+	public void liftUpManual() {
+		set(LIFTER_MOTOR_SPEED, false);
 	}
 	
-	public void liftDown() {
-		currentLifterSpeed = -LIFTER_MOTOR_SPEED;
+	public void liftDownManual() {
+		set(-LIFTER_MOTOR_SPEED, false);
 	}
 	
+	public void liftUpAutomatic() {
+		set(LIFTER_MOTOR_SPEED, true);
+	}
+	
+	public void liftDownAutomatic() {
+		set(-LIFTER_MOTOR_SPEED, true);
+	}
+	
+	/**
+	 * Updates the lifter.
+	 * MUST be called before other lifter actions in teleop.
+	 */
 	public void update() {
-		//Move if limit switch not active
-		if((currentLifterSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentLifterSpeed && !upperLimitSwitch.get())) {
-			set(currentLifterSpeed);
-		}else{
-			set(0);
+		if(!isMovingAutomatically) {
+			currentLifterSpeed = 0;
 		}
+
+		lifterLeft.set(currentLifterSpeed);
+//		Move if limit switch not active
+//		if((currentLifterSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentLifterSpeed && !upperLimitSwitch.get())) {
+//			set(currentLifterSpeed);
+//		}else{
+//			set(0);
+//		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

@@ -7,7 +7,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 public class AutoModes {
-	private static double ROBOT_SPEED = .3;
+	public static final long DISTANCE_BETWEEN_DEFENCES = 0;
+
+	static double ROBOT_SPEED = .3;
 	
 	public static int DEFENSE_DISTANCE = 0;
 	public static int LOWBAR_DISTANCE = 0;
@@ -17,14 +19,14 @@ public class AutoModes {
 	public static int ONE_BALL_DISTANCE = 0;
 	public static int START_DIS = 0;
 	
-	static Obstacle startingBarrier;
-	static enum Obstacle {
-		portcullis, cheval_de_frise, //Category A
-		moat, ramparts, //Category B
-		drawbridge, sally_port, //Category C
-		rock_wall, rough_terrain, //Category D
-		low_bar //Static
-	}
+//	static Obstacle startingBarrier;
+//	static enum Obstacle {
+//		portcullis, cheval_de_frise, //Category A
+//		moat, ramparts, //Category B
+//		drawbridge, sally_port, //Category C
+//		rock_wall, rough_terrain, //Category D
+//		 //Static
+//	}
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
 	
@@ -34,16 +36,10 @@ public class AutoModes {
 
 	///////////////////MODES//////////////////
 
-	public static void oneBall(boolean fromPortcullis) {
+	public static void oneBall() {
 		Robot.intakeLifter.liftDown();
 		syncAimRotator();
-		if(startingBarrier == Obstacle.portcullis) {
-			moveToLimitSwitch(ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
-			Robot.intakeLifter.liftUp();
-			moveForwardForTime(ROBOT_SPEED, 2000);
-		}else{
-			moveForwardForTime(ROBOT_SPEED, 2000);
-		}
+		Obstacle.getStartingObstacle().crossBarrier();
 		Robot.intakeLifter.liftUp();
 		Timer.delay(500);
 		Robot.launcher.fire();
@@ -116,7 +112,7 @@ public class AutoModes {
 		stop();
 	}
 	
-	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
+	static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
@@ -130,6 +126,36 @@ public class AutoModes {
 	public static void stop() {
 		Robot.drive.arcadeDrive(0, 0);
 	}
+	
+	
+	
+//	private static double accelerationFunctionCurrentSpeed = 0;
+//	private static double stepTime = 0;
+//	private static double speedIncrement = 0;
+	public static void moveAccleration(double driveMaxSpeed, double driveMinSpeed, long timeoutMillis) {
+		double speed = 0;
+		long startTime = System.currentTimeMillis();
+		double speedRange = driveMaxSpeed - driveMinSpeed;
+//		double steps = (int) (driveMaxSpeed*timeoutMillis/stepTime);
+		
+		//Acceleration
+		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
+			speed = 2*(System.currentTimeMillis()-startTime)/timeoutMillis;
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.rotateToAngle(currentAngle));
+		}
+		
+		//Decelleration
+		startTime = System.currentTimeMillis();
+		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
+			speed = 1-2*(System.currentTimeMillis()-startTime)/timeoutMillis;
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.rotateToAngle(currentAngle));
+		}
+		
+		stop();
+	}
+//	private double getStep(double startTime, double stepTime) {
+//		return ((System.currentTimeMillis()-startTime)/stepTime);
+//	}
 	
 	
 //	private static class DriveSpeed {

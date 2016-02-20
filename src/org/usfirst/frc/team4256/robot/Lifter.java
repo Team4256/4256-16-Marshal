@@ -21,9 +21,10 @@ public class Lifter {
 		
 		//Initialize limit switches
 		upperLimitSwitch = new DigitalInput(upperLimitSwitchPort);
-		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort);
+		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort); 
+	
 		
-		
+	
 	}
 	
 	private void set(double speed) {

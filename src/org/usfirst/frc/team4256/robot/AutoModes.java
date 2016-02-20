@@ -5,11 +5,15 @@ import java.util.concurrent.Executors;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.RobotDrive;
+
+
+
+
 
 public class AutoModes {
-	public static final long DISTANCE_BETWEEN_DEFENCES = 0;
-
 	static double ROBOT_SPEED = .3;
+
 	
 	public static int DEFENSE_DISTANCE = 0;
 	public static int LOWBAR_DISTANCE = 0;
@@ -19,6 +23,9 @@ public class AutoModes {
 	public static int ONE_BALL_DISTANCE = 0;
 	public static int START_DIS = 0;
 	
+	public static long DISTANCE_BETWEEN_DEFENCES;
+	
+
 //	static Obstacle startingBarrier;
 //	static enum Obstacle {
 //		portcullis, cheval_de_frise, //Category A
@@ -27,6 +34,16 @@ public class AutoModes {
 //		rock_wall, rough_terrain, //Category D
 //		 //Static
 //	}
+
+	static Obstacle startingBarrier;
+	static enum Obstacle {
+		portcullis, cheval_de_frise, //Category A
+		moat, ramparts, //Category B
+		drawbridge, sally_port, //Category C
+		rock_wall, rough_terrain, //Category D
+		low_bar //Static
+	}
+
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
 	
@@ -36,25 +53,54 @@ public class AutoModes {
 
 	///////////////////MODES//////////////////
 
-	public static void oneBall() {
-		Robot.intakeLifter.liftDown();
-		syncAimRotator();
-		Obstacle.getStartingObstacle().crossBarrier();
-		Robot.intakeLifter.liftUp();
-		Timer.delay(500);
-		Robot.launcher.fire();
-	}
-	
-	public static void twoBall() {
-		oneBall();
-		Robot.intakeLifter.liftDown();
-		moveForwardForTime(-ROBOT_SPEED, 2000);
-		rotateToGyroPosition(270);
-		moveForwardForTime(ROBOT_SPEED, 1000);
-		moveForwardForTime(-ROBOT_SPEED, 1000);
-		rotateToGyroPosition(0);
-		oneBall();
-	}
+
+//	public static void oneBall() {
+//		Robot.intakeLifter.liftDown();
+//		syncAimRotator();
+//		Obstacle.getStartingObstacle().crossBarrier();
+//		Robot.intakeLifter.liftUp();
+//	}
+
+//	public static void oneBall(boolean fromPortcullis) {
+//
+//		Robot.intakeLifter.liftDownAutomatic();
+//		syncAimRotator();
+//		if(startingBarrier == Obstacle.portcullis) {
+//			moveToLimitSwitch(ROBOT_SPEED, Robot.intake.stagingLimitSwitch/*change limit switch*/, 3000);
+//			Robot.intakeLifter.liftUpAutomatic();
+//
+//			moveForwardForTime(ROBOT_SPEED, 2000);
+//		}else{
+//			moveForwardForTime(ROBOT_SPEED, 2000);
+//		}
+//
+//		Robot.intakeLifter.liftUpAutomatic();
+//
+//
+//		Timer.delay(500);
+//		Robot.launcher.fire();
+//	}
+//	
+//	public static void twoBall() {
+//
+//		oneBall();
+//		Robot.intakeLifter.liftDown();
+//
+//		//oneBall();
+//
+//		Robot.intakeLifter.liftDownAutomatic();
+//
+//		moveForwardForTime(-ROBOT_SPEED, 2000);
+//		rotateToGyroPosition(270);
+//		moveForwardForTime(ROBOT_SPEED, 1000);
+//		moveForwardForTime(-ROBOT_SPEED, 1000);
+//		rotateToGyroPosition(0);
+//
+//		oneBall();
+//
+//		//oneBall();
+
+//	}
 	
 	
 	
@@ -112,7 +158,11 @@ public class AutoModes {
 		stop();
 	}
 	
-	static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
+
+	
+
+	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
+
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
@@ -128,6 +178,7 @@ public class AutoModes {
 	}
 	
 	
+
 	
 //	private static double accelerationFunctionCurrentSpeed = 0;
 //	private static double stepTime = 0;
@@ -158,6 +209,8 @@ public class AutoModes {
 //	}
 	
 	
+
+
 //	private static class DriveSpeed {
 //		public double moveValue;
 //		public double rotateValue;
@@ -172,3 +225,4 @@ public class AutoModes {
 //		}
 //	}
 }
+	

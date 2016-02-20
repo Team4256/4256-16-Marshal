@@ -4,43 +4,66 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Intake {
-	public static final double STAGING_MOTOR_SPEED = .3;
-	public static final double INTAKE_ROLLER_MOTOR_SPEED = .3;
-	public double direction = 0;
+	public static final double ROLLER_IN_SPEED = .3;
+	public static final double ROLLER_OUT_SPEED = .7;
+	public static final double STAGING_IN_SPEED = .3;
+	public static final double STAGING_OUT_SPEED = .7;
+	public int stopper = 1;
+	public boolean firingHigh = false;
+	public boolean firingLow = false;
 	
+	public VictorSP intakeRoller;
 	public VictorSP stagingLeft;
 	public VictorSP stagingRight; 
-	public VictorSP intakeRoller;
 	
-	public DigitalInput middleLimitSwitch;
+	public DigitalInput stagingLimitSwitch;
 	
-	public Intake(int stagingLeftPort, int stagingRightPort, int intakeRollerPort, int middleLimitSwitchPort) {
+	public Intake(int intakeRollerPort, int stagingLeftPort, int stagingRightPort, int stagingLimitSwitchPort) {
+		intakeRoller = new VictorSP(intakeRollerPort);
 		stagingLeft = new VictorSP(stagingLeftPort);
 		stagingRight = new VictorSP(stagingRightPort);
-		intakeRoller = new VictorSP(intakeRollerPort);
-		middleLimitSwitch = new DigitalInput(middleLimitSwitchPort);
+		stagingLimitSwitch = new DigitalInput(stagingLimitSwitchPort);
 	}
 	
-	private void set(double direction) {
-		stagingLeft.set(direction*STAGING_MOTOR_SPEED);
-		stagingRight.set(direction*STAGING_MOTOR_SPEED);
-		intakeRoller.set(direction*INTAKE_ROLLER_MOTOR_SPEED);
+	private void set() {
+		if (firingHigh) {
+			intakeRoller.set(0);
+			stagingLeft.set(-STAGING_OUT_SPEED*stopper);
+			stagingRight.set(STAGING_OUT_SPEED*stopper);
+		}else if (firingLow) {
+			intakeRoller.set(-ROLLER_OUT_SPEED*stopper);
+			stagingLeft.set(STAGING_OUT_SPEED*stopper);
+			stagingRight.set(-STAGING_OUT_SPEED*stopper);
+		}else {
+			intakeRoller.set(ROLLER_IN_SPEED*stopper);
+			stagingLeft.set(-STAGING_IN_SPEED*stopper);
+			stagingRight.set(STAGING_IN_SPEED*stopper);
+		}
 	}
 	
 	public void intakeIn() {
-		direction = 1;
+		firingHigh = false;
+		firingLow = false;
+		set();
 	}
 	
-	public void intakeOut() {
-		direction = -1;
+	public void fireLow() {
+		firingHigh = false;
+		firingLow = true;
+		set();
+	}
+	
+	public void fireHigh() {
+		firingHigh = true;
+		firingLow = false;
+		set();
 	}
 	
 	public void update() {
-		//Move if limit switch not active
-		if((direction == -1 && !middleLimitSwitch.get())) {
-			set(direction);
-		}else{
-			set(0);
+		if (!firingHigh && !firingLow && stagingLimitSwitch.get()) {
+			stopper = 0;
+		}else {
+			stopper = 1;
 		}
 	}
 }

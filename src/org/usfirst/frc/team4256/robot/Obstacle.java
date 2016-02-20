@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4256.robot;
 
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -80,29 +81,31 @@ public class Obstacle {
 		return obstacles[i-1];
 	}
 	
-	public void crossBarrier() {
-		if (getStartingObstacle().difficulty == Difficulty.simple) {
-			AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
-		}else if (getStartingObstacle().difficulty == Difficulty.hard) {
-			if (getStartingObstacle() == portcullis) {
-				AutoModes.moveToLimitSwitch(AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
-				Robot.intakeLifter.liftUp();
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
-			}else if (getStartingObstacle() == cheval_de_frise){
-				throw new Error("crossing cheval_de_frise not programmed");
-			}
-		}else if (getStartingObstacle().difficulty == Difficulty.impossible) {
-			if(getStartingObstacle().position != 5 && getBarrierAtPosition(getStartingObstacle().position+1).difficulty == Difficulty.simple) {
-				AutoModes.rotateToGyroPosition(270);
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
-				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier();
-			}else if(getStartingObstacle().position != 1 && getBarrierAtPosition(getStartingObstacle().position-1).difficulty == Difficulty.simple) {
-				AutoModes.rotateToGyroPosition(90);
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
-				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier();
-			}
-		}
-	}
+//	public void crossBarrier() {
+//		if (getStartingObstacle().difficulty == Difficulty.simple) {
+//			AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
+//		}else if (getStartingObstacle().difficulty == Difficulty.hard) {
+//			if (getStartingObstacle() == portcullis) {
+//				AutoModes.moveToLimitSwitch(AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
+//				Robot.intakeLifter.liftUp();
+//				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
+//			}else if (getStartingObstacle() == cheval_de_frise){
+//				throw new Error("crossing cheval_de_frise not programmed");
+//			}
+//		}else if (getStartingObstacle().difficulty == Difficulty.impossible) {
+//			if(getStartingObstacle().position != 5 && getBarrierAtPosition(getStartingObstacle().position+1).difficulty == Difficulty.simple) {
+//				AutoModes.rotateToGyroPosition(270);
+//				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
+//				AutoModes.rotateToGyroPosition(0);
+//				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier();
+//			}else if(getStartingObstacle().position != 1 && getBarrierAtPosition(getStartingObstacle().position-1).difficulty == Difficulty.simple) {
+//				AutoModes.rotateToGyroPosition(90);
+//				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
+//				AutoModes.rotateToGyroPosition(0);
+//				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier();
+//			}
+//		}
+//	}
 }
+
+

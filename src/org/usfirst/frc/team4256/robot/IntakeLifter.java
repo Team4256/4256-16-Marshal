@@ -21,11 +21,7 @@ public class IntakeLifter {
 		//Initialize motors
 		lifterLeft = new CANTalon(lifterLeftID);
 		lifterRight = new CANTalon(lifterRightID);
-		
-		
-		//Initialize limit switches
-//		upperLimitSwitch = new DigitalInput(upperLimitSwitchPort);
-//		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort);
+	
 		
 		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
 		lifterRight.set(lifterLeft.getDeviceID());

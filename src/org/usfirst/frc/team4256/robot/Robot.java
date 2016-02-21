@@ -2,6 +2,7 @@
 package org.usfirst.frc.team4256.robot;
 
 
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -10,7 +11,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,12 +28,7 @@ public class Robot extends IterativeRobot {
 	static DBJoystick xboxGun = new DBJoystick(1);
 	
 	//Relays
-	static Relay light = new Relay(0);
-	
-	//DI
-    static DigitalInput stagingAreaSensor = new DigitalInput(1);
-//	static DigitalInput leftIntakeBumper = new DigitalInput(0);
-//	static DigitalInput rightIntakeBumper = new DigitalInput(2);
+	static Relay light;
     
 	//AI
 	static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
@@ -51,6 +46,7 @@ public class Robot extends IterativeRobot {
 	static IntakeLifter intakeLifter;
 //	static Launcher launcher;
 
+
 	static NetworkTable visionTable;
 	
 	
@@ -60,13 +56,33 @@ public class Robot extends IterativeRobot {
 	//static Launcher robotLauncher;
 	
 	public void robotInit() {
-		visionTable = NetworkTable.getTable("SaltVision");
-		SmartDashboard.putBoolean("Motor Stop", false);
-		drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
-				new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
-		turret = new Turret(3, 7, 7, 8, new DoubleSolenoid(1, 2, 4), visionTable);
-		intake = new Intake(4, 5, 8, 003/*unknown*/);
-		intakeLifter = new IntakeLifter(7,8);
+		{//Robot
+			visionTable = NetworkTable.getTable("SaltVision");
+			SmartDashboard.putBoolean("Motor Stop", false);
+
+			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
+					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
+			turret = new Turret(3, 7, 7, 8, new DoubleSolenoid(1, 2, 4), visionTable);
+			intake = new Intake(4, 5, 8, 003/*unknown*/);
+			intakeLifter = new IntakeLifter(7,8);
+		}
+		
+		{//SmartDashboard
+			SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
+
+			Obstacle.obstaclePosition.addObject("1", 1);
+			Obstacle.obstaclePosition.addObject("2", 2);
+			Obstacle.obstaclePosition.addObject("3", 3);
+			Obstacle.obstaclePosition.addObject("4", 4);
+			Obstacle.obstaclePosition.addObject("5", 5);
+
+			SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
+
+			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
+				SmartDashboard.putData("AutonomousObstacles"+(i+1), Obstacle.autonomusObstacleDropDowns[i]);
+				((Obstacle) Obstacle.autonomusObstacleDropDowns[i].getSelected()).position = i+1;
+			}
+		}
 	}
 
 	public void autonomousInit() {
@@ -114,6 +130,8 @@ public class Robot extends IterativeRobot {
 			intakeLifter.liftUpManual();
 		}else if(xboxDriver.axisPressed(DBJoystick.AXIS_RT)){
 			intakeLifter.liftDownManual();
+		}else if (xboxDriver.getPOV() == DBJoystick.SOUTH) {
+			intakeLifter.liftDownAutomatic();
 		}
 		
 		
@@ -126,16 +144,11 @@ public class Robot extends IterativeRobot {
 //			stagingRollerLeft.set(1);
 //			stagingRollerRight.set(1);
 //		}
-		SmartDashboard.putBoolean("Motor Stop", stagingAreaSensor.get());
-		SmartDashboard.putString("test", "test");
+//		SmartDashboard.putBoolean("Motor Stop", stagingAreaSensor.get());
 		
-		}
-			
-		
-		
-//		}
-		
-		
+	}
+
+
 	/**
 	 * This function is called periodically during test mode
 	 */

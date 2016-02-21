@@ -46,8 +46,19 @@ public class DBJoystick extends Joystick {
 	public static int WEST = 270;
 	public static int NORTH_WEST = 315;
 	
+
+	
+//	boolean toggleState = false;
+//	boolean previousState = false;
+
+
+//	boolean toggleState = false;
+//	boolean previousState = false;
+
 	boolean toggleState[] = new boolean[getButtonCount()];
 	boolean previousState[] = new boolean[getButtonCount()];
+
+
 	double port;
 	
 	public DBJoystick(int port) {

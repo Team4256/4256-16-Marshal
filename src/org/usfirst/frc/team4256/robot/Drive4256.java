@@ -9,9 +9,11 @@ public class Drive4256 {
 	DoubleSolenoid leftGearShifter;
 	DoubleSolenoid rightGearShifter;
 
+
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid leftGearShifter, DoubleSolenoid rightGearShifter) {
 		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
 		this.robotDrive = new RobotDrive(LFMotor, LBMotor, RFMotor, RBMotor);
+
 		this.leftGearShifter = leftGearShifter;
 		this.rightGearShifter = rightGearShifter;
 	}

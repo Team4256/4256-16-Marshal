@@ -3,7 +3,7 @@ package org.usfirst.frc.team4256.robot;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Lifter {
+public class IntakeLifter {
 	private static final double LIFTER_MOTOR_SPEED = .2;
 	
 	public CANTalon lifterLeft;
@@ -13,10 +13,11 @@ public class Lifter {
 	public DigitalInput lowerLimitSwitch;
 	
 	public double currentLifterSpeed = 0;
+	private boolean shouldMoveLifterOnUpdateManually = false; //for manual mode
 	public boolean isMovingAutomatically = false;
 	
 //	public Lifter(int lifterLeftPort, int lifterRightPort, int upperLimitSwitchPort, int lowerLimitSwitchPort)
-	public Lifter(int lifterLeftID, int lifterRightID){
+	public IntakeLifter(int lifterLeftID, int lifterRightID){
 		//Initialize motors
 		lifterLeft = new CANTalon(lifterLeftID);
 		lifterRight = new CANTalon(lifterRightID);
@@ -34,8 +35,7 @@ public class Lifter {
 	private void set(double speed, boolean automatic) {
 		currentLifterSpeed = speed;
 		isMovingAutomatically = automatic;
-		lifterLeft.set(speed);
-//		lifterRight.set(speed);
+		shouldMoveLifterOnUpdateManually = true;
 	}
 	
 	public void liftUpManual() {
@@ -56,14 +56,16 @@ public class Lifter {
 	
 	/**
 	 * Updates the lifter.
-	 * MUST be called before other lifter actions in teleop.
+	 * MUST be called in teleop periodic.
 	 */
 	public void update() {
-		if(!isMovingAutomatically) {
+		if(!isMovingAutomatically && shouldMoveLifterOnUpdateManually) {
 			currentLifterSpeed = 0;
 		}
-
+		
+		shouldMoveLifterOnUpdateManually = false;
 		lifterLeft.set(currentLifterSpeed);
+		
 //		Move if limit switch not active
 //		if((currentLifterSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentLifterSpeed && !upperLimitSwitch.get())) {
 //			set(currentLifterSpeed);

@@ -46,7 +46,7 @@ public class AutoModes {
 		}
 		Robot.intakeLifter.liftUpAutomatic();
 		Timer.delay(500);
-		Robot.launcher.fire();
+		Robot.turret.fire();
 	}
 	
 	public static void twoBall() {
@@ -71,7 +71,7 @@ public class AutoModes {
 				@Override
 				public void run() {
 					while(inAutonomous()) {
-						Robot.launcher.aimRotator();
+						Robot.turret.aimRotator();
 					}
 				}});
 		}

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,6 +59,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		{//Robot
 			visionTable = NetworkTable.getTable("SaltVision");
+			light = new Relay(0);
 			SmartDashboard.putBoolean("Motor Stop", false);
 
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
@@ -103,6 +105,7 @@ public class Robot extends IterativeRobot {
 		
 		//Update systems
 		turret.update();
+		light.set(Value.kForward);
 		intake.update();
 		intakeLifter.update();
 

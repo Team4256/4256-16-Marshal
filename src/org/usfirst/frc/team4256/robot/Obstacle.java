@@ -49,22 +49,6 @@ public class Obstacle {
 		if(autonomusObstacleDropDowns[position-1] == null) {
 			autonomusObstacleDropDowns[position-1] = new SendableChooser();
 		}
-//		autonomusObstacleDropDowns[position-1].addObject(name, this);
-//		if(position == 1) {
-//			autonomusObstacle1.addObject(name, this);
-		
-//		}else if(position == 2) {
-//			autonomusObstacle2.addObject(name, this);
-//		}
-//		else if(position == 3) {
-//			autonomusObstacle3.addObject(name, this);		
-//		}
-//		else if(position == 4) {
-//			autonomusObstacle4.addObject(name, this);
-//		}
-//		else if(position == 5) {
-//			autonomusObstacle5.addObject(name, this);
-//		}
 	}
 	
 	static enum Difficulty	{
@@ -81,15 +65,17 @@ public class Obstacle {
 		return obstacles[i-1];
 	}
 	
-	public void crossBarrier() {
+	public void crossBarrier(double direction) {
+		Robot.intakeLifter.liftDownAutomatic();
+		
 		if (getStartingObstacle().difficulty == Difficulty.simple) {
-			AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
+			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
 		}else if (getStartingObstacle().difficulty == Difficulty.hard) {
 			if (getStartingObstacle() == portcullis) {
 				//TODO uncomment and fix
-//				AutoModes.moveToLimitSwitch(AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
-//				Robot.intakeLifter.liftUp();
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, 2000);
+//				AutoModes.moveToLimitSwitch(direction*AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
+//				Robot.intakeLifter.liftUpAutomatic();
+				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
 			}else if (getStartingObstacle() == cheval_de_frise){
 				throw new Error("crossing cheval_de_frise not programmed");
 			}
@@ -98,12 +84,12 @@ public class Obstacle {
 				AutoModes.rotateToGyroPosition(270);
 				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
 				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier();
+				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier(direction);
 			}else if(getStartingObstacle().position != 1 && getBarrierAtPosition(getStartingObstacle().position-1).difficulty == Difficulty.simple) {
 				AutoModes.rotateToGyroPosition(90);
 				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
 				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier();
+				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier(direction);
 			}
 		}
 	}

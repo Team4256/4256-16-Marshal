@@ -15,13 +15,13 @@ public class AutoModes {
 	static double ROBOT_SPEED = .3;
 
 	
-	public static int DEFENSE_DISTANCE = 0;
-	public static int LOWBAR_DISTANCE = 0;
-	public static int ROCKWALL_DISTANCE = 0;
-	public static int ROUGHTERRAIN_DISTANCE = 0;
-	public static int MOAT_DISTANCE = 0;
-	public static int ONE_BALL_DISTANCE = 0;
-	public static int START_DIS = 0;
+//	public static int DEFENSE_DISTANCE = 0;
+//	public static int LOWBAR_DISTANCE = 0;
+//	public static int ROCKWALL_DISTANCE = 0;
+//	public static int ROUGHTERRAIN_DISTANCE = 0;
+//	public static int MOAT_DISTANCE = 0;
+//	public static int ONE_BALL_DISTANCE = 0;
+//	public static int START_DIS = 0;
 	
 	public static long DISTANCE_BETWEEN_DEFENCES;
 	
@@ -45,21 +45,36 @@ public class AutoModes {
 	///////////////////MODES//////////////////
 
 	public static void oneBall() {
-//		Robot.intakeLifter.liftDownAutomatic();
+		//Aim turret
 		syncAimRotator();
-		Obstacle.getStartingObstacle().crossBarrier();
+		
+		//Cross barrier
+		Obstacle.getStartingObstacle().crossBarrier(1);
+		
+		//Fire
+		Timer.delay(.5);
 		Robot.turret.fire();
+		Timer.delay(.5);
 	}
 
 	public static void twoBall() {
+		//Fire first ball
 		oneBall();
-//		Robot.intakeLifter.liftDownAutomatic(); TODO
-		moveForwardForTime(-ROBOT_SPEED, 2000);
+		
+		//Return to neutral zone
+		Obstacle.getStartingObstacle().crossBarrier(-1);
+//		moveForwardForTime(-ROBOT_SPEED, 2000);
+		
+		//Pick up ball
 		rotateToGyroPosition(270);
 		moveForwardForTime(ROBOT_SPEED, 1000);
 		//TODO pick up ball
+		
+		//Return to barrier
 		moveForwardForTime(-ROBOT_SPEED, 1000);
 		rotateToGyroPosition(0);
+		
+		//Fire second ball
 		oneBall();
 	}
 	
@@ -71,7 +86,7 @@ public class AutoModes {
 				@Override
 				public void run() {
 					while(inAutonomous()) {
-						Robot.turret.aimRotator();
+						Robot.turret.aimRotatorToTarget();
 					}
 				}});
 		}
@@ -115,9 +130,6 @@ public class AutoModes {
 		
 		stop();
 	}
-	
-
-	
 
 	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 

@@ -9,8 +9,8 @@ public class IntakeLifter {
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
 	
-	public DigitalInput upperLimitSwitch;
-	public DigitalInput lowerLimitSwitch;
+//	public DigitalInput upperLimitSwitch;
+//	public DigitalInput lowerLimitSwitch;
 	
 	public double currentLifterSpeed = 0;
 	private boolean shouldMoveLifterOnUpdateManually = false; //for manual mode

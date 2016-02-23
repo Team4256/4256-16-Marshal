@@ -22,6 +22,7 @@ public class Turret {
 
 	public double currentTurretSpeed = 0;
 	private boolean shouldMoveRotatorOnUpdateManually = false; //for manual mode
+	public boolean isTracking = false;
 	public boolean isMovingAutomatically = false;
 	public boolean isLaunching = false;
 	public long timeSinceLaunchStart;
@@ -38,7 +39,7 @@ public class Turret {
 		this.visionTable = visionTable;
 	}
 
-	public void aimRotator() {//TargetX, TargetY, TargetWidth, TargetHeight, ImageWidth, ImageHeight
+	public void aimRotatorToTarget() {//TargetX, TargetY, TargetWidth, TargetHeight, ImageWidth, ImageHeight
 		try{
 			double targetX = visionTable.getNumber("TargetX", 0);
 			double imageWidth = visionTable.getNumber("ImageWidth", 0);
@@ -91,14 +92,17 @@ public class Turret {
 	 * MUST be called in teleop periodic.
 	 */
 	public void update() {
-		if((!isMovingAutomatically && !shouldMoveRotatorOnUpdateManually) || //not moving automatically and no command to manually move turret
-				((currentTurretSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentTurretSpeed && !upperLimitSwitch.get()))) {//limit switch pressed
-			currentTurretSpeed = 0;
-		}
+		if(isTracking) {
+			aimRotatorToTarget();
+		}else{
+			if((!isMovingAutomatically && !shouldMoveRotatorOnUpdateManually) || //not moving automatically and no command to manually move turret
+					((currentTurretSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentTurretSpeed && !upperLimitSwitch.get()))) {//limit switch pressed
+				currentTurretSpeed = 0;
+			}
 
-		shouldMoveRotatorOnUpdateManually = false;
-		turretMotor.set(currentTurretSpeed);
-		aimRotator();
+			shouldMoveRotatorOnUpdateManually = false;
+			turretMotor.set(currentTurretSpeed);
+		}
 		
 		
 		if(System.currentTimeMillis() - timeSinceLaunchStart >= 500){

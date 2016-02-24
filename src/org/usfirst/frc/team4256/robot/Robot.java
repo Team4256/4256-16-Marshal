@@ -5,14 +5,13 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
+//import edu.wpi.first.wpilibj.DoubleSole2noid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,6 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	//Compressor
+	static Compressor compressor = new Compressor();
 	//Joysticks
 	static DBJoystick xboxDriver = new DBJoystick(0);
 	static DBJoystick xboxGun = new DBJoystick(1);
@@ -46,7 +47,7 @@ public class Robot extends IterativeRobot {
 	static Intake intake;
 	static IntakeLifter intakeLifter;
 //	static Launcher launcher;
-
+ 
 
 	static NetworkTable visionTable;
 	
@@ -66,8 +67,8 @@ public class Robot extends IterativeRobot {
 					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
 			turret = new Turret(5, 10, 11, 3, 4, 
 					6, 7, visionTable);
-			intake = new Intake(4, 5, 8, 003/*unknown*/);
-			intakeLifter = new IntakeLifter(7,8);
+			intake = new Intake(4, 5, 8, 0/*unknown*/);
+			intakeLifter = new IntakeLifter(8,9);
 		}
 		
 		{//SmartDashboard

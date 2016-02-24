@@ -62,7 +62,8 @@ public class Robot extends IterativeRobot {
 
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
-			turret = new Turret(3, 7, 7, 8, new DoubleSolenoid(1, 2, 4), visionTable);
+			turret = new Turret(5, 10, 11, 3, 4, 
+					6, 7, visionTable);
 			intake = new Intake(4, 5, 8, 003/*unknown*/);
 			intakeLifter = new IntakeLifter(7,8);
 		}

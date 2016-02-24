@@ -9,34 +9,55 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 public class Turret {
 	private static final double TURRET_MOTOR_SPEED = .2;
 	private static final double SHOOTING_WHEEL_MOTOR_SPEED = .2;
+	private static final double SCISSOR_LIFT_MOTOR_SPEED = .2;
 
-	public VictorSP turretMotor;
-	public CANTalon shootingWheelMotor;
-
-	public DoubleSolenoid scissorLift;
+	public CANTalon turretRotator;
+	public CANTalon shootingWheelMotorLeft;
+	public CANTalon shootingWheelMotorRight;
+	
+	public CANTalon scissorLiftLeft;
+	public CANTalon scissorLiftRight;
 
 	public NetworkTable visionTable;
 
 	public DigitalInput upperLimitSwitch;
 	public DigitalInput lowerLimitSwitch;
+//	public DigitalInput scissorLiftUpperLimitSwitch;
+//	public DigitalInput scissorLiftLowerLimitSwitch;
 
 	public double currentTurretSpeed = 0;
+	public double currentScissorLiftSpeed= 0;
+	
 	private boolean shouldMoveRotatorOnUpdateManually = false; //for manual mode
 	public boolean isTracking = false;
 	public boolean isMovingAutomatically = false;
 	public boolean isLaunching = false;
 	public long timeSinceLaunchStart;
 
-	public Turret(int turretPort, int shootingWheelID, int upperLimitSwitchPort, int lowerLimitSwitchPort, DoubleSolenoid scissorLift, NetworkTable visionTable){
+	public Turret(int turretID, int shootingMotorLeftID, int shootingMotorRightID, int upperLimitSwitchPort, int lowerLimitSwitchPort, 
+			int scissorLiftLeftID, int sissorLiftRightID, /*int scissorLiftUpperLimitSwitchPort, int scissorLiftLowerLimitSwitchPort,*/
+			NetworkTable visionTable){
 		//Initialize motors
-		turretMotor = new VictorSP(turretPort);
-		shootingWheelMotor = new CANTalon(shootingWheelID);
-
-		//		//Initialize limit switches
+		turretRotator = new CANTalon(turretID);
+		shootingWheelMotorLeft = new CANTalon(shootingMotorLeftID);
+		shootingWheelMotorRight = new CANTalon(shootingMotorRightID);
+		scissorLiftLeft = new CANTalon(scissorLiftLeftID);
+		scissorLiftRight = new CANTalon(sissorLiftRightID);
+		
+		
+		//Initialize limit switches
 		upperLimitSwitch = new DigitalInput(upperLimitSwitchPort);
 		lowerLimitSwitch = new DigitalInput(lowerLimitSwitchPort);
-		this.scissorLift = scissorLift;
+//		scissorLiftUpperLimitSwitch = new DigitalInput(scissorLiftUpperLimitSwitchPort);
+//		scissorLiftLowerLimitSwitch = new DigitalInput(scissorLiftLowerLimitSwitchPort);
+		
+		//Initialize vision table
 		this.visionTable = visionTable;
+		
+		//Set scissor lift limit switches
+		scissorLiftRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+		scissorLiftRight.set(scissorLiftLeft.getDeviceID());
+		scissorLiftLeft.enableLimitSwitch(true, true);
 	}
 
 	public void aimRotatorToTarget() {//TargetX, TargetY, TargetWidth, TargetHeight, ImageWidth, ImageHeight
@@ -44,7 +65,7 @@ public class Turret {
 			double targetX = visionTable.getNumber("TargetX", 0);
 			double imageWidth = visionTable.getNumber("ImageWidth", 0);
 
-			turretMotor.set(TURRET_MOTOR_SPEED*(targetX*2/imageWidth-1));
+			turretRotator.set(TURRET_MOTOR_SPEED*(targetX*2/imageWidth-1));
 		}catch(NullPointerException e) {
 //			System.err.println("Target not found");
 		}
@@ -56,11 +77,13 @@ public class Turret {
 	}
 
 	public void liftUp() {
-		scissorLift.set(DoubleSolenoid.Value.kForward);
+		currentScissorLiftSpeed= SCISSOR_LIFT_MOTOR_SPEED;
+//		scissorLift.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void liftDown() {
-		scissorLift.set(DoubleSolenoid.Value.kReverse);
+		currentScissorLiftSpeed= -SCISSOR_LIFT_MOTOR_SPEED;
+//		scissorLift.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	private void setTurret(double speed, boolean automatic) {
@@ -92,27 +115,37 @@ public class Turret {
 	 * MUST be called in teleop periodic.
 	 */
 	public void update() {
-		if(isTracking) {
+		//Rotator
+		if(isTracking) {//Auto-tracking
 			aimRotatorToTarget();
-		}else{
+		}else{//Manual control
 			if((!isMovingAutomatically && !shouldMoveRotatorOnUpdateManually) || //not moving automatically and no command to manually move turret
 					((currentTurretSpeed < 0 && !lowerLimitSwitch.get()) || (0 < currentTurretSpeed && !upperLimitSwitch.get()))) {//limit switch pressed
 				currentTurretSpeed = 0;
 			}
 
 			shouldMoveRotatorOnUpdateManually = false;
-			turretMotor.set(currentTurretSpeed);
-		}
-		
-		
-		if(System.currentTimeMillis() - timeSinceLaunchStart >= 500){
-			isLaunching = false;
+			turretRotator.set(currentTurretSpeed);
 		}
 
-		if(isLaunching){
-			shootingWheelMotor.set(-SHOOTING_WHEEL_MOTOR_SPEED);
-		}else{
-			shootingWheelMotor.set(0);
+		//Scissor lift
+		scissorLiftLeft.set(currentScissorLiftSpeed);
+		scissorLiftRight.set(currentScissorLiftSpeed);
+		
+		{//Shooting wheel
+			//Check firing time
+			if(System.currentTimeMillis() - timeSinceLaunchStart >= 500){
+				isLaunching = false;
+			}
+
+			//Fire
+			if(isLaunching){
+				shootingWheelMotorLeft.set(-SHOOTING_WHEEL_MOTOR_SPEED);
+				shootingWheelMotorRight.set(-SHOOTING_WHEEL_MOTOR_SPEED);
+			}else{
+				shootingWheelMotorLeft.set(0);
+				shootingWheelMotorRight.set(0);
+			}
 		}
 	}
 }

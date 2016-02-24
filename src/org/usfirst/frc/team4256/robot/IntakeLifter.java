@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeLifter {
-	private static final double LIFTER_MOTOR_SPEED = .2;
+	private static final double LIFTER_MOTOR_SPEED = .1;
 	
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
@@ -48,6 +48,7 @@ public class IntakeLifter {
 	
 	public void liftDownAutomatic() {
 		set(-LIFTER_MOTOR_SPEED, true);
+		Robot.intake.intakeIn();
 	}
 	
 	/**
@@ -55,7 +56,7 @@ public class IntakeLifter {
 	 * MUST be called in teleop periodic.
 	 */
 	public void update() {
-		if(!isMovingAutomatically && shouldMoveLifterOnUpdateManually) {
+		if(!isMovingAutomatically && !shouldMoveLifterOnUpdateManually) {
 			currentLifterSpeed = 0;
 		}
 		

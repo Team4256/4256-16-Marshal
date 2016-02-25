@@ -23,11 +23,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	//Compressor
-	static Compressor compressor = new Compressor();
 	//Joysticks
 	static DBJoystick xboxDriver = new DBJoystick(0);
 	static DBJoystick xboxGun = new DBJoystick(1);
+
+	//Compressor
+	static Compressor compressor = new Compressor();
 	
 	//Relays
 	static Relay light;
@@ -37,16 +38,20 @@ public class Robot extends IterativeRobot {
 
 	//Drive
 	static Drive4256 drive;	
-	static CANTalon wheelFrontLeft = new CANTalon(1);
-	static CANTalon wheelBackLeft = new CANTalon(2);
-	static CANTalon wheelFrontRight = new CANTalon(3);
-	static CANTalon wheelBackRight = new CANTalon(4);
+	static CANTalon wheelFrontLeft = new CANTalon(11);
+	static CANTalon wheelBackLeft = new CANTalon(12);
+	static CANTalon wheelFrontRight = new CANTalon(13);
+	static CANTalon wheelBackRight = new CANTalon(14);
+	
+	static CANTalon intakeLifterLeft = new CANTalon(18);
+	static CANTalon intakeLifterRight = new CANTalon(19);
 	
 	//Systems
-	static Turret turret;
+//	static Turret turret;
+	
 	static Intake intake;
+	static CANTalon turret = new CANTalon(15);
 	static IntakeLifter intakeLifter;
-//	static Launcher launcher;
  
 
 	static NetworkTable visionTable;
@@ -62,15 +67,23 @@ public class Robot extends IterativeRobot {
 			visionTable = NetworkTable.getTable("SaltVision");
 			light = new Relay(0);
 			SmartDashboard.putBoolean("Motor Stop", false);
+			//Slave 
+			wheelBackLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
+			wheelBackLeft.set(wheelFrontLeft.getDeviceID());
+
+			wheelBackRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+			wheelBackRight.set(wheelFrontRight.getDeviceID());
 
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
-			turret = new Turret(5, 10, 11, 3, 4, 
-					6, 7, visionTable);
-			intake = new Intake(4, 5, 8, 0/*unknown*/);
-			intakeLifter = new IntakeLifter(8,9);
+			//			turret = new Turret(5, 10, 11, 3, 4, 
+			//					6, 7, visionTable);
+			intake = new Intake(0, 5, 8, 0/*unknown*/);
+
+
+			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
 		}
-		
+
 		{//SmartDashboard
 			SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
 			SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
@@ -82,6 +95,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 	}
+
 
 	public void autonomousInit() {
 		gamemode = Gamemode.AUTONOMOUS;
@@ -105,50 +119,57 @@ public class Robot extends IterativeRobot {
 		gamemode = Gamemode.TELEOP;
 		
 		//Update systems
-		turret.update();
+//		turret.update();
 		light.set(Value.kForward);
 		intake.update();
 		intakeLifter.update();
 
 		//Drive
 		{
-			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : .75);
+			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
 		}
 
 		//Turret
 		{
-			//Rotate manual
-			if(xboxGun.axisPressed(DBJoystick.AXIS_LT)){
-				turret.rotateLeftManual(); 
-			}else if(xboxGun.axisPressed(DBJoystick.AXIS_RT)){
-				turret.rotateRightManual();
-			}
+//			//Rotate manual
+//			if(xboxGun.axisPressed(DBJoystick.AXIS_LT)){
+//				turret.rotateLeftManual(); 
+//			}else if(xboxGun.axisPressed(DBJoystick.AXIS_RT)){
+//				turret.rotateRightManual();
+//			}
+//			//Rotate manual (CAN)
+//			if(xboxGun.axisPressed(DBJoystick.AXIS_LT)){
+//				turret.set(-0.3); 
+//			}else if(xboxGun.axisPressed(DBJoystick.AXIS_RT)){
+//				turret.set(0.3);
+//			}
 			
-			//Rotate automatically
-			if (xboxGun.getPOV() == DBJoystick.POV_WEST){
-				turret.rotateLeftAutomatic();
-			}else if (xboxGun.getPOV() == DBJoystick.POV_EAST){
-				turret.rotateRightAutomatic();
-			}
+//			//Rotate automatically
+//			if (xboxGun.getPOV() == DBJoystick.POV_WEST){
+//				turret.rotateLeftAutomatic();
+//			}else if (xboxGun.getPOV() == DBJoystick.POV_EAST){
+//				turret.rotateRightAutomatic();
+//			}
+			
 			
 			//Shooter angle shift
-			if (turretElevationToggle.getState()){
-				turret.liftUp();
-			}else {
-				turret.liftDown();
-			}
-			
-			//Toggle scissor lift
-			if (toggleScissorLift.getState()){
-				turret.liftUp();
-			}else{
-				turret.liftDown();
-			}
-			
-			//Auto tracking toggle
-			turret.isTracking = autoTrackingToggle.getState();
+//			if (turretElevationToggle.getState()){
+//				turret.liftUp();
+//			}else {
+//				turret.liftDown();
+//			}
+//			
+//			//Toggle scissor lift
+//			if (toggleScissorLift.getState()){
+//				turret.liftUp();
+//			}else{
+//				turret.liftDown();
+//			}
+//			
+//			//Auto tracking toggle
+//			turret.isTracking = autoTrackingToggle.getState();
 		}
 
 		//Intake Lifter
@@ -167,14 +188,16 @@ public class Robot extends IterativeRobot {
 		{
 			//Fire in high or low goal
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_RB)){
-				intake.fireHigh();
-			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
-				intake.fireLow();
+				intake.loadTurret();
 			}
 			
 			//Intake ball
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
+			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
+				intake.intakeOut();
+			}else{
+				intake.stop();
 			}
 		}
 		

@@ -7,16 +7,16 @@ public class Intake {
 	public static final long LOAD_TURRET_TIME =1000;
 	public static final long FIRE_LOW_TIME =500;
 	
-	public static final double ROLLER_IN_SPEED = .3;
-	public static final double ROLLER_OUT_SPEED = .3;
+	public static final double ROLLER_IN_SPEED = 1;
+	public static final double ROLLER_OUT_SPEED = 1;
 	public static final double STAGING_IN_SPEED = .3;
 	public static final double STAGING_OUT_SPEED = .3;
 	public int direction = 1;
 	
 	public State currentAction = State.nothing;
-	public static enum State {loadTurret, firingLow, intake, nothing}
-	public long totalTime;
-	public long startTime;
+	public static enum State {loadTurret, intakeOut, intake, nothing}
+	public long firingTotalTime;
+	public long firingStartTime;
 	
 	public VictorSP intakeRoller;
 	public VictorSP stagingLeft;
@@ -31,62 +31,61 @@ public class Intake {
 		stagingLimitSwitch = new DigitalInput(stagingLimitSwitchPort);
 	}
 	
+	private void set(double intakeDirection, double stagingDirection) {
+		intakeRoller.set(ROLLER_OUT_SPEED*intakeDirection);
+		stagingLeft.set(STAGING_OUT_SPEED*stagingDirection);
+		stagingRight.set(STAGING_OUT_SPEED*stagingDirection);
+	}
+	
 	private void set() {
 		if (currentAction == State.loadTurret) {
-			intakeRoller.set(0);
-			stagingLeft.set(-STAGING_OUT_SPEED*direction);
-			stagingRight.set(STAGING_OUT_SPEED*direction);
-		}else if (currentAction == State.loadTurret) {
-			intakeRoller.set(-ROLLER_OUT_SPEED*direction);
-			stagingLeft.set(STAGING_OUT_SPEED*direction);
-			stagingRight.set(-STAGING_OUT_SPEED*direction);
-		}else {
-			intakeRoller.set(ROLLER_IN_SPEED*direction);
-			stagingLeft.set(-STAGING_IN_SPEED*direction);
-			stagingRight.set(STAGING_IN_SPEED*direction);
+			set(0, 1);
+		}else if (currentAction == State.intakeOut) {
+			set(-1, -1);
+		}else if (currentAction == State.intake) {
+			set(1, 1);
+		}else{
+			set(0,0);
 		}
 	}
-	
+	public void stop() {
+		currentAction = State.nothing;
+	}
 	public void intakeIn() {
-		if (System.currentTimeMillis() - startTime > totalTime) {
+//		if (System.currentTimeMillis() - startTime > totalTime) {
 			currentAction = State.intake;
-//			loadTurret = false;
-//			firingLow = false;
-		}
+//		}
 	}
 	
-	public void fireLow(long firingTime) {
-		this.totalTime = firingTime;
-		currentAction = State.firingLow;
-//		loadTurret = false;
-//		firingLow = true;
+	public void intakeOut(long firingTime) {
+		this.firingTotalTime = firingTime;
+		currentAction = State.intakeOut;
 	}
 	
-	public void fireLow() {
-		fireLow(FIRE_LOW_TIME);
+	public void intakeOut() {
+		intakeOut(FIRE_LOW_TIME);
 	}
 	
 	public void loadTurret(long firingTime) {
-		this.totalTime = firingTime;
+		this.firingTotalTime = firingTime;
 		currentAction = State.loadTurret;
-//		loadTurret = true;
-//		firingLow = false;
 	}
 	
-	public void fireHigh() {
+	public void loadTurret() {
 		//fireHigh(FIRE_HIGH_TIME);
 		loadTurret(LOAD_TURRET_TIME);
 	}
 	
 	public void update() {
 		if (currentAction == State.intake && stagingLimitSwitch.get()) {
-			direction = 0;
+//			direction = 0;
 		}else {
-			direction = 1;
+//			direction = 1;
+//			set();
 		}
 		
-		if(System.currentTimeMillis() - startTime > totalTime) {
-			currentAction = State.intake;
+		if(System.currentTimeMillis() - firingStartTime > firingTotalTime && currentAction != State.intake) {
+			currentAction = State.nothing;
 		}
 		
 		set();

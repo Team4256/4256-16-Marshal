@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -66,18 +67,26 @@ public class Obstacle {
 	}
 	
 	public void crossBarrier(double direction) {
-		Robot.intakeLifter.liftDownAutomatic();
+//		Robot.intakeLifter.liftDownAutomatic();
 		
 		if (getStartingObstacle().difficulty == Difficulty.simple) {
+			//Cross like normal
+			Robot.intakeLifter.liftDownAutomatic();
 			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
 		}else if (getStartingObstacle().difficulty == Difficulty.hard) {
 			if (getStartingObstacle() == portcullis) {
-				//TODO uncomment and fix
+				Robot.intakeLifter.liftDownAutomatic();
 //				AutoModes.moveToLimitSwitch(direction*AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
 //				Robot.intakeLifter.liftUpAutomatic();
-				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
-			}else if (getStartingObstacle() == cheval_de_frise){
-				throw new Error("crossing cheval_de_frise not programmed");
+				//TODO cross like normal
+//				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
+			}else if (getStartingObstacle() == cheval_de_frise){//!!!!!!!!!! NEED TO BE ON ONE SIDE TO START
+				//Push cheval_de_frise down
+				Robot.intakeLifter.liftUpAutomatic();
+				//TODO go forward
+				Timer.delay(1000);
+				Robot.intakeLifter.liftDownAutomatic();
+				//TODO cross like normal
 			}
 		}else if (getStartingObstacle().difficulty == Difficulty.impossible) {
 			if(getStartingObstacle().position != 5 && getBarrierAtPosition(getStartingObstacle().position+1).difficulty == Difficulty.simple) {

@@ -53,7 +53,7 @@ public class AutoModes {
 		
 		//Fire
 		Timer.delay(.5);
-		Robot.turret.fire();
+//		Robot.turret.fire();
 		Timer.delay(.5);
 	}
 
@@ -86,7 +86,7 @@ public class AutoModes {
 				@Override
 				public void run() {
 					while(inAutonomous()) {
-						Robot.turret.aimRotatorToTarget();
+//						Robot.turret.aimRotatorToTarget();
 					}
 				}});
 		}

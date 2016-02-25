@@ -12,7 +12,16 @@ public class Drive4256 {
 
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid leftGearShifter, DoubleSolenoid rightGearShifter) {
 		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
-		this.robotDrive = new RobotDrive(LFMotor, LBMotor, RFMotor, RBMotor);
+
+//		LBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+//		LBMotor.set(LFMotor.getDeviceID());
+//
+//		RBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+//		RBMotor.set(wheelFrontRight.getDeviceID());
+		
+		LFMotor.setInverted(true);
+		LBMotor.setInverted(true);
+		this.robotDrive = new RobotDrive(LFMotor/*, LBMotor*/, RFMotor/*, RBMotor*/);
 
 		this.leftGearShifter = leftGearShifter;
 		this.rightGearShifter = rightGearShifter;

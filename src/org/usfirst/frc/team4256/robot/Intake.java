@@ -58,7 +58,6 @@ public class Intake {
 	}
 	
 	public void intakeOut(long firingTime) {
-		this.firingTotalTime = firingTime;
 		currentAction = State.intakeOut;
 	}
 	
@@ -67,6 +66,7 @@ public class Intake {
 	}
 	
 	public void loadTurret(long firingTime) {
+		this.firingStartTime = System.currentTimeMillis();
 		this.firingTotalTime = firingTime;
 		currentAction = State.loadTurret;
 	}
@@ -84,7 +84,7 @@ public class Intake {
 //			set();
 		}
 		
-		if(System.currentTimeMillis() - firingStartTime > firingTotalTime && currentAction != State.intake) {
+		if(currentAction == State.loadTurret && System.currentTimeMillis() - firingStartTime > firingTotalTime) {
 			currentAction = State.nothing;
 		}
 		

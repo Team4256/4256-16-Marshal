@@ -6,12 +6,14 @@ package org.usfirst.frc.team4256.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Compressor;
 //import edu.wpi.first.wpilibj.DoubleSole2noid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,6 +34,9 @@ public class Robot extends IterativeRobot {
 	
 	//Relays
 	static Relay light;
+	
+	//Limit Switch
+//	static DigitalInput portcullisLimitSwitch = new DigitalInput(0);
     
 	//AI
 	static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
@@ -105,7 +110,12 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-
+//	int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
+//	switch (autoMode) {
+//	case 0:
+//		Obstacle.getStartingObstacle().crossBarrier(1);
+//		}
+// will have to do case for each Obstacle?
 	}
 
 	/**
@@ -126,7 +136,7 @@ public class Robot extends IterativeRobot {
 
 		//Drive
 		{
-			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1);
+			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
 		}
@@ -212,8 +222,37 @@ public class Robot extends IterativeRobot {
 //		}
 //		SmartDashboard.putBoolean("Motor Stop", stagingAreaSensor.get());
 		
+		//Portcullis LimitSwitch
+//		if(portcullisLimitSwitch.get()) {
+//			//IntakeLifter is set to it's current state and speed
+//			
+//		}else{
+//			intakeLifter.liftUpAutomatic();
+//			AutoModes.moveForwardForTime(0, 0);
+//			//drive forward autonomous function
+//		}
+//		
 	}
 
+	//Automated teleop variables
+	public static AutomatedTeleopState automatedTeleopStage = AutomatedTeleopState.collectBall;
+	public static enum AutomatedTeleopState {
+			collectBall,
+			crossBarrier,
+			fire,
+			returnToNeutralZone
+		}
+	
+	/**
+	 * This function should be toggled on button press to enter an autonomous loop when in teleop
+	 */
+	public void teleopAutomated() {
+		//TODO exit if controller activated
+		//Must be able to enter loop at any time
+		//This can be done with an *enum for location, and *boolean declaring if the robot contains a ball
+		
+		
+	}
 
 	/**
 	 * This function is called periodically during test mode

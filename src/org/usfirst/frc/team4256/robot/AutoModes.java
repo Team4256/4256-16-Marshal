@@ -79,6 +79,7 @@ public class AutoModes {
 	}
 	
 	///////////////////FUNCTIONS//////////////////
+	//------rotator------
 	private static boolean syncAimRotatorIsRunning = false;
 	public static void syncAimRotator() {
 		if(!syncAimRotatorIsRunning) {
@@ -92,6 +93,31 @@ public class AutoModes {
 		}
 		
 		syncAimRotatorIsRunning = true;
+	}
+	
+	//------intake lifter------
+	public static void syncIntakeLifterUp() {
+		private_syncIntakeLifter(IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
+	}
+	
+	public static void syncIntakeLifterDown() {
+		private_syncIntakeLifter(-IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
+	}
+	
+	private static int intakeLifterCommandCurrentIndex = 0;
+	private static void private_syncIntakeLifter(double liftSpeed, long timeoutMillis) {
+		long startTime = System.currentTimeMillis();
+		
+		exeSrvc.execute(new Runnable() {
+			@Override
+			public void run() {
+				int intakeLifterCommandIndex = intakeLifterCommandCurrentIndex++;
+				
+				while(System.currentTimeMillis()-startTime < timeoutMillis && 
+						intakeLifterCommandIndex  == intakeLifterCommandCurrentIndex && inAutonomous()) {
+					Robot.intakeLifter.lifterLeft.set(liftSpeed);
+				}
+			}});
 	}
 
 

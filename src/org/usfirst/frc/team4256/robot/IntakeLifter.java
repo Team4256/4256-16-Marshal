@@ -9,7 +9,7 @@ public class IntakeLifter {
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
 	
-	public DigitalInput upperLimitSwitch = new DigitalInput(2);
+//	public DigitalInput upperLimitSwitch = new DigitalInput(2);
 //	public DigitalInput lowerLimitSwitch = new DigitalInput();
 	
 	public double currentLifterSpeed = 0;
@@ -26,7 +26,7 @@ public class IntakeLifter {
 		
 		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
 		lifterRight.set(lifterLeft.getDeviceID());
-		lifterLeft.enableLimitSwitch(true, false);
+		lifterLeft.enableLimitSwitch(true, true);
 	}
 	
 	private void set(double speed, boolean automatic) {
@@ -41,6 +41,7 @@ public class IntakeLifter {
 	
 	public void liftDownManual() {
 		set(-LIFTER_MOTOR_SPEED, false);
+		Robot.intake.intakeIn();
 	}
 	
 	public void liftUpAutomatic() {

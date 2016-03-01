@@ -15,8 +15,8 @@ public class Turret {
 	public CANTalon shootingWheelMotorLeft;
 	public CANTalon shootingWheelMotorRight;
 	
-	public CANTalon scissorLiftLeft;
-	public CANTalon scissorLiftRight;
+//	public CANTalon scissorLiftLeft;
+//	public CANTalon scissorLiftRight;
 
 	public NetworkTable visionTable;
 
@@ -35,14 +35,15 @@ public class Turret {
 	public long timeSinceLaunchStart;
 
 	public Turret(int turretID, int shootingMotorLeftID, int shootingMotorRightID, int upperLimitSwitchPort, int lowerLimitSwitchPort, 
-			int scissorLiftLeftID, int sissorLiftRightID, /*int scissorLiftUpperLimitSwitchPort, int scissorLiftLowerLimitSwitchPort,*/
+			/*int scissorLiftLeftID, int sissorLiftRightID, /*int scissorLiftUpperLimitSwitchPort, int scissorLiftLowerLimitSwitchPort,*/
 			NetworkTable visionTable){
 		//Initialize motors
 		turretRotator = new CANTalon(turretID);
 		shootingWheelMotorLeft = new CANTalon(shootingMotorLeftID);
 		shootingWheelMotorRight = new CANTalon(shootingMotorRightID);
-		scissorLiftLeft = new CANTalon(scissorLiftLeftID);
-		scissorLiftRight = new CANTalon(sissorLiftRightID);
+//		scissorLiftLeft = new CANTalon(scissorLiftLeftID);
+//		scissorLiftRight = new CANTalon(sissorLiftRightID);
+		
 		
 		
 		//Initialize limit switches
@@ -55,9 +56,11 @@ public class Turret {
 		this.visionTable = visionTable;
 		
 		//Set scissor lift limit switches
-		scissorLiftRight.changeControlMode(CANTalon.TalonControlMode.Follower);
-		scissorLiftRight.set(scissorLiftLeft.getDeviceID());
-		scissorLiftLeft.enableLimitSwitch(true, true);
+//		scissorLiftRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+//		scissorLiftRight.set(scissorLiftLeft.getDeviceID());
+//		scissorLiftLeft.enableLimitSwitch(true, true);
+		
+		//
 	}
 
 	public void aimRotatorToTarget() {//TargetX, TargetY, TargetWidth, TargetHeight, ImageWidth, ImageHeight
@@ -129,9 +132,9 @@ public class Turret {
 		}
 
 		//Scissor lift
-		scissorLiftLeft.set(currentScissorLiftSpeed);
-		scissorLiftRight.set(currentScissorLiftSpeed);
-		
+//		scissorLiftLeft.set(currentScissorLiftSpeed);
+//		scissorLiftRight.set(currentScissorLiftSpeed);
+//		
 		{//Shooting wheel
 			//Check firing time
 			if(System.currentTimeMillis() - timeSinceLaunchStart >= 500){

@@ -6,6 +6,7 @@ package org.usfirst.frc.team4256.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Compressor;
 //import edu.wpi.first.wpilibj.DoubleSole2noid;
@@ -46,12 +47,16 @@ public class Robot extends IterativeRobot {
 	static CANTalon intakeLifterLeft = new CANTalon(18);
 	static CANTalon intakeLifterRight = new CANTalon(19);
 	
+	static CANTalon shooterLeft = new CANTalon(0);
+	static CANTalon shooterRight = new CANTalon(0);
+	
 	//Systems
 //	static Turret turret;
 	
 	static Intake intake;
 	static CANTalon turret = new CANTalon(15);
 	static IntakeLifter intakeLifter;
+	static Turret shooter;
  
 
 	static NetworkTable visionTable;
@@ -59,6 +64,8 @@ public class Robot extends IterativeRobot {
 	
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};
+	
+	static DigitalInput stagingSensor = new DigitalInput(2);
 	
 	//static Launcher robotLauncher;
 	
@@ -79,6 +86,11 @@ public class Robot extends IterativeRobot {
 			//			turret = new Turret(5, 10, 11, 3, 4, 
 			//					6, 7, visionTable);
 			intake = new Intake(0, 5, 8, 0/*unknown*/);
+			
+			shooterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
+			shooterLeft.set(shooterRight.getDeviceID());
+			
+//			shooter = new Turret(0,0,0,0,0,visionTable);
 
 
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
@@ -115,6 +127,8 @@ public class Robot extends IterativeRobot {
 	Toggle turretElevationToggle = new Toggle(xboxGun, DBJoystick.BUTTON_LB);
 	Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
+	Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
+	Toggle shooterToggle = new Toggle (xboxGun, DBJoystick.AXIS_RT);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		
@@ -130,6 +144,7 @@ public class Robot extends IterativeRobot {
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
 		}
+		
 
 		//Turret
 		{
@@ -167,6 +182,11 @@ public class Robot extends IterativeRobot {
 //			}else{
 //				turret.liftDown();
 //			}
+			if(shooterToggle.getState()) {
+				shooterLeft.set(0.5);
+			} else {
+				shooterLeft.set(0);
+			}
 //			
 //			//Auto tracking toggle
 //			turret.isTracking = autoTrackingToggle.getState();
@@ -192,12 +212,17 @@ public class Robot extends IterativeRobot {
 			}
 			
 			//Intake ball
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
+			if (intakeInToggle.getState()){
 				intake.intakeIn();
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
 				intake.intakeOut();
 			}else{
 				intake.stop();
+			}
+			if (stagingSensor.get() && !(xboxGun.getRawButton(DBJoystick.BUTTON_X))) {
+				intake.stop();
+				intakeInToggle.equals(false);
+				
 			}
 		}
 		

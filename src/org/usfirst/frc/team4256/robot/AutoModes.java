@@ -130,6 +130,16 @@ public class AutoModes {
 		
 		stop();
 	}
+	
+//	public static void moveForwardToBall(double driveSpeed, long timeMillis)	{
+//		long startTime = System.currentTimeMillis();
+//		
+//		while(System.currentTimeMillis()-startTime < timeMillis && inAutonomous())	{
+//			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.rotateToAngle(currentAngle));
+//			Robot.intake.intakeIn();
+//		}
+//		
+//	}
 
 	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 

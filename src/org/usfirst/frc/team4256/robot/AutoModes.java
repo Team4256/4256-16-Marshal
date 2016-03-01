@@ -12,18 +12,14 @@ import edu.wpi.first.wpilibj.RobotDrive;
 
 
 public class AutoModes {
-	static double ROBOT_SPEED = .3;
-
+	static double ROBOT_SPEED = .4;
 	
-//	public static int DEFENSE_DISTANCE = 0;
-//	public static int LOWBAR_DISTANCE = 0;
-//	public static int ROCKWALL_DISTANCE = 0;
-//	public static int ROUGHTERRAIN_DISTANCE = 0;
-//	public static int MOAT_DISTANCE = 0;
-//	public static int ONE_BALL_DISTANCE = 0;
-//	public static int START_DIS = 0;
+	public static final double DISTANCE_CENTER_TO_BARRIER = 000;//TODO
+	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
+	public static final double DISTANCE_DEFENCE_WIDTH = 48;//need to verify
 	
-	public static long DISTANCE_BETWEEN_DEFENCES;
+	
+	public static long DISTANCE_BETWEEN_DEFENCES;//<---remove!!
 	
 
 //	static Obstacle startingBarrier;
@@ -43,7 +39,18 @@ public class AutoModes {
 	}
 
 	///////////////////MODES//////////////////
-
+	public static void test() {
+//		AutoModes.syncIntakeLifterDown();
+//		AutoModes.moveForwardForDistance(-1*AutoModes.ROBOT_SPEED, 36, 2000);
+		rotateToGyroPosition(45);
+		Timer.delay(.5);
+		rotateToGyroPosition(270);
+		Timer.delay(.5);
+		rotateToGyroPosition(90);
+		//moveForwardForDistance(ROBOT_SPEED, 36, 3000);
+//		Obstacle.low_bar.crossBarrier(1);
+	}
+	
 	public static void oneBall() {
 		//Aim turret
 		syncAimRotator();
@@ -97,11 +104,11 @@ public class AutoModes {
 	
 	//------intake lifter------
 	public static void syncIntakeLifterUp() {
-		private_syncIntakeLifter(IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
+		private_syncIntakeLifter(-IntakeLifter.LIFTER_MOTOR_SPEED, 1000);
 	}
 	
 	public static void syncIntakeLifterDown() {
-		private_syncIntakeLifter(-IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
+		private_syncIntakeLifter(IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
 	}
 	
 	private static int intakeLifterCommandCurrentIndex = 0;
@@ -111,7 +118,7 @@ public class AutoModes {
 		exeSrvc.execute(new Runnable() {
 			@Override
 			public void run() {
-				int intakeLifterCommandIndex = intakeLifterCommandCurrentIndex++;
+				int intakeLifterCommandIndex = ++intakeLifterCommandCurrentIndex;
 				
 				while(System.currentTimeMillis()-startTime < timeoutMillis && 
 						intakeLifterCommandIndex  == intakeLifterCommandCurrentIndex && inAutonomous()) {
@@ -139,9 +146,12 @@ public class AutoModes {
 	public static double currentAngle = 0;//need current angle in gyro, move
 	public static void rotateToGyroPosition(double angle) {
 		currentAngle = angle;
+		double turnSpeed = 999;
 		
-		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
-			Robot.gyro.rotateToAngle(angle);
+//		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
+		while(Math.abs(turnSpeed) > .1 && inAutonomous()) {
+			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
+			Robot.drive.arcadeDrive(0, turnSpeed);
 		}
 		
 		stop();
@@ -151,18 +161,30 @@ public class AutoModes {
 		long startTime = System.currentTimeMillis();
 		
 		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.rotateToAngle(currentAngle));
+			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
 		}
 		
 		stop();
 	}
 
+	public static void moveForwardForDistance(double driveSpeed, double distance, long timeoutMillis) {
+		long startTime = System.currentTimeMillis();
+		double startDisplacement = Robot.gyro.getGroundDisplacement();
+		
+		while(Math.abs(Robot.gyro.getGroundDisplacement()-startDisplacement) < distance &&
+				System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
+		}
+		
+		stop();
+	}
+	
 	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.rotateToAngle(currentAngle));
+			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
 		}
 		
 		stop();
@@ -188,14 +210,14 @@ public class AutoModes {
 		//Acceleration
 		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
 			speed = 2*(System.currentTimeMillis()-startTime)/timeoutMillis;
-			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.rotateToAngle(currentAngle));
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
 		}
 		
 		//Decelleration
 		startTime = System.currentTimeMillis();
 		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
 			speed = 1-2*(System.currentTimeMillis()-startTime)/timeoutMillis;
-			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.rotateToAngle(currentAngle));
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
 		}
 		
 		stop();

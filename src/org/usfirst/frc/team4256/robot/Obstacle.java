@@ -66,21 +66,25 @@ public class Obstacle {
 		return obstacles[i-1];
 	}
 	
+	public void preCrossBarrier(double direction) {
+		//TODO
+	}
+	
 	public void crossBarrier(double direction) {
 //		Robot.intakeLifter.liftDownAutomatic();
 		
-		if (getStartingObstacle().difficulty == Difficulty.simple) {
+		if (difficulty == Difficulty.simple) {
 			//Cross like normal
-			Robot.intakeLifter.liftDownAutomatic();
+			AutoModes.syncIntakeLifterDown();
 			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
-		}else if (getStartingObstacle().difficulty == Difficulty.hard) {
-			if (getStartingObstacle() == portcullis) {
+		}else if (difficulty == Difficulty.hard) {
+			if (this == portcullis) {
 				Robot.intakeLifter.liftDownAutomatic();
 //				AutoModes.moveToLimitSwitch(direction*AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
 //				Robot.intakeLifter.liftUpAutomatic();
 				//TODO cross like normal
 //				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
-			}else if (getStartingObstacle() == cheval_de_frise){//!!!!!!!!!! NEED TO BE ON ONE SIDE TO START
+			}else if (this == cheval_de_frise){//!!!!!!!!!! NEED TO BE ON ONE SIDE TO START
 				//Push cheval_de_frise down
 				Robot.intakeLifter.liftUpAutomatic();
 				//TODO go forward
@@ -88,18 +92,19 @@ public class Obstacle {
 				Robot.intakeLifter.liftDownAutomatic();
 				//TODO cross like normal
 			}
-		}else if (getStartingObstacle().difficulty == Difficulty.impossible) {
-			if(getStartingObstacle().position != 5 && getBarrierAtPosition(getStartingObstacle().position+1).difficulty == Difficulty.simple) {
-				AutoModes.rotateToGyroPosition(270);
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
-				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier(direction);
-			}else if(getStartingObstacle().position != 1 && getBarrierAtPosition(getStartingObstacle().position-1).difficulty == Difficulty.simple) {
-				AutoModes.rotateToGyroPosition(90);
-				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
-				AutoModes.rotateToGyroPosition(0);
-				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier(direction);
-			}
+		}else if (this.difficulty == Difficulty.impossible) {
+			//replace getStartingObstacle() with this
+//			if(getStartingObstacle().position != 5 && getBarrierAtPosition(getStartingObstacle().position+1).difficulty == Difficulty.simple) {
+//				AutoModes.rotateToGyroPosition(270);
+//				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
+//				AutoModes.rotateToGyroPosition(0);
+//				getBarrierAtPosition(getStartingObstacle().position+1).crossBarrier(direction);
+//			}else if(getStartingObstacle().position != 1 && getBarrierAtPosition(getStartingObstacle().position-1).difficulty == Difficulty.simple) {
+//				AutoModes.rotateToGyroPosition(90);
+//				AutoModes.moveForwardForTime(AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_BETWEEN_DEFENCES);
+//				AutoModes.rotateToGyroPosition(0);
+//				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier(direction);
+//			}
 		}
 	}
 }

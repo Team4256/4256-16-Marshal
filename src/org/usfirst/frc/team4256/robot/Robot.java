@@ -3,17 +3,15 @@ package org.usfirst.frc.team4256.robot;
 
 
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Compressor;
 //import edu.wpi.first.wpilibj.DoubleSole2noid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -39,7 +37,8 @@ public class Robot extends IterativeRobot {
 //	static DigitalInput portcullisLimitSwitch = new DigitalInput(0);
     
 	//AI
-	static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
+	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
+	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP, 90);
 
 	//Drive
 	static Drive4256 drive;	
@@ -104,6 +103,7 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		gamemode = Gamemode.AUTONOMOUS;
+		AutoModes.test();
 	}
 
 	/**

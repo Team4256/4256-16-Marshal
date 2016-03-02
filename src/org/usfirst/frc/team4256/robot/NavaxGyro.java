@@ -34,34 +34,36 @@ public class NavaxGyro extends AHRS {
 	}
 	
 	double deadband = .05;
-	double minimumMagnitude = .75;
+	double minimumMagnitude = .6;
 	public double getAngleDisplacementFromAngleAsMotorValue(double targetAngle/*, double deadband, double minimumMagnitude*/) {
 		updateAngle();
 		SmartDashboard.putNumber("angle displacement", this.targetAngle.getDisplacementFrom(targetAngle));
-		double motorValue = this.targetAngle.getDisplacementFrom(targetAngle)/180;
-		if(motorValue < 0) {
-			return -.6;
-		}else{
-			return .6;
-		}
+//		double motorValue = this.targetAngle.getDisplacementFrom(targetAngle)/180;
+//		if(motorValue < 0) {
+//			return -.6;
+//		}else{
+//			return .6;
+//		}
+		
+		
 //		return this.targetAngle.range.toRange(targetAngle, Range.MOTOR_RANGE)*.5;
 		
 		
 		
-//		double motorValue = this.targetAngle.range.toRange(targetAngle, Range.MOTOR_RANGE);
+		double motorValue = this.targetAngle.getDisplacementFrom(targetAngle)/180;
 //		motorValue = Math.pow(motorValue, 2);//square input
-//		
-//		if(Math.abs(motorValue) < deadband) {
-//			return 0;
-//		}else{
-//			double motorMagnitude = motorValue*(1-minimumMagnitude) + Math.abs(motorValue)*minimumMagnitude;
-//			
-//			if(motorValue < 0) {
-//				return -motorMagnitude;
-//			}else{
-//				return motorMagnitude;
-//			}
-//		}
+		
+		if(Math.abs(motorValue) < deadband) {
+			return 0;
+		}else{
+			double motorMagnitude = motorValue*(1-minimumMagnitude) + Math.abs(motorValue)*minimumMagnitude;
+			
+			if(motorValue < 0) {
+				return -motorMagnitude;
+			}else{
+				return motorMagnitude;
+			}
+		}
 	}
 	
 	public double getGroundDisplacement() {

@@ -137,8 +137,9 @@ public class Robot extends IterativeRobot {
 	Toggle turretElevationToggle = new Toggle(xboxGun, DBJoystick.BUTTON_LB);
 	Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
-	Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
+	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle (xboxGun, DBJoystick.AXIS_RT);
+	Toggle shooterOverideToggle = new Toggle (xboxGun, DBJoystick.BUTTON_Y);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		
@@ -214,25 +215,35 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		//Intake
-		{
-			//Fire in high or low goal
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_RB)){
-				intake.loadTurret();
-			}
-			
-			//Intake ball
-			if (intakeInToggle.getState()){
+		{//Intake
+			//in and out
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
+				shooterLeft.set(.5);
+				
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
 				intake.intakeOut();
+				shooterLeft.set(0);
+				
+			//high shot
+			}else if (shooterToggle.getState()) {
+				intake.loadTurret();
+				shooterLeft.set(.5);
+				//should have code in here so that it finishes no matter what (unless override is run), even if toggle state becomes false
+				//should also have code in here that automatically makes the toggle state false when action is complete
+				
+			//shot override ** need to make so that state only gets changed if we are in the process of shooting. once shooting gets finished, this toggle needs to be reset to true
+			//THIS MAY CAUSE PROBLEMS TONIGHT. COMENT OUT OVERRIDE IF ISSUES OCCUR
+			}else if (shooterOverideToggle.getState()) {
+				shooterLeft.set(.5);
+			}else if (!shooterOverideToggle.getState()) {
+				shooterLeft.set(0);
+			
 			}else{
 				intake.stop();
-			}
-			if (stagingSensor.get() && !(xboxGun.getRawButton(DBJoystick.BUTTON_X))) {
-				intake.stop();
-				intakeInToggle.equals(false);
-				
+				if (intake.currentAction != Intake.State.intake) {
+					shooterLeft.set(0);
+				}
 			}
 		}
 		

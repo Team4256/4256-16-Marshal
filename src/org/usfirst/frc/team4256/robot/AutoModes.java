@@ -149,7 +149,7 @@ public class AutoModes {
 		double turnSpeed = 999;
 		
 //		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
-		while(Math.abs(turnSpeed) > .1 && inAutonomous()) {
+		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(angle)) > 1 && inAutonomous()) {
 			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
 			Robot.drive.arcadeDrive(0, turnSpeed);
 		}

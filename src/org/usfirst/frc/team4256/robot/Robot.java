@@ -4,6 +4,7 @@ package org.usfirst.frc.team4256.robot;
 
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -51,8 +52,8 @@ public class Robot extends IterativeRobot {
 	static CANTalon intakeLifterLeft = new CANTalon(18);
 	static CANTalon intakeLifterRight = new CANTalon(19);
 	
-	static CANTalon shooterLeft = new CANTalon(0);
-	static CANTalon shooterRight = new CANTalon(0);
+	static CANTalon shooterLeft = new CANTalon(21);
+	static CANTalon shooterRight = new CANTalon(20);
 	
 	//Systems
 //	static Turret turret;
@@ -69,7 +70,10 @@ public class Robot extends IterativeRobot {
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};
 	
-	static DigitalInput stagingSensor = new DigitalInput(2);
+//	static DigitalInput stagingLimitSwitch = new DigitalInput(0);
+	
+	static CameraServer camera = CameraServer.getInstance();
+	
 	
 	//static Launcher robotLauncher;
 	
@@ -89,16 +93,19 @@ public class Robot extends IterativeRobot {
 					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
 			//			turret = new Turret(5, 10, 11, 3, 4, 
 			//					6, 7, visionTable);
-			intake = new Intake(0, 5, 8, 0/*unknown*/);
+			intake = new Intake(0, 5, 8, 0);
 			
-			shooterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
-			shooterLeft.set(shooterRight.getDeviceID());
+//			shooterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
+//			shooterLeft.set(shooterRight.getDeviceID());
 			
 //			shooter = new Turret(0,0,0,0,0,visionTable);
 
 
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
 		}
+		camera.setQuality(100);
+		camera.startAutomaticCapture("cam1");
+		
 
 		{//SmartDashboard
 			SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
@@ -213,17 +220,25 @@ public class Robot extends IterativeRobot {
 			}else if (xboxDriver.getPOV() == DBJoystick.POV_SOUTH) {
 				intakeLifter.liftDownAutomatic();
 			}
+			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
+				shooterRight.set(0.5);
+				shooterLeft.set(0.5);
+			} else {
+				shooterRight.set(0);
+				shooterLeft.set(0);
+			}
 		}
 		
 		{//Intake
 			//in and out
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
-				shooterLeft.set(.5);
+				shooterLeft.set(.3);
 				
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
 				intake.intakeOut();
 				shooterLeft.set(0);
+			
 				
 			//high shot
 			}else if (shooterToggle.getState()) {
@@ -241,6 +256,7 @@ public class Robot extends IterativeRobot {
 			
 			}else{
 				intake.stop();
+				
 				if (intake.currentAction != Intake.State.intake) {
 					shooterLeft.set(0);
 				}

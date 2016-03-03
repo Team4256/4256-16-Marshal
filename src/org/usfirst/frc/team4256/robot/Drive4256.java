@@ -6,25 +6,25 @@ import edu.wpi.first.wpilibj.RobotDrive;
 
 public class Drive4256 {
 	RobotDrive robotDrive;
-	DoubleSolenoid leftGearShifter;
-	DoubleSolenoid rightGearShifter;
+	DoubleSolenoid gearShifter;
+//	DoubleSolenoid rightGearShifter;
 
 
-	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid leftGearShifter, DoubleSolenoid rightGearShifter) {
+	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid gearShifter) {
 		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
 
-//		LBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
-//		LBMotor.set(LFMotor.getDeviceID());
-//
-//		RBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
-//		RBMotor.set(wheelFrontRight.getDeviceID());
+		LBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+		LBMotor.set(LFMotor.getDeviceID());
+
+		RBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+		RBMotor.set(RFMotor.getDeviceID());
 		
 		LFMotor.setInverted(true);
 		LBMotor.setInverted(true);
 		this.robotDrive = new RobotDrive(LFMotor/*, LBMotor*/, RFMotor/*, RBMotor*/);
 
-		this.leftGearShifter = leftGearShifter;
-		this.rightGearShifter = rightGearShifter;
+		this.gearShifter = gearShifter;
+//		this.rightGearShifter = rightGearShifter;
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
@@ -41,12 +41,12 @@ public class Drive4256 {
 	}
 
 	public void slowGear() {
-		leftGearShifter.set(DoubleSolenoid.Value.kForward);
-		rightGearShifter.set(DoubleSolenoid.Value.kForward);
+		gearShifter.set(DoubleSolenoid.Value.kForward);
+//		rightGearShifter.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void fastGear() {
-		leftGearShifter.set(DoubleSolenoid.Value.kReverse);
-		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
+		gearShifter.set(DoubleSolenoid.Value.kReverse);
+//		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
 	}
 }

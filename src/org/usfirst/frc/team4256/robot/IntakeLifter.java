@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeLifter {
 	static final double LIFTER_MOTOR_SPEED = .4;
-	
+
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
 	
@@ -21,12 +21,10 @@ public class IntakeLifter {
 		//Initialize motors
 		this.lifterLeft = lifterLeft;
 		this.lifterRight = lifterRight;
-	
-		lifterLeft.setInverted(true);
 		
-		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
-		lifterRight.set(lifterLeft.getDeviceID());
-		lifterLeft.enableLimitSwitch(true, true);
+		lifterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
+		lifterLeft.set(lifterRight.getDeviceID());
+		lifterRight.enableLimitSwitch(true, true);
 	}
 	
 	private void set(double speed, boolean automatic) {
@@ -64,7 +62,7 @@ public class IntakeLifter {
 		
 		shouldMoveLifterOnUpdateManually = false;
 //		if(0 < currentLifterSpeed && !upperLimitSwitch.get()) {
-			lifterLeft.set(currentLifterSpeed);
+			lifterRight.set(currentLifterSpeed);
 //		}
 		
 //		Move if limit switch not active

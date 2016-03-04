@@ -122,7 +122,7 @@ public class AutoModes {
 				
 				while(System.currentTimeMillis()-startTime < timeoutMillis && 
 						intakeLifterCommandIndex  == intakeLifterCommandCurrentIndex && inAutonomous()) {
-					Robot.intakeLifter.lifterLeft.set(liftSpeed);
+					Robot.intakeLifter.lifterRight.set(liftSpeed);
 				}
 			}});
 	}

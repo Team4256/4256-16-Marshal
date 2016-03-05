@@ -16,8 +16,11 @@ public class AutoModes {
 	
 	public static final double DISTANCE_CENTER_TO_BARRIER = 000;//TODO
 	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
-	public static final double DISTANCE_DEFENCE_WIDTH = 48;//need to verify
+	public static final double DISTANCE_DEFENCE_WIDTH = 50;//TODO add divider width, long enough
 	
+	public static final long TIMEOUT_DISTANCE_CENTER_TO_BARRIER = 5000;//TODO
+	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
+	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
 	
 	public static long DISTANCE_BETWEEN_DEFENCES;//<---remove!!
 	
@@ -51,12 +54,13 @@ public class AutoModes {
 //		Obstacle.low_bar.crossBarrier(1);
 	}
 	
-	public static void oneBall() {
-		//Aim turret
-		syncAimRotator();
+	public static void oneBall(Obstacle obstacleToCross) {
+		//Prepare for barrier and target
+		obstacleToCross.preCrossBarrier(1);
+		//Hayden doesn't understand -> syncAimRotator();
 		
 		//Cross barrier
-		Obstacle.getStartingObstacle().crossBarrier(1);
+		obstacleToCross.crossBarrier(1);
 		
 		//Fire
 		Timer.delay(.5);
@@ -64,9 +68,9 @@ public class AutoModes {
 		Timer.delay(.5);
 	}
 
-	public static void twoBall() {
+	public static void twoBall(Obstacle obstacleToCross) {
 		//Fire first ball
-		oneBall();
+		oneBall(obstacleToCross);
 		
 		//Return to neutral zone
 		Obstacle.getStartingObstacle().crossBarrier(-1);
@@ -82,11 +86,11 @@ public class AutoModes {
 		rotateToGyroPosition(0);
 		
 		//Fire second ball
-		oneBall();
+		oneBall(obstacleToCross);
 	}
 	
 	///////////////////FUNCTIONS//////////////////
-	//------rotator------
+	//------rotator sync------
 	private static boolean syncAimRotatorIsRunning = false;
 	public static void syncAimRotator() {
 		if(!syncAimRotatorIsRunning) {
@@ -102,7 +106,7 @@ public class AutoModes {
 		syncAimRotatorIsRunning = true;
 	}
 	
-	//------intake lifter------
+	//------intake lifter sync------
 	public static void syncIntakeLifterUp() {
 		private_syncIntakeLifter(-IntakeLifter.LIFTER_MOTOR_SPEED, 1000);
 	}
@@ -112,8 +116,8 @@ public class AutoModes {
 	}
 	
 	private static int intakeLifterCommandCurrentIndex = 0;
-	private static void private_syncIntakeLifter(double liftSpeed, long timeoutMillis) {
-		long startTime = System.currentTimeMillis();
+	private static void private_syncIntakeLifter(final double liftSpeed, final long timeoutMillis) {
+		final long startTime = System.currentTimeMillis();
 		
 		exeSrvc.execute(new Runnable() {
 			@Override
@@ -126,8 +130,27 @@ public class AutoModes {
 				}
 			}});
 	}
-
-
+	
+	//------intake lifter------
+	public static void intakeLifterUp() {
+		private_intakeLifter(-IntakeLifter.LIFTER_MOTOR_SPEED, 1000);
+	}
+	
+	public static void intakeLifterDown() {
+		private_intakeLifter(IntakeLifter.LIFTER_MOTOR_SPEED, 2000);
+	}
+	
+	private static void private_intakeLifter(double liftSpeed, long timeoutMillis) {
+		final long startTime = System.currentTimeMillis();
+		
+		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
+			Robot.intakeLifter.lifterLeft.set(liftSpeed);
+		}
+	}
+	
+	
+	
+	
 	
 	///////////////////MOVEMENT-conversions//////////////////
 	private double FEET_PER_SECOND = 4;//TODO CALCULATE FEET PER SECOND
@@ -157,26 +180,6 @@ public class AutoModes {
 		stop();
 	}
 
-	public static void moveForwardForTime(double driveSpeed, long timeoutMillis) {
-		long startTime = System.currentTimeMillis();
-		
-		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
-		}
-		
-		stop();
-	}
-	
-//	public static void moveForwardToBall(double driveSpeed, long timeMillis)	{
-//		long startTime = System.currentTimeMillis();
-//		
-//		while(System.currentTimeMillis()-startTime < timeMillis && inAutonomous())	{
-//			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.rotateToAngle(currentAngle));
-//			Robot.intake.intakeIn();
-//		}
-//		
-//	}
-
 	public static void moveForwardForDistance(double driveSpeed, double distance, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		double startDisplacement = Robot.gyro.getGroundDisplacement();
@@ -189,8 +192,45 @@ public class AutoModes {
 		stop();
 	}
 	
-	private static long moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
+	public static void moveForwardForTime(double driveSpeed, long timeoutMillis) {
+		long startTime = System.currentTimeMillis();
+		
+		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
+		}
+		
+		stop();
+	}
+	
+	public static void alignToTarget() {
+		
+		double targetLongitude = Robot.visionTable.getNumber("TargetX", 0);
+//		double targetDistance = Robot.visionTable.getNumber("Distance", 0);
+		double imageCenter = Robot.visionTable.getNumber("ImageWidth", 0)/2;
+		double targetWidth = Robot.visionTable.getNumber("TargetWidth", 0);
+		double pixelSpeed = (targetLongitude - imageCenter)/imageCenter;
+		if (pixelSpeed < .4 && Math.abs(pixelSpeed*imageCenter) > targetWidth) {
+			pixelSpeed = .4;
+		}
+		
+		
+//		
+//		double targetAngle = Math.atan((targetX*2/imageWidth-1)/targetDistance);
+//		
+//		Robot.drive.arcadeDrive(0, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(targetAngle));
+	}
+	
+//	public static void moveForwardToBall(double driveSpeed, long timeMillis)	{
+//		long startTime = System.currentTimeMillis();
+//		
+//		while(System.currentTimeMillis()-startTime < timeMillis && inAutonomous())	{
+//			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.rotateToAngle(currentAngle));
+//			Robot.intake.intakeIn();
+//		}
+//		
+//	}
 
+	public static void moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
@@ -198,7 +238,6 @@ public class AutoModes {
 		}
 		
 		stop();
-		return System.currentTimeMillis()-startTime;
 	}
 	
 	public static void stop() {

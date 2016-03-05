@@ -23,7 +23,7 @@ public class NavaxGyro extends AHRS {
 	private void updateAngle() {
 		targetAngle.setValue(getAngle());
 	}
-
+	
 	public double getAngle() {
 		return targetAngle.getNormalizedValueForContinous(super.getAngle()-offsetAngle);
 	}

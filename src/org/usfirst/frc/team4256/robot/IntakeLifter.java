@@ -5,10 +5,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeLifter {
 	static final double LIFTER_MOTOR_SPEED = .4;
-
+	
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
 	
+	DigitalInput frontLimitSwitch;
 //	public DigitalInput upperLimitSwitch = new DigitalInput(2);
 //	public DigitalInput lowerLimitSwitch = new DigitalInput();
 	
@@ -17,14 +18,17 @@ public class IntakeLifter {
 	public boolean isMovingAutomatically = false;
 	
 //	public Lifter(int lifterLeftPort, int lifterRightPort, int upperLimitSwitchPort, int lowerLimitSwitchPort)
-	public IntakeLifter(CANTalon lifterLeft, CANTalon lifterRight){
+	public IntakeLifter(CANTalon lifterLeft, CANTalon lifterRight, DigitalInput frontLimitSwitch){
 		//Initialize motors
 		this.lifterLeft = lifterLeft;
 		this.lifterRight = lifterRight;
+		this.frontLimitSwitch = frontLimitSwitch;
+	
+		lifterLeft.setInverted(true);
 		
-		lifterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
-		lifterLeft.set(lifterRight.getDeviceID());
-		lifterRight.enableLimitSwitch(true, true);
+		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+		lifterRight.set(lifterLeft.getDeviceID());
+		lifterLeft.enableLimitSwitch(true, true);
 	}
 	
 	private void set(double speed, boolean automatic) {
@@ -62,7 +66,7 @@ public class IntakeLifter {
 		
 		shouldMoveLifterOnUpdateManually = false;
 //		if(0 < currentLifterSpeed && !upperLimitSwitch.get()) {
-			lifterRight.set(currentLifterSpeed);
+			lifterLeft.set(currentLifterSpeed);
 //		}
 		
 //		Move if limit switch not active

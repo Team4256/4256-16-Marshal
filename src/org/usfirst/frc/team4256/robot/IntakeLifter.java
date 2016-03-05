@@ -9,6 +9,7 @@ public class IntakeLifter {
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
 	
+	DigitalInput frontLimitSwitch;
 //	public DigitalInput upperLimitSwitch = new DigitalInput(2);
 //	public DigitalInput lowerLimitSwitch = new DigitalInput();
 	
@@ -17,10 +18,11 @@ public class IntakeLifter {
 	public boolean isMovingAutomatically = false;
 	
 //	public Lifter(int lifterLeftPort, int lifterRightPort, int upperLimitSwitchPort, int lowerLimitSwitchPort)
-	public IntakeLifter(CANTalon lifterLeft, CANTalon lifterRight){
+	public IntakeLifter(CANTalon lifterLeft, CANTalon lifterRight, DigitalInput frontLimitSwitch){
 		//Initialize motors
 		this.lifterLeft = lifterLeft;
 		this.lifterRight = lifterRight;
+		this.frontLimitSwitch = frontLimitSwitch;
 	
 		lifterLeft.setInverted(true);
 		
@@ -36,21 +38,21 @@ public class IntakeLifter {
 	}
 	
 	public void liftUpManual() {
-		set(LIFTER_MOTOR_SPEED, false);
+		set(-LIFTER_MOTOR_SPEED, false);
 	}
 	
 	public void liftDownManual() {
-		set(-LIFTER_MOTOR_SPEED, false);
-		Robot.intake.intakeIn();
+		set(LIFTER_MOTOR_SPEED, false);
+//		Robot.intake.intakeIn();
 	}
 	
 	public void liftUpAutomatic() {
-		set(LIFTER_MOTOR_SPEED, true);
+		set(-LIFTER_MOTOR_SPEED, true);
 	}
 	
 	public void liftDownAutomatic() {
-		set(-LIFTER_MOTOR_SPEED, true);
-		Robot.intake.intakeIn();
+		set(LIFTER_MOTOR_SPEED, true);
+//		Robot.intake.intakeIn();
 	}
 	
 	/**

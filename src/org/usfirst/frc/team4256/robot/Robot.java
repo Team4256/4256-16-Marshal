@@ -1,6 +1,13 @@
 
 package org.usfirst.frc.team4256.robot;
 
+<<<<<<< HEAD
+=======
+
+
+import org.usfirst.frc.team4256.robot.Obstacle.Difficulty;
+
+>>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -27,6 +34,9 @@ public class Robot extends IterativeRobot {
 	//Compressor
 	static Compressor compressor = new Compressor();
 	
+	//Solenoid
+	static DoubleSolenoid turretLifter = new DoubleSolenoid(0, 2, 3);
+	
 	//Relays
 	static Relay light;
     
@@ -47,19 +57,28 @@ public class Robot extends IterativeRobot {
 	static CANTalon shooterRight = new CANTalon(20);
 	
 	//Systems
+<<<<<<< HEAD
 //	static Turret turret;
 //	static CANTalon turret = new CANTalon(15);
 //	static Turret shooter;
 	
 	static Intake intake;
 	static IntakeLifter intakeLifter; 
+=======
+	static Intake intake;
+//	static CANTalon turret = new CANTalon(15);
+	static IntakeLifter intakeLifter;
+	static Launcher shooter;
+//	static Turret shooter;
+ 
+>>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 
 	static NetworkTable visionTable;
 	
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};
 	
-//	static DigitalInput stagingLimitSwitch = new DigitalInput(0);
+	static DigitalInput frontLimitSwitch = new DigitalInput(2);
 	
 	static CameraServer camera;
 	
@@ -70,33 +89,38 @@ public class Robot extends IterativeRobot {
 		{//Robot
 			visionTable = NetworkTable.getTable("SaltVision");
 			light = new Relay(0);
-			SmartDashboard.putBoolean("Motor Stop", false);
-			//Slave 
-			wheelBackLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
-			wheelBackLeft.set(wheelFrontLeft.getDeviceID());
-
-			wheelBackRight.changeControlMode(CANTalon.TalonControlMode.Follower);
-			wheelBackRight.set(wheelFrontRight.getDeviceID());
+			//SmartDashboard.putBoolean("Motor Stop", false);
 
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
-					new DoubleSolenoid(0, 0, 1), new DoubleSolenoid(0, 2, 3));
+					new DoubleSolenoid(0, 0, 1));
 			//			turret = new Turret(5, 10, 11, 3, 4, 
 			//					6, 7, visionTable);
 			intake = new Intake(0, 5, 8, 0);
 			
-//			shooterLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
-//			shooterLeft.set(shooterRight.getDeviceID());
-			
+			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
 //			shooter = new Turret(0,0,0,0,0,visionTable);
 
+<<<<<<< HEAD
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
 		}
+=======
+
+			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
+		}
+		camera.setQuality(100);
+		
+>>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 		camera.startAutomaticCapture("cam1");
+		
+		SmartDashboard.putString("             ","AUTONOMOUS MODE");
 		
 
 		{//SmartDashboard
-			SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
-			SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
+			//SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
+			//SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
+			SmartDashboard.putNumber("AUTONOMOUS MODE", 8);
+			SmartDashboard.putNumber("Position", 1);
+			SmartDashboard.putNumber("NumberOfBalls", 1);
 
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
@@ -109,19 +133,54 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		gamemode = Gamemode.AUTONOMOUS;
+		
+//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
+//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
+		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
+		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
+		int position = (int) SmartDashboard.getNumber("Position");
+		
+
 		AutoModes.test();
+
+		
+		switch (autoMode) {
+			case 0: //Portcullis 
+				AutoModes.oneBall(new Obstacle("portcullis", Difficulty.hard, position));
+				break;
+			case 1: 	//Cheval De Frise 
+				AutoModes.oneBall(new Obstacle("cheval_de_frise", Difficulty.hard, position));
+				break;
+			case 2: 	//Moat 
+				AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
+				break;
+			case 3: 	//Ramparts 
+				AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
+				break;
+			case 4:     //Drawbridge 
+				AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
+				break;
+			case 5: 	//Sally Port 
+				AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
+				break;
+			case 6:		//Rock Wall 
+				AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
+				break;
+			case 7:		//Rough Terrain
+				AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
+				break;
+			default:	//Low Bar
+				AutoModes.oneBall(Obstacle.low_bar);
+				//two ball eventually
+		}
+
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-//	int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
-//	switch (autoMode) {
-//	case 0:
-//		Obstacle.getStartingObstacle().crossBarrier(1);
-//		}
-// will have to do case for each Obstacle?
+		
 	}
 
 	/**
@@ -132,8 +191,8 @@ public class Robot extends IterativeRobot {
 	Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
-	Toggle shooterToggle = new Toggle (xboxGun, DBJoystick.AXIS_RT);
-	Toggle shooterOverideToggle = new Toggle (xboxGun, DBJoystick.BUTTON_Y);
+	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
+	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		
@@ -149,6 +208,8 @@ public class Robot extends IterativeRobot {
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
 		}
+		
+		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
 		
 
 		//Turret
@@ -187,67 +248,89 @@ public class Robot extends IterativeRobot {
 //			}else{
 //				turret.liftDown();
 //			}
-			if(shooterToggle.getState()) {
-				shooterLeft.set(0.5);
-			} else {
-				shooterLeft.set(0);
-			}
 //			
 //			//Auto tracking toggle
 //			turret.isTracking = autoTrackingToggle.getState();
+			
+			//Toggle shooter motors
+			if(shooterToggle.getState()) {
+//			if(xboxGun.getButtonToggleState(DBJoystick.BUTTON_Y)) {
+				shooter.start();
+			}else{
+				shooter.stop();
+			}
+			
+			//Raise/lower shooter
+			if(turretLifterToggle.getState()) {
+//			if(xboxGun.getAxisToggleState(DBJoystick.AXIS_LT)) {
+				shooter.raise();
+			}else{
+				shooter.lower();
+			}
 		}
 
 		//Intake Lifter
 		{
 			//Lift up or down
 			if(xboxDriver.axisPressed(DBJoystick.AXIS_LT)){
-				intakeLifter.liftUpManual();
-			}else if(xboxDriver.axisPressed(DBJoystick.AXIS_RT)){
 				intakeLifter.liftDownManual();
+			}else if(xboxDriver.axisPressed(DBJoystick.AXIS_RT)){
+				intakeLifter.liftUpManual();
+			}else if (xboxDriver.getPOV() == DBJoystick.POV_NORTH) {
+				intakeLifter.liftUpAutomatic();
 			}else if (xboxDriver.getPOV() == DBJoystick.POV_SOUTH) {
 				intakeLifter.liftDownAutomatic();
 			}
-			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
-				shooterRight.set(0.5);
-				shooterLeft.set(0.5);
-			} else {
-				shooterRight.set(0);
-				shooterLeft.set(0);
-			}
+//			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
+//				shooterRight.set(0.5);
+//				shooterLeft.set(0.5);
+//			} else {
+//				shooterRight.set(0);
+//				shooterLeft.set(0);
+//			}
 		}
 		
 		{//Intake
-			//in and out
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
-				shooterLeft.set(.3);
-				
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
 				intake.intakeOut();
-				shooterLeft.set(0);
-			
-				
-			//high shot
-			}else if (shooterToggle.getState()) {
+			}else if (xboxGun.axisPressed(DBJoystick.AXIS_RT)){
 				intake.loadTurret();
-				shooterLeft.set(.5);
-				//should have code in here so that it finishes no matter what (unless override is run), even if toggle state becomes false
-				//should also have code in here that automatically makes the toggle state false when action is complete
-				
-			//shot override ** need to make so that state only gets changed if we are in the process of shooting. once shooting gets finished, this toggle needs to be reset to true
-			//THIS MAY CAUSE PROBLEMS TONIGHT. COMENT OUT OVERRIDE IF ISSUES OCCUR
-			}else if (shooterOverideToggle.getState()) {
-				shooterLeft.set(.5);
-			}else if (!shooterOverideToggle.getState()) {
-				shooterLeft.set(0);
-			
 			}else{
 				intake.stop();
-				
-				if (intake.currentAction != Intake.State.intake) {
-					shooterLeft.set(0);
-				}
 			}
+			//in and out
+//			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
+//				intake.intakeIn();
+//				shooterLeft.set(.3);
+//				
+//			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
+//				intake.intakeOut();
+//				shooterLeft.set(0);
+//			
+//				
+//			//high shot
+//			}else if (shooterToggle.getState()) {
+//				intake.loadTurret();
+//				shooterLeft.set(.5);
+//				//should have code in here so that it finishes no matter what (unless override is run), even if toggle state becomes false
+//				//should also have code in here that automatically makes the toggle state false when action is complete
+//				
+//			//shot override ** need to make so that state only gets changed if we are in the process of shooting. once shooting gets finished, this toggle needs to be reset to true
+//			//THIS MAY CAUSE PROBLEMS TONIGHT. COMENT OUT OVERRIDE IF ISSUES OCCUR
+//			}else if (shooterOverideToggle.getState()) {
+//				shooterLeft.set(.5);
+//			}else if (!shooterOverideToggle.getState()) {
+//				shooterLeft.set(0);
+//			
+//			}else{
+//				intake.stop();
+//				
+//				if (intake.currentAction != Intake.State.intake) {
+//					shooterLeft.set(0);
+//				}
+//			}
 		}
 		
 		//SensorStop
@@ -270,7 +353,14 @@ public class Robot extends IterativeRobot {
 //			AutoModes.moveForwardForTime(0, 0);
 //			//drive forward autonomous function
 //		}
-//		
+		//Low Bar Config
+//		if (xboxGun.getRawButton(DBJoystick.BUTTON_B)) {
+//			Robot.intakeLifter.liftDownAutomatic();
+//			shooter.lower();
+//		} 
+
+
+		//		
 	}
 
 	//Automated teleop variables

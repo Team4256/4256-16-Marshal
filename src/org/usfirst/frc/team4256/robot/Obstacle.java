@@ -21,16 +21,17 @@ public class Obstacle {
 	final static Obstacle portcullis = new Obstacle("portcullis", Difficulty.hard, 1);
 	final static Obstacle cheval_de_frise = new Obstacle("cheval_de_frise", Difficulty.hard, 1);
 	final static Obstacle moat = new Obstacle("moat", Difficulty.simple, 2);
-	final static Obstacle ramparts = new Obstacle("ramparts", Difficulty.simple, 2);
+	final static Obstacle ramparts = new Obstacle("ramparts", Difficulty.hard, 2);
 	final static Obstacle drawbridge = new Obstacle("drawbridge", Difficulty.impossible, 3);
 	final static Obstacle sally_port = new Obstacle("sally_port", Difficulty.impossible, 3);
 	final static Obstacle rock_wall = new Obstacle("rock_wall", Difficulty.simple, 4);
 	final static Obstacle rough_terrain = new Obstacle("rough_terrain", Difficulty.simple, 4);
+	//low bar should be only constant
 	final static Obstacle low_bar = new Obstacle("low_bar", Difficulty.simple, 5);
 	
 	int position; 
 	Difficulty difficulty;
-	
+	//why is there an int position that is hard coded?
 	public Obstacle(String name, Difficulty difficulty, int position) {
 		this.difficulty = difficulty;
 		this.position = position;
@@ -67,30 +68,44 @@ public class Obstacle {
 	}
 	
 	public void preCrossBarrier(double direction) {
-		//TODO
+		if(this == cheval_de_frise) {
+			//TODO intake down a small amount
+		}else{
+			AutoModes.syncIntakeLifterDown();
+		}
+	}
+	
+	private void moveBarrierLength(double direction) {
+		AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_ACROSS_BARRIER, AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 	}
 	
 	public void crossBarrier(double direction) {
-//		Robot.intakeLifter.liftDownAutomatic();
-		
 		if (difficulty == Difficulty.simple) {
 			//Cross like normal
-			AutoModes.syncIntakeLifterDown();
-			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
+//			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
+			moveBarrierLength(direction);
 		}else if (difficulty == Difficulty.hard) {
 			if (this == portcullis) {
-				Robot.intakeLifter.liftDownAutomatic();
-//				AutoModes.moveToLimitSwitch(direction*AutoModes.ROBOT_SPEED, Robot.intake.middleLimitSwitch/*change limit switch*/, 3000);
+				AutoModes.moveToLimitSwitch(direction*AutoModes.ROBOT_SPEED, Robot.intakeLifter.frontLimitSwitch, 5000);//TODO change timeout to lower # if works
 //				Robot.intakeLifter.liftUpAutomatic();
 				//TODO cross like normal
 //				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
-			}else if (this == cheval_de_frise){//!!!!!!!!!! NEED TO BE ON ONE SIDE TO START
+			}else if (this == cheval_de_frise){
 				//Push cheval_de_frise down
-				Robot.intakeLifter.liftUpAutomatic();
-				//TODO go forward
-				Timer.delay(1000);
-				Robot.intakeLifter.liftDownAutomatic();
-				//TODO cross like normal
+				AutoModes.intakeLifterDown();
+				//Cross
+				moveBarrierLength(direction);
+			}else if (this == ramparts){
+				double SKEW_ANGLE = 10;
+				//Skew robot to start rampart
+				double part1 = .2;
+				AutoModes.currentAngle = AutoModes.currentAngle+SKEW_ANGLE;
+				AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, (part1/Math.cos(SKEW_ANGLE))*AutoModes.DISTANCE_ACROSS_BARRIER, ((long)part1)*AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
+				
+				//Skew robot to start rampart
+				double part2 = 1-part1;
+				AutoModes.currentAngle = AutoModes.currentAngle-SKEW_ANGLE;
+				AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, part2*AutoModes.DISTANCE_ACROSS_BARRIER, ((long)part2)*AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 			}
 		}else if (this.difficulty == Difficulty.impossible) {
 			//replace getStartingObstacle() with this
@@ -107,6 +122,19 @@ public class Obstacle {
 //			}
 		}
 	}
+	
+
+//	public static void crossRampart() {
+//		long startTime = System.currentTimeMillis();
+//		double startDisplacement = Robot.gyro.getGroundDisplacement();
+//		
+//		while(Math.abs(Robot.gyro.getGroundDisplacement()-startDisplacement) < distance &&
+//				System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
+//			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentAngle));
+//		}
+//		
+//		stop();
+//	}
 }
 
 

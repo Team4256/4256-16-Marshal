@@ -1,7 +1,8 @@
 package org.usfirst.frc.team4256.robot;
 
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.RumbleType;
 /**
  * DBJoystick = Deadband Joystick
  *
@@ -48,16 +49,16 @@ public class DBJoystick extends Joystick {
 	
 
 	
-//	boolean toggleState = false;
-//	boolean previousState = false;
-
-
-//	boolean toggleState = false;
-//	boolean previousState = false;
-
-	boolean toggleState[] = new boolean[getButtonCount()];
-	boolean previousState[] = new boolean[getButtonCount()];
-
+////	boolean toggleState = false;
+////	boolean previousState = false;
+//
+//
+////	boolean toggleState = false;
+////	boolean previousState = false;
+//
+//	boolean toggleState[] = new boolean[getButtonCount()];
+//	boolean previousState[] = new boolean[getButtonCount()];
+	private HashMap<JoystickControl, Toggle> toggles = new HashMap<JoystickControl, Toggle>();
 
 	double port;
 	
@@ -75,19 +76,36 @@ public class DBJoystick extends Joystick {
 		return deadband(super.getRawAxis(axis));
 	}
 	
-	public boolean getRawToggle(int whichButton){
-		return toggleState[whichButton];
+	private boolean getToggleState(JoystickControl control) {
+		//Add toggle if not created
+		if(!toggles.containsKey(control)) {
+			toggles.put(control, new Toggle(control.joystick, control.index, control.isButton()));
+		}
+		
+		return toggles.get(control).getState();
 	}
 	
-	public void updateToggle() {
-		for (int i = 1; i < previousState.length; i++) {
-			boolean currentState = this.getRawButton(i);
-			if (currentState && (currentState != previousState[i])){
-				toggleState[i] = !toggleState[i];
-			}
-			previousState[i] = currentState;
-		}
+	public boolean getButtonToggleState(int button) {
+		return getToggleState(new JoystickControl(this, JoystickControl.ControlType.Button, button));
 	}
+	
+	public boolean getAxisToggleState(int axis) {
+		return getToggleState(new JoystickControl(this, JoystickControl.ControlType.Axis, axis));
+	}
+	
+//	public boolean getRawToggle(int whichButton){
+//		return toggleState[whichButton];
+//	}
+//	
+//	public void updateToggle() {
+//		for (int i = 1; i < previousState.length; i++) {
+//			boolean currentState = this.getRawButton(i);
+//			if (currentState && (currentState != previousState[i])){
+//				toggleState[i] = !toggleState[i];
+//			}
+//			previousState[i] = currentState;
+//		}
+//	}
 	
 	public boolean axisPressed(int axis) {
 		return super.getRawAxis(axis) > DETENT;

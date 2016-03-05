@@ -1,0 +1,39 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="NumberOfBalls" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="824" y="417"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
+		<location x="788" y="24"/>
+		<width>471</width>
+		<height>332</height>
+		<property name="Image File" value="C:\Users\frc1\Documents\GitHub\FRC-2016-Competition\Auto Modes Image.png"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="22" y="29"/>
+		<width>662</width>
+		<height>476</height>
+	</static-widget>
+	<widget field="             " type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="781" y="378"/>
+		<width>234</width>
+		<height>28</height>
+		<property name="Font Size" value="18"/>
+	</widget>
+	<widget field="AUTONOMOUS MODE" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="911" y="377"/>
+		<width>218</width>
+		<height>29</height>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="ObstaclePosition"/>
+	<hidden field="AutonomousObstacles5"/>
+	<hidden field="AutonomousObstacles4"/>
+	<hidden field="AutonomousObstacles"/>
+	<hidden field="AutonomousObstacles1"/>
+	<hidden field="AutonomousObstacles3"/>
+	<hidden field="AutonomousObstacles2"/>
+	<hidden field="Motor Stop"/>
+</xml>

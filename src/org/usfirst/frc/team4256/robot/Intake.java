@@ -27,12 +27,19 @@ public class Intake {
 	private void set() {
 		if (currentAction == State.intake || currentAction == State.loadTurret) {
 			set(1);
+//			Robot.shooter.start();
+//			Robot.shooterLeft.set(.3);//temp
 		}else if (currentAction == State.intakeOut) {
 			set(-1);
+//			Robot.shooter.stop();
+//			Robot.shooterLeft.set(0);//temp
 		}else{
 			set(0);
+//			Robot.shooter.stop();
+//			Robot.shooterLeft.set(0);//temp
 		}
 	}
+	
 	public void stop() {
 		if (currentAction != State.intake) {
 			currentAction = State.nothing;

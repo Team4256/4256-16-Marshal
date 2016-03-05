@@ -202,22 +202,32 @@ public class AutoModes {
 		stop();
 	}
 	
-	public static void alignToTarget() {
-		
+	public static double alignToTarget() {
 		double targetLongitude = Robot.visionTable.getNumber("TargetX", 0);
-//		double targetDistance = Robot.visionTable.getNumber("Distance", 0);
 		double imageCenter = Robot.visionTable.getNumber("ImageWidth", 0)/2;
 		double targetWidth = Robot.visionTable.getNumber("TargetWidth", 0);
 		double pixelSpeed = (targetLongitude - imageCenter)/imageCenter;
 		if (pixelSpeed < .4 && Math.abs(pixelSpeed*imageCenter) > targetWidth) {
 			pixelSpeed = .4;
 		}
-		
-		
-//		
-//		double targetAngle = Math.atan((targetX*2/imageWidth-1)/targetDistance);
-//		
-//		Robot.drive.arcadeDrive(0, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(targetAngle));
+		if (Math.abs(pixelSpeed*imageCenter) > targetWidth) {
+			return pixelSpeed;
+		}else {
+			return 0;
+		}
+	}
+	
+	public static final double SHOT_RANGE_INCHES = 100;
+	public static void driveWithinShotRangeAndShoot() {
+		double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
+		double driveSpeed = 0;
+		if (alignToTarget() == 0) {
+			driveSpeed = .7;
+		}
+		while (targetDistance > SHOT_RANGE_INCHES) {
+			Robot.drive.arcadeDrive(driveSpeed, alignToTarget());
+		}
+		Robot.shooter.start();
 	}
 	
 //	public static void moveForwardToBall(double driveSpeed, long timeMillis)	{

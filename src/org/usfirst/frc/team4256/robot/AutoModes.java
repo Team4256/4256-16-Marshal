@@ -2,14 +2,8 @@ package org.usfirst.frc.team4256.robot;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.RobotDrive;
-
-
-
-
 
 public class AutoModes {
 	static double ROBOT_SPEED = .4;
@@ -18,8 +12,6 @@ public class AutoModes {
 	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
 	public static final double DISTANCE_DEFENCE_WIDTH = 48;//need to verify
 	
-	
-	public static long DISTANCE_BETWEEN_DEFENCES;//<---remove!!
 	
 
 //	static Obstacle startingBarrier;
@@ -232,25 +224,5 @@ public class AutoModes {
 		
 		stop();
 	}
-//	private double getStep(double startTime, double stepTime) {
-//		return ((System.currentTimeMillis()-startTime)/stepTime);
-//	}
-	
-	
-
-
-//	private static class DriveSpeed {
-//		public double moveValue;
-//		public double rotateValue;
-//		
-//		public DriveSpeed(double moveValue, double rotateValue) {
-//			this.moveValue = moveValue;
-//			this.rotateValue = rotateValue;
-//		}
-//		
-//		public void drive() {
-//			Robot.drive.arcadeDrive(moveValue, rotateValue);
-//		}
-//	}
 }
 	

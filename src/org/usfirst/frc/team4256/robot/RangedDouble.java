@@ -82,16 +82,6 @@ public class RangedDouble {
 	public void decreaseBy(double amount) {
 		setValue(value-amount);
 	}
-	
-	/**
-	 * Converts a value relative to this range into another.
-	 * 
-	 * @param newRange - The new range to convert the value into
-	 * @return the new value
-	 */
-	public double toRange(Range newRange) {
-		return range.toRange(value, newRange);
-	}
 
 
 	/**

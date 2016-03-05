@@ -1,15 +1,10 @@
 
 package org.usfirst.frc.team4256.robot;
 
-
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-//import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.DoubleSole2noid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
@@ -34,12 +29,8 @@ public class Robot extends IterativeRobot {
 	
 	//Relays
 	static Relay light;
-	
-	//Limit Switch
-//	static DigitalInput portcullisLimitSwitch = new DigitalInput(0);
     
 	//AI
-	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
 	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP, 90);
 
 	//Drive
@@ -57,22 +48,20 @@ public class Robot extends IterativeRobot {
 	
 	//Systems
 //	static Turret turret;
+//	static CANTalon turret = new CANTalon(15);
+//	static Turret shooter;
 	
 	static Intake intake;
-	static CANTalon turret = new CANTalon(15);
-	static IntakeLifter intakeLifter;
-	static Turret shooter;
- 
+	static IntakeLifter intakeLifter; 
 
 	static NetworkTable visionTable;
-	
 	
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};
 	
 //	static DigitalInput stagingLimitSwitch = new DigitalInput(0);
 	
-	static CameraServer camera = CameraServer.getInstance();
+	static CameraServer camera;
 	
 	
 	//static Launcher robotLauncher;
@@ -100,10 +89,8 @@ public class Robot extends IterativeRobot {
 			
 //			shooter = new Turret(0,0,0,0,0,visionTable);
 
-
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
 		}
-		camera.setQuality(100);
 		camera.startAutomaticCapture("cam1");
 		
 

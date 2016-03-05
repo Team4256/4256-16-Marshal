@@ -1,16 +1,14 @@
 
 package org.usfirst.frc.team4256.robot;
 
-<<<<<<< HEAD
-=======
 
 
 import org.usfirst.frc.team4256.robot.Obstacle.Difficulty;
 
->>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
@@ -57,21 +55,12 @@ public class Robot extends IterativeRobot {
 	static CANTalon shooterRight = new CANTalon(20);
 	
 	//Systems
-<<<<<<< HEAD
-//	static Turret turret;
-//	static CANTalon turret = new CANTalon(15);
-//	static Turret shooter;
-	
-	static Intake intake;
-	static IntakeLifter intakeLifter; 
-=======
 	static Intake intake;
 //	static CANTalon turret = new CANTalon(15);
 	static IntakeLifter intakeLifter;
 	static Launcher shooter;
 //	static Turret shooter;
  
->>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 
 	static NetworkTable visionTable;
 	
@@ -100,16 +89,11 @@ public class Robot extends IterativeRobot {
 			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
 //			shooter = new Turret(0,0,0,0,0,visionTable);
 
-<<<<<<< HEAD
-			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight);
-		}
-=======
 
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 		}
 		camera.setQuality(100);
 		
->>>>>>> 0630019f12cd191e973035a9d8a8be67010c4420
 		camera.startAutomaticCapture("cam1");
 		
 		SmartDashboard.putString("             ","AUTONOMOUS MODE");

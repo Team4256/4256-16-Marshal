@@ -32,10 +32,10 @@ public class DBJoystick extends Joystick {
 	public static int BUTTON_LEFT_STICK = 9;
 	public static int BUTTON_RIGHT_STICK = 10;
 	public static int BUTTON_XBOX = 11;
-//	public static int BUTTON_NORTH = 12;
-//	public static int BUTTON_SOUTH = 13;
-//	public static int BUTTON_WEST = 14;
-//	public static int BUTTON_EAST = 15;
+	public static int BUTTON_NORTH = 12;
+	public static int BUTTON_SOUTH = 13;
+	public static int BUTTON_WEST = 14;
+	public static int BUTTON_EAST = 15;
 	
 	//D-Pad
 	public static int POV_NORTH = 0;

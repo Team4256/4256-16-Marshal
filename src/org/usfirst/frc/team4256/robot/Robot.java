@@ -120,56 +120,11 @@ public class Robot extends IterativeRobot {
 
 
 	public void autonomousInit() {
-		gamemode = Gamemode.AUTONOMOUS;
-		gyro.zeroYaw();
-
-		//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
-		//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
-		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
-		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
-		int position = (int) SmartDashboard.getNumber("Position");
-
-
-		AutoModes.oneBall(Obstacle.low_bar);
-		//AutoModes.test();
-		//		drive.arcadeDrive(0, 1);
-
-//		switch (autoMode) {
-//		case 0: //Portcullis 
-//			AutoModes.oneBall(Obstacle.portcullis);
-//			break;
-//		case 1: 	//Cheval De Frise 
-//			AutoModes.oneBall(Obstacle.cheval_de_frise);
-//			break;
-//		case 2: 	//Moat 
-//			AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
-//			break;
-//		case 3: 	//Ramparts 
-//			AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
-//			break;
-//		case 4:     //Drawbridge 
-//			AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
-//			break;
-//		case 5: 	//Sally Port 
-//			AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
-//			break;
-//		case 6:		//Rock Wall 
-//			AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
-//			break;
-//		case 7:		//Rough Terrain
-//			AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
-//			break;
-//		case 8: //Corner Shot
-////			AutoModes.syncIntakeLifterDownHalf();
-//			Robot.shooter.start();
-//			Timer.delay(1);
-////			Robot.shooter.raise();
-//			Robot.intake.intakeRoller.set(1);
-//			break;
-//		default:	//Low Bar
-//		AutoModes.oneBall(Obstacle.low_bar);
-//		}
-		//two ball eventually
+		AutoModes.exeSrvc.execute(new Runnable() {
+			@Override
+			public void run() {
+				AutoModes.start();
+			}});
 	}
 
 	
@@ -191,6 +146,7 @@ public class Robot extends IterativeRobot {
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
+	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_EAST);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
@@ -206,7 +162,7 @@ public class Robot extends IterativeRobot {
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			drive.lockAngle(xboxGun.getRawButton(DBJoystick.BUTTON_LB));
+			drive.lockAngle(dpadeast.getState());
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());

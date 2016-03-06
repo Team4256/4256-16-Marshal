@@ -3,6 +3,9 @@ package org.usfirst.frc.team4256.robot;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.usfirst.frc.team4256.robot.Robot.Gamemode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,6 +42,60 @@ public class AutoModes {
 	
 	public static boolean inAutonomous() {
 		return Robot.gamemode == Robot.Gamemode.AUTONOMOUS;
+	}
+	
+	///////////////////START//////////////////
+	public static void start() {
+		Robot.gamemode = Gamemode.AUTONOMOUS;
+		Robot.gyro.zeroYaw();
+
+		//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
+		//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
+		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
+		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
+		int position = (int) SmartDashboard.getNumber("Position");
+
+
+		AutoModes.oneBall(Obstacle.low_bar);
+		//AutoModes.test();
+		//		drive.arcadeDrive(0, 1);
+
+//		switch (autoMode) {
+//		case 0: //Portcullis 
+//			AutoModes.oneBall(Obstacle.portcullis);
+//			break;
+//		case 1: 	//Cheval De Frise 
+//			AutoModes.oneBall(Obstacle.cheval_de_frise);
+//			break;
+//		case 2: 	//Moat 
+//			AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
+//			break;
+//		case 3: 	//Ramparts 
+//			AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
+//			break;
+//		case 4:     //Drawbridge 
+//			AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
+//			break;
+//		case 5: 	//Sally Port 
+//			AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
+//			break;
+//		case 6:		//Rock Wall 
+//			AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
+//			break;
+//		case 7:		//Rough Terrain
+//			AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
+//			break;
+//		case 8: //Corner Shot
+////			AutoModes.syncIntakeLifterDownHalf();
+//			Robot.shooter.start();
+//			Timer.delay(1);
+////			Robot.shooter.raise();
+//			Robot.intake.intakeRoller.set(1);
+//			break;
+//		default:	//Low Bar
+//		AutoModes.oneBall(Obstacle.low_bar);
+//		}
+		//two ball eventually
 	}
 
 	///////////////////MODES//////////////////

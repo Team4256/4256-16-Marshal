@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-//import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.DoubleSole2noid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
@@ -40,9 +38,6 @@ public class Robot extends IterativeRobot {
 	
 	//Relays
 	static Relay light;
-	
-	//Limit Switch
-//	static DigitalInput portcullisLimitSwitch = new DigitalInput(0);
     
 	//AI
 	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
@@ -70,7 +65,6 @@ public class Robot extends IterativeRobot {
  
 
 	static NetworkTable visionTable;
-	
 	
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};

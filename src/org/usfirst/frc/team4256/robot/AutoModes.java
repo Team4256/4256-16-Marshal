@@ -3,7 +3,6 @@ package org.usfirst.frc.team4256.robot;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,8 +23,6 @@ public class AutoModes {
 	public static final long TIMEOUT_DISTANCE_CENTER_TO_BARRIER = 5000;//TODO
 	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
 	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
-	
-	public static long DISTANCE_BETWEEN_DEFENCES;//<---remove!!
 	
 
 //	static Obstacle startingBarrier;
@@ -385,25 +382,5 @@ public class AutoModes {
 		
 		stop();
 	}
-//	private double getStep(double startTime, double stepTime) {
-//		return ((System.currentTimeMillis()-startTime)/stepTime);
-//	}
-	
-	
-
-
-//	private static class DriveSpeed {
-//		public double moveValue;
-//		public double rotateValue;
-//		
-//		public DriveSpeed(double moveValue, double rotateValue) {
-//			this.moveValue = moveValue;
-//			this.rotateValue = rotateValue;
-//		}
-//		
-//		public void drive() {
-//			Robot.drive.arcadeDrive(moveValue, rotateValue);
-//		}
-//	}
 }
 	

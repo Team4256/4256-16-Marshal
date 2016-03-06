@@ -28,7 +28,7 @@ public class IntakeLifter {
 		
 		lifterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
 		lifterRight.set(lifterLeft.getDeviceID());
-		lifterLeft.enableLimitSwitch(true, true);
+		lifterLeft.enableLimitSwitch(false, true);
 	}
 	
 	private void set(double speed, boolean automatic) {

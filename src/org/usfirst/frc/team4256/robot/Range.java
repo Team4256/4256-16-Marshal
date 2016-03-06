@@ -26,24 +26,4 @@ public class Range {
 	public boolean isWithinRange(double n) {
 		return (min <= n&&n <= max);
 	}
-	
-	/**
-	 * Converts a value relative to this range into another.
-	 * 
-	 * @param value - The value to convert
-	 * @param newRange - The new range to convert the value into
-	 * @return the new value
-	 */
-	public double toRange(double value, Range newRange) {
-		double newValue = newRange.min+(value-min)*newRange.getRange()*2/range-newRange.getRange()/2;
-		
-		//Force value into range if not in bounds
-		if(newValue < newRange.min) {
-			newValue = newRange.min;
-		}else if(newRange.max < newValue) {
-			newValue = newRange.max;
-		}
-		
-		return newValue;
-	}
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -45,7 +46,7 @@ public class Robot extends IterativeRobot {
     
 	//AI
 	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
-	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP, 90);
+	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
 
 	//Drive
 	static Drive4256 drive;	
@@ -77,6 +78,8 @@ public class Robot extends IterativeRobot {
 	static DigitalInput frontLimitSwitch = new DigitalInput(2);
 	
 	static CameraServer camera = CameraServer.getInstance();
+	static CameraServer camera2 = CameraServer.getInstance();
+	
 	
 	
 	//static Launcher robotLauncher;
@@ -100,8 +103,11 @@ public class Robot extends IterativeRobot {
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 		}
 		camera.setQuality(100);
+		camera2.setQuality(100);
 		
 		camera.startAutomaticCapture("cam1");
+		camera2.startAutomaticCapture("cam2");
+		
 		
 		SmartDashboard.putString("             ","AUTONOMOUS MODE");
 		
@@ -124,53 +130,64 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInit() {
 		gamemode = Gamemode.AUTONOMOUS;
-		
-//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
-//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
+		gyro.zeroYaw();
+
+		//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
+		//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
 		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
 		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
 		int position = (int) SmartDashboard.getNumber("Position");
-		
 
+
+		//		AutoModes.oneBall(Obstacle.low_bar);
 		AutoModes.test();
+		//		drive.arcadeDrive(0, 1);
 
-		
-		switch (autoMode) {
-			case 0: //Portcullis 
-				AutoModes.oneBall(new Obstacle("portcullis", Difficulty.hard, position));
-				break;
-			case 1: 	//Cheval De Frise 
-				AutoModes.oneBall(new Obstacle("cheval_de_frise", Difficulty.hard, position));
-				break;
-			case 2: 	//Moat 
-				AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
-				break;
-			case 3: 	//Ramparts 
-				AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
-				break;
-			case 4:     //Drawbridge 
-				AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
-				break;
-			case 5: 	//Sally Port 
-				AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
-				break;
-			case 6:		//Rock Wall 
-				AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
-				break;
-			case 7:		//Rough Terrain
-				AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
-				break;
-			default:	//Low Bar
-				AutoModes.oneBall(Obstacle.low_bar);
-				//two ball eventually
-		}
-
+//		switch (autoMode) {
+//		case 0: //Portcullis 
+//			AutoModes.oneBall(Obstacle.portcullis);
+//			break;
+//		case 1: 	//Cheval De Frise 
+//			AutoModes.oneBall(Obstacle.cheval_de_frise);
+//			break;
+//		case 2: 	//Moat 
+//			AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
+//			break;
+//		case 3: 	//Ramparts 
+//			AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
+//			break;
+//		case 4:     //Drawbridge 
+//			AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
+//			break;
+//		case 5: 	//Sally Port 
+//			AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
+//			break;
+//		case 6:		//Rock Wall 
+//			AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
+//			break;
+//		case 7:		//Rough Terrain
+//			AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
+//			break;
+//		case 8: //Corner Shot
+////			AutoModes.syncIntakeLifterDownHalf();
+//			Robot.shooter.start();
+//			Timer.delay(1);
+////			Robot.shooter.raise();
+//			Robot.intake.intakeRoller.set(1);
+//			break;
+//		default:	//Low Bar
+//		AutoModes.oneBall(Obstacle.low_bar);
+//		}
+		//two ball eventually
 	}
+
+	
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
+//		AutoModes.test();
 		
 	}
 
@@ -196,8 +213,9 @@ public class Robot extends IterativeRobot {
 		//Drive
 		{
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
-			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
+			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
+			
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
@@ -255,8 +273,10 @@ public class Robot extends IterativeRobot {
 			if(turretLifterToggle.getState()) {
 //			if(xboxGun.getAxisToggleState(DBJoystick.AXIS_LT)) {
 				shooter.raise();
+				SmartDashboard.putString("Shooter Position", "Up");
 			}else{
 				shooter.lower();
+				SmartDashboard.putString("Shooter Position", "Down");
 			}
 		}
 
@@ -322,6 +342,11 @@ public class Robot extends IterativeRobot {
 //					shooterLeft.set(0);
 //				}
 //			}
+			if (gearShiftToggle.getState()) {
+				SmartDashboard.putString("Shifter Value", "Low Gear");
+			} else {
+				SmartDashboard.putString("Shifter Value", "High Gear");
+			}
 		}
 		
 		//SensorStop

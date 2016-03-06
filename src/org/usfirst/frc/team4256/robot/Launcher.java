@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Launcher {
-	public static final double SHOOTER_SPEED = 1;
+	public static final double SHOOTER_SPEED = .95;
 	
 	CANTalon shooterLeft;
 	CANTalon shooterRight;

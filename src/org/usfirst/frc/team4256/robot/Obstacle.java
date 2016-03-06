@@ -76,7 +76,8 @@ public class Obstacle {
 	}
 	
 	private void moveBarrierLength(double direction) {
-		AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_ACROSS_BARRIER, AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
+		AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 1000);
+//		AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_ACROSS_BARRIER, AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 	}
 	
 	public void crossBarrier(double direction) {
@@ -99,12 +100,12 @@ public class Obstacle {
 				double SKEW_ANGLE = 10;
 				//Skew robot to start rampart
 				double part1 = .2;
-				AutoModes.currentAngle = AutoModes.currentAngle+SKEW_ANGLE;
+				AutoModes.currentTargetAngle = AutoModes.currentTargetAngle+SKEW_ANGLE;
 				AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, (part1/Math.cos(SKEW_ANGLE))*AutoModes.DISTANCE_ACROSS_BARRIER, ((long)part1)*AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 				
 				//Skew robot to start rampart
 				double part2 = 1-part1;
-				AutoModes.currentAngle = AutoModes.currentAngle-SKEW_ANGLE;
+				AutoModes.currentTargetAngle = AutoModes.currentTargetAngle-SKEW_ANGLE;
 				AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, part2*AutoModes.DISTANCE_ACROSS_BARRIER, ((long)part2)*AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 			}
 		}else if (this.difficulty == Difficulty.impossible) {

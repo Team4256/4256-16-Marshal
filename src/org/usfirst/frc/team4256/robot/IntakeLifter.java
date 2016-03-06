@@ -38,21 +38,25 @@ public class IntakeLifter {
 	}
 	
 	public void liftUpManual() {
-		set(-LIFTER_MOTOR_SPEED, false);
+		set(LIFTER_MOTOR_SPEED, false);
 	}
 	
 	public void liftDownManual() {
-		set(LIFTER_MOTOR_SPEED, false);
+		set(-LIFTER_MOTOR_SPEED, false);
 //		Robot.intake.intakeIn();
 	}
 	
 	public void liftUpAutomatic() {
-		set(-LIFTER_MOTOR_SPEED, true);
+		set(LIFTER_MOTOR_SPEED, true);
 	}
 	
 	public void liftDownAutomatic() {
-		set(LIFTER_MOTOR_SPEED, true);
+		set(-LIFTER_MOTOR_SPEED, true);
 //		Robot.intake.intakeIn();
+	}
+	
+	public void moveLifter(double speed) {
+		lifterLeft.set(speed);
 	}
 	
 	/**
@@ -66,7 +70,7 @@ public class IntakeLifter {
 		
 		shouldMoveLifterOnUpdateManually = false;
 //		if(0 < currentLifterSpeed && !upperLimitSwitch.get()) {
-			lifterLeft.set(currentLifterSpeed);
+		moveLifter(currentLifterSpeed);
 //		}
 		
 //		Move if limit switch not active

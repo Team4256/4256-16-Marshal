@@ -74,16 +74,21 @@ public class AutoModes {
 		moveForwardForTime(ROBOT_SPEED, 6000);
 	
 		//Cross barrier
+		Robot.shooter.start();
 		obstacleToCross.crossBarrier(1);
 		
+		rotateToGyroPosition(190);
 //		//Drives to specifc target position and shoots
-		alignToTargetIncremental();
-//		driveWithinShotRangeAndShoot();
 		
+		driveWithinShotRange();
+//		driveWithinShotRangeAndShoot();
+		alignToTargetIncremental();
 		//Fire
 		Timer.delay(.5);
+		
+		Robot.shooter.raise();
+		Robot.intake.intakeRoller.set(1);
 //		Robot.turret.fire();
-		Timer.delay(.5);
 	}
 
 	public static void twoBall(Obstacle obstacleToCross) {
@@ -243,6 +248,17 @@ public class AutoModes {
 		stop();
 	}
 	
+	public static double getTargetOffset() {
+		double targetOffset = 1;
+		double targetX = Robot.visionTable.getNumber("TargetX", 0);
+		double imageWidth = Robot.visionTable.getNumber("ImageWidth", 0);
+//		double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
+		
+		targetOffset = (targetX*2/imageWidth-1);//33,40
+		SmartDashboard.putNumber("target offset", targetOffset);
+		return targetOffset;
+	}
+	
 	public static void alignToTargetIncremental() {
 		alignToTarget(.8, .15, .15);
 		alignToTarget(.6, 0, 0);
@@ -255,13 +271,8 @@ public class AutoModes {
 		double targetOffset = 1;
 		
 		while(Math.abs(targetOffset) > accuracy && inAutonomous()) {
-			double targetX = Robot.visionTable.getNumber("TargetX", 0);
-			double imageWidth = Robot.visionTable.getNumber("ImageWidth", 0);
-//			double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
-			
-			targetOffset = (targetX*2/imageWidth-1);//33,40
-			SmartDashboard.putNumber("target offset", targetOffset);
-			Robot.drive.arcadeDrive(0, correctMotorTurnValue(targetOffset, .55, .56));
+			targetOffset = getTargetOffset();
+			Robot.drive.arcadeDrive(0, correctMotorValue(targetOffset, .55, .56));
 			if(pauseIncrementDelay != 0) {
 				Timer.delay(driveIncrementDelay);
 				Robot.drive.arcadeDrive(0, 0);
@@ -270,7 +281,7 @@ public class AutoModes {
 		}
 	}
 	
-	public static double correctMotorTurnValue(double motorValue, double minimumMagnitude, double maximumMagnitude) {
+	public static double correctMotorValue(double motorValue, double minimumMagnitude, double maximumMagnitude) {
 //		motorValue = Math.pow(motorValue, 1.5);//square input
 
 
@@ -284,22 +295,6 @@ public class AutoModes {
 		}
 	}
 	
-//	public static ArrayList<Double> previousRates = new ArrayList<Double>();
-//	public static int amountOfPreviousRates = 8;
-//	public static double correctMotorTurnValueExperimental(double motorValue, double deadband, double minimumMagnitude, double maximumMagnitude) {
-//		double angularVelocity = Robot.gyro.getRate();
-//		
-//		if(true){
-//			return correctMotorTurnValue(motorValue, deadband, minimumMagnitude, maximumMagnitude)/angularVelocity;
-//		}else{
-//			previousRates.add(angularVelocity);
-//			if(previousRates.size() > amountOfPreviousRates) {
-//				previousRates.remove(0);
-//			}
-//			
-//			return correctMotorTurnValue(motorValue, deadband, minimumMagnitude, maximumMagnitude)/previousRates.get(previousRates.size()-1);
-//		}
-//	}
 	
 //	public static double alignToTarget() {
 //		double targetLongitude = Robot.visionTable.getNumber("TargetX", 0);
@@ -316,20 +311,18 @@ public class AutoModes {
 //		}
 //	}
 	
-//	public static final double SHOT_RANGE_INCHES = 100;
-//	public static void driveWithinShotRangeAndShoot() {
-//		double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
-//		double driveSpeed = 0;
-//		if (alignToTarget() == 0) {
-//			driveSpeed = .7;
-//		}
-//		while (targetDistance > SHOT_RANGE_INCHES) {
-//			Robot.drive.arcadeDrive(driveSpeed, alignToTarget());
-//		}
+	public static final double SHOT_RANGE_INCHES = 112;
+	public static void driveWithinShotRange() {
+		double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
+		double speed = .7;
+		while (targetDistance > SHOT_RANGE_INCHES) {
+			speed = .7*targetDistance/(219 - SHOT_RANGE_INCHES);
+			Robot.drive.arcadeDrive(correctMotorValue(speed, .4, .7), correctMotorValue(getTargetOffset(), 0, .25));
+		}
 //		Robot.shooter.start();
-////		Timer.delay(1);
-////		Robot.shooter.fire();
-//	}
+//		Timer.delay(1);
+//		Robot.shooter.fire();
+	}
 	
 //	public static void moveForwardToBall(double driveSpeed, long timeMillis)	{
 //		long startTime = System.currentTimeMillis();

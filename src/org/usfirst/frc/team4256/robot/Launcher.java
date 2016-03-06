@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;
@@ -38,5 +39,9 @@ public class Launcher {
 	
 	public void lower() {
 		turretLifter.set(DoubleSolenoid.Value.kReverse);
+	}
+	
+	public void align() {
+		AutoModes.alignToTargetIncremental();
 	}
 }

@@ -63,7 +63,8 @@ public class RangedDouble {
 						d = -d;
 					}
 				}else{
-					d %= range.max;
+//					d %= range.max;
+					d = (d<0?-1:1)*((Math.abs(d)-range.getRange())%(range.getRange()/2));
 				}
 			}
 		}

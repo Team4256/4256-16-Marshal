@@ -3,8 +3,6 @@ package org.usfirst.frc.team4256.robot;
 
 
 
-import org.usfirst.frc.team4256.robot.Obstacle.Difficulty;
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -14,7 +12,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -133,8 +130,8 @@ public class Robot extends IterativeRobot {
 		int position = (int) SmartDashboard.getNumber("Position");
 
 
-		//		AutoModes.oneBall(Obstacle.low_bar);
-		AutoModes.test();
+		AutoModes.oneBall(Obstacle.low_bar);
+		//AutoModes.test();
 		//		drive.arcadeDrive(0, 1);
 
 //		switch (autoMode) {
@@ -209,7 +206,7 @@ public class Robot extends IterativeRobot {
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			
+			drive.lockAngle(xboxGun.getRawButton(DBJoystick.BUTTON_LB));
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
@@ -217,43 +214,10 @@ public class Robot extends IterativeRobot {
 
 		//Turret
 		{
-//			//Rotate manual
-//			if(xboxGun.axisPressed(DBJoystick.AXIS_LT)){
-//				turret.rotateLeftManual(); 
-//			}else if(xboxGun.axisPressed(DBJoystick.AXIS_RT)){
-//				turret.rotateRightManual();
-//			}
-//			//Rotate manual (CAN)
-//			if(xboxGun.axisPressed(DBJoystick.AXIS_LT)){
-//				turret.set(-0.3); 
-//			}else if(xboxGun.axisPressed(DBJoystick.AXIS_RT)){
-//				turret.set(0.3);
-//			}
-			
-//			//Rotate automatically
-//			if (xboxGun.getPOV() == DBJoystick.POV_WEST){
-//				turret.rotateLeftAutomatic();
-//			}else if (xboxGun.getPOV() == DBJoystick.POV_EAST){
-//				turret.rotateRightAutomatic();
-//			}
-			
-			
-			//Shooter angle shift
-//			if (turretElevationToggle.getState()){
-//				turret.liftUp();
-//			}else {
-//				turret.liftDown();
-//			}
-//			
-//			//Toggle scissor lift
-//			if (toggleScissorLift.getState()){
-//				turret.liftUp();
-//			}else{
-//				turret.liftDown();
-//			}
-//			
-//			//Auto tracking toggle
-//			turret.isTracking = autoTrackingToggle.getState();
+			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {
+				shooter.align();
+			}
 			
 			//Toggle shooter motors
 			if(shooterToggle.getState()) {

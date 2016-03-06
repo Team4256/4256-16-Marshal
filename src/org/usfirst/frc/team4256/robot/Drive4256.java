@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 public class Drive4256 {
 	RobotDrive robotDrive;
 	DoubleSolenoid gearShifter;
+	Double lockedAngle;
 //	DoubleSolenoid rightGearShifter;
 
 
@@ -28,7 +29,11 @@ public class Drive4256 {
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
-		robotDrive.arcadeDrive(moveValue, rotateValue);
+		if (lockedAngle != null) {
+			robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle));
+		}else {
+			robotDrive.arcadeDrive(moveValue, rotateValue);
+		}
 	}
 
 	public void gearShift(boolean gear) {
@@ -48,5 +53,13 @@ public class Drive4256 {
 	public void fastGear() {
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
 //		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
+	}
+	
+	public void lockAngle(boolean updateAngle) {
+		if(updateAngle && lockedAngle == null) {
+			lockedAngle = Robot.gyro.getAngle();
+		}else{
+			lockedAngle = null;
+		}
 	}
 }

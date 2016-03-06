@@ -118,13 +118,15 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
-
+	private static boolean autonomousThreadRunning = false;
 	public void autonomousInit() {
-		AutoModes.exeSrvc.execute(new Runnable() {
-			@Override
-			public void run() {
-				AutoModes.start();
-			}});
+		if(!autonomousThreadRunning) {
+			AutoModes.exeSrvc.execute(new Runnable() {
+				@Override
+				public void run() {
+					AutoModes.start();
+				}});
+		}
 	}
 
 	
@@ -171,7 +173,7 @@ public class Robot extends IterativeRobot {
 		//Turret
 		{
 			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				shooter.align();
 			}
 			

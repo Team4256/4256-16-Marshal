@@ -118,13 +118,15 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
-
+	private static boolean autonomousThreadRunning = false;
 	public void autonomousInit() {
-		AutoModes.exeSrvc.execute(new Runnable() {
-			@Override
-			public void run() {
-				AutoModes.start();
-			}});
+		if(!autonomousThreadRunning) {
+			AutoModes.exeSrvc.execute(new Runnable() {
+				@Override
+				public void run() {
+					AutoModes.start();
+				}});
+		}
 	}
 
 	

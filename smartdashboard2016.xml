@@ -1,17 +1,25 @@
 <xml version="1.0">
 <dashboard>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtensionCompat">
-		<location x="293" y="68"/>
-		<width>649</width>
-		<height>489</height>
-	</static-widget>
+	<widget field="Angle Lock Toggle" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="1283" y="604"/>
+		<width>358</width>
+		<height>143</height>
+		<property name="Foreground" value="0.153.153.255"/>
+		<property name="Background" value="0.0.0.255"/>
+		<property name="Font Size" value="40"/>
+	</widget>
+	<widget field="Are we in range?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="622"/>
+	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="984" y="717"/>
+		<location x="201" y="-12"/>
+		<width>781</width>
+		<height>571</height>
 	</static-widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtensionCompat">
-		<location x="1088" y="37"/>
-		<width>595</width>
-		<height>557</height>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
+		<location x="998" y="5"/>
+		<width>800</width>
+		<height>560</height>
 	</static-widget>
 	<widget field="target values" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="852"/>
@@ -36,20 +44,20 @@
 		<location x="0" y="714"/>
 	</widget>
 	<widget field="Shifter Value" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="807" y="609"/>
-		<width>328</width>
-		<height>107</height>
+		<location x="751" y="596"/>
+		<width>430</width>
+		<height>143</height>
 		<property name="Foreground" value="0.204.0.255"/>
 		<property name="Background" value="0.0.0.255"/>
-		<property name="Font Size" value="30"/>
+		<property name="Font Size" value="40"/>
 	</widget>
 	<widget field="Shooter Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="421" y="606"/>
-		<width>316</width>
-		<height>106</height>
+		<location x="277" y="597"/>
+		<width>355</width>
+		<height>148</height>
 		<property name="Foreground" value="255.255.0.255"/>
 		<property name="Background" value="0.0.0.255"/>
-		<property name="Font Size" value="30"/>
+		<property name="Font Size" value="40"/>
 	</widget>
 	<widget field="current based limit?" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="691"/>
@@ -61,7 +69,7 @@
 		<location x="0" y="645"/>
 	</widget>
 	<widget field="AUTONOMOUS MODE" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="494" y="750"/>
+		<location x="731" y="937"/>
 	</widget>
 	<widget field="             " type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="599"/>

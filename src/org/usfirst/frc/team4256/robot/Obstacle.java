@@ -67,15 +67,37 @@ public class Obstacle {
 		return obstacles[i-1];
 	}
 	
+	private double getObstacleDirection() {
+		double direction;
+		
+		if(this == low_bar) {
+			direction = -1;
+		}else{
+			direction = -1;
+		}
+		
+		return direction;
+	}
+	
 	public void preCrossBarrier(double direction) {
 		if(this == cheval_de_frise) {
-			//TODO intake down a small amount
+			AutoModes.syncIntakeLifterDownHalf();
 		}else{
 			AutoModes.syncIntakeLifterDown();
 		}
 	}
 	
+	public void moveToBarrier(double direction) {
+		direction *= getObstacleDirection();
+		
+//		AutoModes.moveForwardToRamp(direction*AutoModes.ROBOT_SPEED, 3000);
+		AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 1000);
+	}
+	
 	private void moveBarrierLength(double direction) {
+		direction *= getObstacleDirection();
+		
+//		AutoModes.moveForwardOffRamp(direction*AutoModes.ROBOT_SPEED, 2000);
 		AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 1000);
 //		AutoModes.moveForwardForDistance(direction*AutoModes.ROBOT_SPEED, AutoModes.DISTANCE_ACROSS_BARRIER, AutoModes.TIMEOUT_DISTANCE_ACROSS_BARRIER);
 	}
@@ -122,6 +144,23 @@ public class Obstacle {
 //				getBarrierAtPosition(getStartingObstacle().position-1).crossBarrier(direction);
 //			}
 		}
+	}
+	
+	public void moveFromObstacleToTarget() {
+		double direction = getObstacleDirection();
+		
+		AutoModes.moveForwardForTime(.8, 1200);//temp
+		Timer.delay(.2);
+		if(direction == -1) {
+			AutoModes.rotateToGyroPosition(60);
+		}else{
+			AutoModes.rotateToGyroPosition(120);
+		}
+		Timer.delay(.2);
+//		AutoModes.driveWithinShotRange();
+		AutoModes.moveForwardForTime(.9, 800);//temp
+		Timer.delay(.2);
+		
 	}
 	
 

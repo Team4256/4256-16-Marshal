@@ -11,6 +11,8 @@ public class Launcher {
 	CANTalon shooterRight;
 	DoubleSolenoid turretLifter;
 	
+	boolean isRaised;
+	
 	public Launcher(CANTalon shooterLeft, CANTalon shooterRight, DoubleSolenoid turretLifter) {
 		this.shooterLeft = shooterLeft;
 		this.shooterRight = shooterRight;
@@ -34,10 +36,14 @@ public class Launcher {
 	}
 	
 	public void raise() {
+		isRaised = true;
+		Robot.visionTable.putNumber("ShooterAngle", isRaised? 39.1 : 33);
 		turretLifter.set(DoubleSolenoid.Value.kForward);
 	}
 	
 	public void lower() {
+		isRaised = false;
+		Robot.visionTable.putNumber("ShooterAngle", isRaised? 39.1 : 33);
 		turretLifter.set(DoubleSolenoid.Value.kReverse);
 	}
 	

@@ -16,6 +16,10 @@ public class NavaxGyro extends AHRS {
 		zeroYaw();
 		targetAngle = new RangedDouble(new Range(0, 360), 0);
 	}
+	
+	public double getElevation() {
+		return -super.getRoll();
+	}
 
 	private void updateAngle() {
 		targetAngle.setValue(getAngle());

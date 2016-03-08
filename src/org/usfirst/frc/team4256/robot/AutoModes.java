@@ -26,7 +26,7 @@ public class AutoModes {
 	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
 	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
 	
-	public static final double RAMP_ANGLE = 6;//Actual angle is 12, but 6 should be enough
+	public static final double RAMP_ANGLE = 3;//Actual angle is 12, but 6 should be enough
 
 //	static Obstacle startingBarrier;
 //	static enum Obstacle {
@@ -44,10 +44,15 @@ public class AutoModes {
 		return Robot.gamemode == Robot.Gamemode.AUTONOMOUS;
 	}
 	
+	public static void showStatus(String status) {
+		SmartDashboard.putString("Autonomous Stat", status);
+	}
+	
 	///////////////////START//////////////////
 	public static void start() {
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.zeroYaw();
+		Robot.visionTable.putNumber("ShooterAngle", Robot.shooter.isRaised? 39.1 : 33);
 
 		//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
 		//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
@@ -57,7 +62,7 @@ public class AutoModes {
 
 
 		AutoModes.oneBall(Obstacle.low_bar);
-		//AutoModes.test();
+//		AutoModes.test();
 		//		drive.arcadeDrive(0, 1);
 
 //		switch (autoMode) {
@@ -100,11 +105,17 @@ public class AutoModes {
 
 	///////////////////MODES//////////////////
 	public static void test() {
+//		driveWithinShotRange();
+		Robot.shooter.start();
+		Robot.shooter.raise();
+		fire();
+		
+		
 //		alignToTargetIncremental();
-		rotateToGyroPosition(270);
-		Timer.delay(.5);
-		rotateToGyroPosition(90);
-		Timer.delay(.5);
+//		rotateToGyroPosition(270);
+//		Timer.delay(.5);
+//		rotateToGyroPosition(90);
+//		Timer.delay(.5);
 		
 //		AutoModes.syncIntakeLifterDown();
 //		
@@ -126,27 +137,28 @@ public class AutoModes {
 	
 	public static void oneBall(Obstacle obstacleToCross) {
 		//Prepare for barrier and target
+		showStatus("Starting");
 		obstacleToCross.preCrossBarrier(1);
-		//Hayden doesn't understand -> syncAimRotator();
-		//moveForwardForTime(ROBOT_SPEED, 6000);
-		moveForwardToRamp(ROBOT_SPEED, 5000);
+		
+		//Move to barrier
+		showStatus("To obstacle");
+		obstacleToCross.moveToBarrier(1);
 	
 		//Cross barrier
-		Robot.shooter.start();
+		showStatus("On obstacle");
 		obstacleToCross.crossBarrier(1);
 		
-		rotateToGyroPosition(190);
-//		//Drives to specifc target position and shoots
-		
-		driveWithinShotRange();
-//		driveWithinShotRangeAndShoot();
-		alignToTargetIncremental();
-		//Fire
-		Timer.delay(.5);
-		
+		//Prepare to fire
+		Robot.shooter.start();
 		Robot.shooter.raise();
-		Robot.intake.intakeRoller.set(1);
-//		Robot.turret.fire();
+		
+		//Drive to target
+		showStatus("To target");
+		obstacleToCross.moveFromObstacleToTarget();
+		
+		//Align and fire
+		showStatus("Align and FIRE");
+		alignAndFire();
 	}
 
 	public static void twoBall(Obstacle obstacleToCross) {
@@ -171,6 +183,19 @@ public class AutoModes {
 	}
 	
 	///////////////////FUNCTIONS//////////////////
+	//------fire------
+	public static void alignAndFire() {
+		//Align
+		alignToTargetIncremental();
+		fire();
+	}
+	
+	public static void fire() {
+
+		//Fire
+		Robot.intake.intakeRoller.set(1);
+	}
+	
 	//------rotator sync------
 	private static boolean aimRotatorThreadRunning = false;
 	public static void syncAimRotator() {
@@ -286,7 +311,8 @@ public class AutoModes {
 		
 //		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
 		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(angle)) > 1 && inAutonomous()) {
-			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
+//			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
+			turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(angle)/180, .4, .6);
 			Robot.drive.arcadeDrive(0, turnSpeed);
 		}
 		
@@ -356,11 +382,13 @@ public class AutoModes {
 		stop();
 	}
 	
+	//////elevation
+	public static double lastGroundElevation;
 	public static void moveForwardToRamp(double driveSpeed, long timeoutMillis) {
-		double startYaw = Robot.gyro.getYaw();
+		lastGroundElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
-		while(Robot.gyro.getYaw() - startYaw >= RAMP_ANGLE && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+		while(Math.abs(Robot.gyro.getElevation() - lastGroundElevation) <= RAMP_ANGLE && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
 //			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
 			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
@@ -368,7 +396,24 @@ public class AutoModes {
 		stop();
 	}
 	
-	public static final double SHOT_RANGE_INCHES = 112;
+	public static void moveForwardOffRamp(double driveSpeed, long timeoutMillis) {
+		double startElevation = Robot.gyro.getElevation();
+		long startTime = System.currentTimeMillis();
+		
+		//Wait for robot reach down ramp
+		while(Math.abs(Robot.gyro.getElevation() - startElevation) <= 2*RAMP_ANGLE && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, 0);
+		}
+		
+		//Wait for robot to become level
+		while(Robot.gyro.getElevation() - lastGroundElevation >= 1/*1 is max error*/ && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, 0);
+		}
+
+		stop();
+	}
+	
+	public static final double SHOT_RANGE_INCHES = 108.5;//112 was here for some reason
 	public static void driveWithinShotRange() {
 		double targetDistance = Robot.visionTable.getNumber("TargetDistance", 0);
 		double speed = .7;

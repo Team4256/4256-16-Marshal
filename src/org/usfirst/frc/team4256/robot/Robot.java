@@ -144,11 +144,11 @@ public class Robot extends IterativeRobot {
 	 */
 	Toggle gearShiftToggle = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
 	Toggle turretElevationToggle = new Toggle(xboxGun, DBJoystick.BUTTON_LB);
-	Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
+	//Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
-	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_EAST);
+	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
@@ -290,6 +290,12 @@ public class Robot extends IterativeRobot {
 //			Robot.intakeLifter.liftDownAutomatic();
 //			shooter.lower();
 //		} 
+		if(dpadeast.getState()) {
+			SmartDashboard.putString("Drive Angle Lock Toggle", "Engaged");
+		} else {
+			SmartDashboard.putString("Drive Angle Lock Toggle", "Disengaged");
+
+		}
 
 
 		//		

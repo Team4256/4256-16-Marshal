@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class Drive4256 {
-	public static final double DRIVE_TURN_OFFSET = -.08;
+	public static final double DRIVE_TURN_OFFSET = .12;
+	public static final double DRIVE_TURN_BACKWARDS_OFFSET = 0;
 	
 	RobotDrive robotDrive;
 	DoubleSolenoid gearShifter;
@@ -31,10 +32,17 @@ public class Drive4256 {
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
+		double driveTurnOffset = rotateValue;
+		if(rotateValue < 0) {
+			driveTurnOffset *= DRIVE_TURN_BACKWARDS_OFFSET;
+		}else{
+			driveTurnOffset *= DRIVE_TURN_OFFSET;
+		}
+		
 		if (lockedAngle != null) {
-			robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) - DRIVE_TURN_OFFSET);
+			robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
 		}else {
-			robotDrive.arcadeDrive(moveValue, rotateValue - DRIVE_TURN_OFFSET);
+			robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 		}
 	}
 

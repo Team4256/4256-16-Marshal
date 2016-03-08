@@ -263,6 +263,11 @@ public class Robot extends IterativeRobot {
 			} else {
 				SmartDashboard.putString("Shifter Value", "High Gear");
 			}
+			if (dpadeast.getState()) {
+				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
+			} else {
+				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
+			}
 		}
 		
 		//SensorStop

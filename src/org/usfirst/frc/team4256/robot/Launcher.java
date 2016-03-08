@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
@@ -47,7 +48,44 @@ public class Launcher {
 		turretLifter.set(DoubleSolenoid.Value.kReverse);
 	}
 	
-	public void align() {
-		AutoModes.alignToTargetIncremental();
+	public void align(DBJoystick controller) {
+		alignToTarget(controller, .6, 0, 0);
+		alignToTarget(controller, .3, .15, .2);
+		alignToTarget(controller, .03, .1, .2);
+	}
+	
+
+	public void alignToTarget(DBJoystick controller, double accuracy, double driveIncrementDelay, double pauseIncrementDelay) {
+		double targetOffset = AutoModes.getTargetOffset();
+		
+		while(Math.abs(targetOffset) > accuracy) {
+			targetOffset = AutoModes.getTargetOffset();
+			Robot.drive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .55, .56));
+			if(pauseIncrementDelay != 0) {
+				if(teleopDelay(driveIncrementDelay, controller)) break;
+				Robot.drive.arcadeDrive(0, 0);
+				if(teleopDelay(pauseIncrementDelay, controller)) break;
+			}
+		}
+	}
+	
+	/**
+	 * Delays unless a joystick control is activated.
+	 * Returns true if the joystick has been activated.
+	 * @param delayMillis - the milliseconds to delay.
+	 * @param controller -  the controller to check actions for.
+	 * @return
+	 */
+	public static boolean teleopDelay(double delayMillis, DBJoystick controller) {
+		long startTime = System.currentTimeMillis();
+		Robot.gyro.resetDisplacement();
+		
+		while(System.currentTimeMillis()-startTime < delayMillis) {
+			if(controller.anyControlIsActive()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

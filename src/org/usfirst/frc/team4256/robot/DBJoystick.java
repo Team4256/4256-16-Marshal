@@ -108,7 +108,7 @@ public class DBJoystick extends Joystick {
 //	}
 	
 	public boolean axisPressed(int axis) {
-		return super.getRawAxis(axis) > DETENT;
+		return Math.abs(super.getRawAxis(axis)) > DETENT;
 	}
 	
 	public double deadband(double input) {
@@ -118,6 +118,31 @@ public class DBJoystick extends Joystick {
 	public void rumble(float amount) {
 		setRumble(RumbleType.kLeftRumble, amount);
     	setRumble(RumbleType.kRightRumble, amount);
+	}
+
+	public boolean anyControlIsActive() {
+		//Check buttons (index starts at 1)
+		for(int i = 1; i<=getButtonCount(); i++) {
+			if(getRawButton(i)) {
+				return true;
+			}
+		}
+		
+		//Check axis
+		for(int i = 0; i<getAxisCount(); i++) {
+			if(axisPressed(i)) {
+				return true;
+			}
+		}
+		
+		//Check POV
+		for(int i = 0; i<getPOVCount(); i++) {
+			if(getPOV(i) == -1) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
 

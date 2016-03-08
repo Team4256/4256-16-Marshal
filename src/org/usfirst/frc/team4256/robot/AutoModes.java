@@ -28,15 +28,6 @@ public class AutoModes {
 	
 	public static final double RAMP_ANGLE = 3;//Actual angle is 12, but 6 should be enough
 
-//	static Obstacle startingBarrier;
-//	static enum Obstacle {
-//		portcullis, cheval_de_frise, //Category A
-//		moat, ramparts, //Category B
-//		drawbridge, sally_port, //Category C
-//		rock_wall, rough_terrain, //Category D
-//		low_bar //Static
-//	}
-
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
 	
@@ -341,7 +332,7 @@ public class AutoModes {
 	}
 	
 	public static void alignToTarget(double accuracy, double driveIncrementDelay, double pauseIncrementDelay) {
-		double targetOffset = 1;
+		double targetOffset = getTargetOffset();
 		
 		while(Math.abs(targetOffset) > accuracy && inAutonomous()) {
 			targetOffset = getTargetOffset();
@@ -382,7 +373,7 @@ public class AutoModes {
 		stop();
 	}
 	
-	//////elevation
+	//------elevation------
 	public static double lastGroundElevation;
 	public static void moveForwardToRamp(double driveSpeed, long timeoutMillis) {
 		lastGroundElevation = Robot.gyro.getElevation();

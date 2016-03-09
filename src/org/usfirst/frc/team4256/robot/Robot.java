@@ -32,6 +32,7 @@ public class Robot extends IterativeRobot {
 	
 	//Solenoid
 	static DoubleSolenoid turretLifter = new DoubleSolenoid(0, 2, 3);
+	static DoubleSolenoid winchStop = new DoubleSolenoid(0, 5, 6); // TODO
 	
 	//Relays
 	static Relay light;
@@ -53,12 +54,16 @@ public class Robot extends IterativeRobot {
 	static CANTalon shooterLeft = new CANTalon(21);
 	static CANTalon shooterRight = new CANTalon(20);
 	
+	static CANTalon lifterWinch = new CANTalon(15);
+	
+	
 	//Systems
 	static Intake intake;
 //	static CANTalon turret = new CANTalon(15);
 	static IntakeLifter intakeLifter;
 	static Launcher shooter;
 //	static Turret shooter;
+	static ClimbingMech climbingMech;
  
 
 	static NetworkTable visionTable;
@@ -77,21 +82,15 @@ public class Robot extends IterativeRobot {
 	
 	public void robotInit() {
 		{//Robot
-			visionTable = NetworkTable.getTable("SaltVision");
 			light = new Relay(0);
-			//SmartDashboard.putBoolean("Motor Stop", false);
-
+			visionTable = NetworkTable.getTable("SaltVision");
+			
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1));
-			//			turret = new Turret(5, 10, 11, 3, 4, 
-			//					6, 7, visionTable);
-			intake = new Intake(0, 5, 8, 0);
-			
 			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
-//			shooter = new Turret(0,0,0,0,0,visionTable);
-
-
+			intake = new Intake(0, 5, 8, 0);
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
+			climbingMech = new ClimbingMech(lifterWinch, winchStop);
 		}
 		camera.setQuality(100);
 		camera2.setQuality(100);
@@ -152,7 +151,7 @@ public class Robot extends IterativeRobot {
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
-		
+		SmartDashboard.putNumber("Elevation", gyro.getElevation());
 		//Update systems
 //		turret.update();
 		light.set(Value.kForward);
@@ -174,7 +173,7 @@ public class Robot extends IterativeRobot {
 		{
 			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
-				shooter.align();
+				drive.alignToTarget();
 			}
 			
 			//Toggle shooter motors
@@ -227,37 +226,7 @@ public class Robot extends IterativeRobot {
 			}else{
 				intake.stop();
 			}
-			//in and out
-//			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
-//				intake.intakeIn();
-//				shooterLeft.set(.3);
-//				
-//			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
-//				intake.intakeOut();
-//				shooterLeft.set(0);
-//			
-//				
-//			//high shot
-//			}else if (shooterToggle.getState()) {
-//				intake.loadTurret();
-//				shooterLeft.set(.5);
-//				//should have code in here so that it finishes no matter what (unless override is run), even if toggle state becomes false
-//				//should also have code in here that automatically makes the toggle state false when action is complete
-//				
-//			//shot override ** need to make so that state only gets changed if we are in the process of shooting. once shooting gets finished, this toggle needs to be reset to true
-//			//THIS MAY CAUSE PROBLEMS TONIGHT. COMENT OUT OVERRIDE IF ISSUES OCCUR
-//			}else if (shooterOverideToggle.getState()) {
-//				shooterLeft.set(.5);
-//			}else if (!shooterOverideToggle.getState()) {
-//				shooterLeft.set(0);
-//			
-//			}else{
-//				intake.stop();
-//				
-//				if (intake.currentAction != Intake.State.intake) {
-//					shooterLeft.set(0);
-//				}
-//			}
+			
 			if (gearShiftToggle.getState()) {
 				SmartDashboard.putString("Shifter Value", "Low Gear");
 			} else {
@@ -270,40 +239,24 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		//SensorStop
-//		if(stagingAreaSensor.get()){
-//			stagingRollerLeft.set(0);
-//			stagingRollerRight.set(0);
-//		}
-//		else {
-//			stagingRollerLeft.set(1);
-//			stagingRollerRight.set(1);
-//		}
-//		SmartDashboard.putBoolean("Motor Stop", stagingAreaSensor.get());
+		{//Climbing Mech
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {
+				climbingMech.startClimbing();
+			}
+			
+			if (climbingMech.isActive) {
+				climbingMech.moveHook(xboxGun.getRawAxis(DBJoystick.AXIS_LEFT_Y));
+			}
+		}
 		
-		//Portcullis LimitSwitch
-//		if(portcullisLimitSwitch.get()) {
-//			//IntakeLifter is set to it's current state and speed
-//			
-//		}else{
-//			intakeLifter.liftUpAutomatic();
-//			AutoModes.moveForwardForTime(0, 0);
-//			//drive forward autonomous function
-//		}
-		//Low Bar Config
-//		if (xboxGun.getRawButton(DBJoystick.BUTTON_B)) {
-//			Robot.intakeLifter.liftDownAutomatic();
-//			shooter.lower();
-//		} 
+		
+		//move
 		if(dpadeast.getState()) {
 			SmartDashboard.putString("Drive Angle Lock Toggle", "Engaged");
 		} else {
 			SmartDashboard.putString("Drive Angle Lock Toggle", "Disengaged");
 
 		}
-
-
-		//		
 	}
 
 	//Automated teleop variables

@@ -137,7 +137,7 @@ public class DBJoystick extends Joystick {
 		
 		//Check POV
 		for(int i = 0; i<getPOVCount(); i++) {
-			if(getPOV(i) == -1) {
+			if(getPOV(i) != -1) {
 				return true;
 			}
 		}

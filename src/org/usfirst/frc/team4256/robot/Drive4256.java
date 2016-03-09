@@ -12,7 +12,9 @@ public class Drive4256 {
 	DoubleSolenoid gearShifter;
 	Double lockedAngle;
 //	DoubleSolenoid rightGearShifter;
-
+	
+	boolean isAligning;
+	double targetOffset;
 
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid gearShifter) {
 		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
@@ -32,17 +34,21 @@ public class Drive4256 {
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
-		double driveTurnOffset = rotateValue;
-		if(rotateValue < 0) {
-			driveTurnOffset *= DRIVE_TURN_BACKWARDS_OFFSET;
+		if(isAligning) {
+			align(Robot.xboxGun);
 		}else{
-			driveTurnOffset *= DRIVE_TURN_OFFSET;
-		}
-		
-		if (lockedAngle != null) {
-			robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
-		}else {
-			robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
+			double driveTurnOffset = rotateValue;
+			if(rotateValue < 0) {
+				driveTurnOffset *= DRIVE_TURN_BACKWARDS_OFFSET;
+			}else{
+				driveTurnOffset *= DRIVE_TURN_OFFSET;
+			}
+
+			if (lockedAngle != null) {
+				robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
+			}else {
+				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
+			}
 		}
 	}
 
@@ -71,5 +77,69 @@ public class Drive4256 {
 		}else{
 			lockedAngle = null;
 		}
+	}
+
+	public void alignToTarget() {
+		isAligning = true;
+	}
+	
+	private void align(DBJoystick controller) {
+		//Align if target is farther from center
+		alignToTarget(controller, .6, 0, 0);
+		alignToTarget(controller, .3, .15, .2);
+		
+		//Stop alignment if the target has been aligned and the robot is not rotating
+		if(alignToTarget(controller, .03, .1, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
+			isAligning = false;
+		}
+	}
+
+	/**
+	 * Will rotate the drive system towards the target.
+	 * 
+	 * @param controller - will terminate if this controller is activated
+	 * @param accuracy - the distance of the target from the robot's center on a scale from 0 to 1
+	 * @param driveIncrementDelay - the time to drive for in milliseconds (for moving in increments)
+	 * @param pauseIncrementDelay - the time to stop after driving in milliseconds (for moving in increments)
+	 * @return whether or not the target is within the specified accuracy
+	 */
+	private boolean alignToTarget(DBJoystick controller, double accuracy, double driveIncrementDelay, double pauseIncrementDelay) {
+		targetOffset = AutoModes.getTargetOffset();
+		
+		if(Math.abs(targetOffset) > accuracy) {
+			targetOffset = AutoModes.getTargetOffset();
+			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .55, .56));
+			
+			if(pauseIncrementDelay != 0) {
+				isAligning = !teleopDelay(driveIncrementDelay, controller);
+				if(isAligning) return false;
+				robotDrive.arcadeDrive(0, 0);
+				isAligning = !teleopDelay(pauseIncrementDelay, controller);
+			}
+			
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	/**
+	 * Delays unless a joystick control is activated.
+	 * Returns true if the joystick has been activated.
+	 * @param delayMillis - the milliseconds to delay.
+	 * @param controller -  the controller to check actions for.
+	 * @return
+	 */
+	private static boolean teleopDelay(double delayMillis, DBJoystick controller) {
+		long startTime = System.currentTimeMillis();
+		Robot.gyro.resetDisplacement();
+		
+		while(System.currentTimeMillis()-startTime < delayMillis) {
+			if(controller.anyControlIsActive()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

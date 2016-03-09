@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class AutoModes {
-	public static final double ROBOT_SPEED = -.75;
+	private static final double ROBOT_SPEED = -1;
 	public static final double AUTO_LIFTER_UP_MOTOR_SPEED = .5;
 	public static final double AUTO_LIFTER_DOWN_MOTOR_SPEED = 1;
 	
@@ -26,7 +26,7 @@ public class AutoModes {
 	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
 	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
 	
-	public static final double RAMP_ANGLE = 3;//Actual angle is 12, but 6 should be enough
+	public static final double RAMP_ANGLE = 8;//Actual angle is 12, but 6 should be enough
 
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
@@ -52,23 +52,23 @@ public class AutoModes {
 		int position = (int) SmartDashboard.getNumber("Position");
 
 
-		AutoModes.oneBall(Obstacle.low_bar);
-//		AutoModes.test();
+//		AutoModes.oneBall(Obstacle.low_bar);
+		AutoModes.test();
 		//		drive.arcadeDrive(0, 1);
 
-//		switch (autoMode) {
+		switch (autoMode) {
 //		case 0: //Portcullis 
 //			AutoModes.oneBall(Obstacle.portcullis);
 //			break;
-//		case 1: 	//Cheval De Frise 
-//			AutoModes.oneBall(Obstacle.cheval_de_frise);
-//			break;
-//		case 2: 	//Moat 
-//			AutoModes.oneBall(new Obstacle("moat", Difficulty.simple, position));
-//			break;
-//		case 3: 	//Ramparts 
-//			AutoModes.oneBall(new Obstacle("ramparts", Difficulty.hard, position));
-//			break;
+		case 1: 	//Cheval De Frise 
+			AutoModes.oneBall(Obstacle.cheval_de_frise);
+			break;
+		case 2: 	//Moat 
+			AutoModes.oneBall(Obstacle.moat);
+			break;
+		case 3: 	//Ramparts 
+			AutoModes.oneBall(Obstacle.ramparts);
+			break;
 //		case 4:     //Drawbridge 
 //			AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
 //			break;
@@ -78,28 +78,29 @@ public class AutoModes {
 //		case 6:		//Rock Wall 
 //			AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
 //			break;
-//		case 7:		//Rough Terrain
-//			AutoModes.oneBall(new Obstacle("rough_terrain", Difficulty.simple, position));
-//			break;
-//		case 8: //Corner Shot
-////			AutoModes.syncIntakeLifterDownHalf();
-//			Robot.shooter.start();
-//			Timer.delay(1);
-////			Robot.shooter.raise();
-//			Robot.intake.intakeRoller.set(1);
-//			break;
-//		default:	//Low Bar
-//		AutoModes.oneBall(Obstacle.low_bar);
-//		}
+		case 7:		//Rough Terrain
+			AutoModes.oneBall(Obstacle.rough_terrain);
+			break;
+		case 8: //Corner Shot
+			syncIntakeLifterDownSlight();
+			Robot.shooter.start();
+			Robot.shooter.raise();
+			Timer.delay(1);
+			Robot.intake.intakeRoller.set(1);
+			break;
+		default:	//Low Bar
+		AutoModes.oneBall(Obstacle.low_bar);
+		}
 		//two ball eventually
 	}
 
 	///////////////////MODES//////////////////
 	public static void test() {
+//		Obstacle.low_bar.moveToBarrier(1);
 //		driveWithinShotRange();
-		Robot.shooter.start();
-		Robot.shooter.raise();
-		fire();
+//		Robot.shooter.start();
+//		Robot.shooter.raise();
+//		fire();
 		
 		
 //		alignToTargetIncremental();
@@ -118,8 +119,8 @@ public class AutoModes {
 //		rotateToGyroPosition(90);
 		//moveForwardForDistance(ROBOT_SPEED, 36, 3000);
 //		Obstacle.low_bar.crossBarrier(1);
-		
-//		oneBall(Obstacle.low_bar);
+//		AutoModes.moveForwardForTime(.75*AutoModes.ROBOT_SPEED, 800);
+		oneBall(Obstacle.cheval_de_frise);
 		
 //		SmartDashboard.putNumber("speed", 0);
 //		SmartDashboard.putNumber("time (s)", 5);
@@ -145,11 +146,11 @@ public class AutoModes {
 		
 		//Drive to target
 		showStatus("To target");
-		obstacleToCross.moveFromObstacleToTarget();
+//		obstacleToCross.moveFromObstacleToTarget(1);
 		
 		//Align and fire
-		showStatus("Align and FIRE");
-		alignAndFire();
+//		showStatus("Align and FIRE");
+//		alignAndFire();
 	}
 
 	public static void twoBall(Obstacle obstacleToCross) {
@@ -215,7 +216,11 @@ public class AutoModes {
 	public static void syncIntakeLifterDownHalf() {
 		private_syncIntakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 400);
 	}
-	
+
+	public static void syncIntakeLifterDownSlight() {
+		private_syncIntakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 25);
+	}
+
 	private static int intakeLifterLastThreadIndex = 0;
 	private static void private_syncIntakeLifter(final double liftSpeed, final long timeoutMillis) {
 		exeSrvc.execute(new Runnable() {
@@ -285,12 +290,12 @@ public class AutoModes {
 	
 	///////////////////MOVEMENT-rotate//////////////////
 	public static double currentTargetAngle = 90;//need current angle in gyro, move
-	public static void rotateTimeBased(double turnSpeed, long timeoutMillis) {
+	public static void rotateTimeBased(double driveSpeed, double turnSpeed, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		
 //		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
 		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(0, turnSpeed);
+			Robot.drive.arcadeDrive(driveSpeed, turnSpeed);
 		}
 		
 		stop();
@@ -375,13 +380,15 @@ public class AutoModes {
 	
 	//------elevation------
 	public static double lastGroundElevation;
-	public static void moveForwardToRamp(double driveSpeed, long timeoutMillis) {
+	public static void moveForwardToRamp(double direction, double driveSpeed, long timeoutMillis) {
 		lastGroundElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
-		while(Math.abs(Robot.gyro.getElevation() - lastGroundElevation) <= RAMP_ANGLE && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+		while(direction*(Robot.gyro.getElevation() - lastGroundElevation) >= RAMP_ANGLE-1 && 
+				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+			SmartDashboard.putNumber("Elevation", Robot.gyro.getElevation());
 //			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
-			Robot.drive.arcadeDrive(driveSpeed, 0);
+			Robot.drive.arcadeDrive(direction*driveSpeed, 0);
 		}
 
 		stop();

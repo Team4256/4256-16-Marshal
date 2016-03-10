@@ -53,7 +53,7 @@ public class AutoModes {
 
 
 //		AutoModes.oneBall(Obstacle.low_bar);
-		AutoModes.test();
+//		AutoModes.test();
 		//		drive.arcadeDrive(0, 1);
 
 		switch (autoMode) {
@@ -146,7 +146,7 @@ public class AutoModes {
 		
 		//Drive to target
 		showStatus("To target");
-//		obstacleToCross.moveFromObstacleToTarget(1);
+//		obstacleToCross.moveFromObstacleToTarget(position);
 		
 		//Align and fire
 //		showStatus("Align and FIRE");

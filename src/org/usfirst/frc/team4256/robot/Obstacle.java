@@ -122,6 +122,7 @@ public class Obstacle {
 		if (difficulty == Difficulty.simple) {
 			//Cross like normal
 //			AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
+//			this.crossRampart();
 			moveBarrierLength(direction);
 		}else if (difficulty == Difficulty.hard) {
 			if (this == portcullis) {
@@ -130,7 +131,7 @@ public class Obstacle {
 				//TODO cross like normal
 //				AutoModes.moveForwardForTime(direction*AutoModes.ROBOT_SPEED, 2000);
 			}else if (this == cheval_de_frise){
-				//Push cheval_de_frise down
+				//Push cheval_de_frise downro
 				AutoModes.intakeLifterDown();
 				//Cross
 //				moveBarrierLength(direction);
@@ -184,21 +185,32 @@ public class Obstacle {
 		}else{
 			targetIndex = 2;
 		}
-		
-		
+				
 		double direction = getObstacleDirection();
 		
 		AutoModes.moveForwardForTime(.8, 1200);//temp
 		Timer.delay(.2);
-//		if(direction == -1) {
-//			AutoModes.rotateToGyroPosition(60);
-//		}else{
-//			AutoModes.rotateToGyroPosition(120);
-//		}
-//		Timer.delay(.2);
-////		AutoModes.driveWithinShotRange();
-//		AutoModes.moveForwardForTime(.9, 800);//temp
-//		Timer.delay(.2);
+		if (targetIndex == 1) {
+			if(direction == -1) {
+				AutoModes.rotateToGyroPosition(60);
+			}else{
+				AutoModes.rotateToGyroPosition(120);
+			}
+		}
+		else if (targetIndex == 3) {
+			if(direction == -1) {
+				AutoModes.rotateToGyroPosition(-60);
+			}else{
+				AutoModes.rotateToGyroPosition(-120);
+			}
+		}
+		else { //targetIndex == 2	
+			//No rotate
+		}		
+			Timer.delay(.2);
+	//		AutoModes.driveWithinShotRange();
+			AutoModes.moveForwardForTime(.9, 800);//temp
+			Timer.delay(.2);
 		
 	}
 	

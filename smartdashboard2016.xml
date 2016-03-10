@@ -1,25 +1,17 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Angle Lock Toggle" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="1283" y="604"/>
-		<width>358</width>
-		<height>143</height>
-		<property name="Foreground" value="0.153.153.255"/>
-		<property name="Background" value="0.0.0.255"/>
-		<property name="Font Size" value="40"/>
-	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
+		<location x="17" y="17"/>
+		<property name="Image File" value="C:\Eclipse Mars Programs\GitHub\FRC-2016-Competition\Auto Modes Image.png"/>
+	</static-widget>
 	<widget field="Are we in range?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="622"/>
+		<location x="60" y="375"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="201" y="-12"/>
-		<width>781</width>
-		<height>571</height>
-	</static-widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
-		<location x="998" y="5"/>
-		<width>800</width>
-		<height>560</height>
+		<location x="870" y="16"/>
+		<width>475</width>
+		<height>360</height>
+		<property name="Size" value="320x240"/>
 	</static-widget>
 	<widget field="target values" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="852"/>
@@ -44,7 +36,7 @@
 		<location x="0" y="714"/>
 	</widget>
 	<widget field="Shifter Value" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="751" y="596"/>
+		<location x="752" y="452"/>
 		<width>430</width>
 		<height>143</height>
 		<property name="Foreground" value="0.204.0.255"/>
@@ -52,7 +44,7 @@
 		<property name="Font Size" value="40"/>
 	</widget>
 	<widget field="Shooter Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="277" y="597"/>
+		<location x="301" y="455"/>
 		<width>355</width>
 		<height>148</height>
 		<property name="Foreground" value="255.255.0.255"/>
@@ -63,23 +55,21 @@
 		<location x="0" y="691"/>
 	</widget>
 	<widget field="NumberOfBalls" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="668"/>
+		<location x="75" y="336"/>
 	</widget>
 	<widget field="Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="645"/>
+		<location x="106" y="307"/>
 	</widget>
 	<widget field="AUTONOMOUS MODE" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="731" y="937"/>
 	</widget>
 	<widget field="             " type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="21" y="599"/>
+		<location x="44" y="267"/>
 		<width>198</width>
+		<height>23</height>
 	</widget>
 	<widget field="Autonomous mode:" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="599"/>
-	</widget>
-	<widget field="angle displacement" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="576"/>
 	</widget>
 	<widget field="AutonomousObstacles2" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="330"/>
@@ -93,9 +83,6 @@
 	<widget field="AutonomousObstacles4" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="267"/>
 	</widget>
-	<widget field="Motor Stop" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="21" y="246"/>
-	</widget>
 	<widget field="AutonomousObstacles" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="42"/>
 	</widget>
@@ -105,7 +92,16 @@
 	<widget field="AutonomousObstacles1" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="0"/>
 	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="358" y="9"/>
+		<width>481</width>
+		<height>370</height>
+		<property name="Size" value="320x240"/>
+	</static-widget>
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="angle displacement"/>
+	<hidden field="Angle Lock Toggle"/>
+	<hidden field="Motor Stop"/>
 </xml>

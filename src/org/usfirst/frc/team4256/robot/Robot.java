@@ -105,7 +105,7 @@ public class Robot extends IterativeRobot {
 		{//SmartDashboard
 			//SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
 			//SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
-			SmartDashboard.putNumber("AUTONOMOUS MODE", 8);
+			SmartDashboard.putNumber("AUTONOMOUS MODE", 9);
 			SmartDashboard.putNumber("Position", 1);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
 

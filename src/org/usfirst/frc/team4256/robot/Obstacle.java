@@ -172,11 +172,8 @@ public class Obstacle {
 		}
 	}
 	
-	public static final double TOWER_CENTER_X = 50;
-	public static final double TOWER_TO_FIRST_OBSTACLE_OFFSET_X = 50;
-	public static final double DISTANCE_BETWEEN_OBSTACLES = 48;
-	
 	public void moveFromObstacleToTarget(int position) {
+
 		int targetIndex;
 		if(position == 1) {
 			targetIndex = 1;
@@ -186,6 +183,7 @@ public class Obstacle {
 			targetIndex = 2;
 		}
 				
+
 		double direction = getObstacleDirection();
 		
 		AutoModes.moveForwardForTime(.8, 1200);//temp

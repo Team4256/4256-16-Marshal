@@ -73,8 +73,7 @@ public class Robot extends IterativeRobot {
 	
 	static DigitalInput frontLimitSwitch = new DigitalInput(2);
 	
-	static CameraServer camera = CameraServer.getInstance();
-	static CameraServer camera2 = CameraServer.getInstance();
+	static CameraServer camera = CameraServer.getInstance();  
 	
 	
 	
@@ -92,22 +91,21 @@ public class Robot extends IterativeRobot {
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(lifterWinch, winchStop);
 		}
-		camera.setQuality(100);
-		camera2.setQuality(100);
 		
-		camera.startAutomaticCapture("cam1");
-		camera2.startAutomaticCapture("cam2");
+		{//Camera
+			camera.setQuality(100);
+			camera.startAutomaticCapture("cam1");
+			
+			
+		}
 		
-		
-		SmartDashboard.putString("             ","AUTONOMOUS MODE");
-		
-
 		{//SmartDashboard
 			//SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
 			//SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
 			SmartDashboard.putNumber("AUTONOMOUS MODE", 9);
 			SmartDashboard.putNumber("Position", 1);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
+			SmartDashboard.putString("             ","AUTONOMOUS MODE");
 
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
@@ -157,6 +155,12 @@ public class Robot extends IterativeRobot {
 		light.set(Value.kForward);
 		intake.update();
 		intakeLifter.update();
+		
+//		if(xboxGun.getRawButton(DBJoystick.BUTTON_START)) {
+//			camera.startAutomaticCapture("cam2");
+//		}else{
+//			camera.startAutomaticCapture("cam1");
+//		}
 
 		//Drive
 		{
@@ -180,8 +184,11 @@ public class Robot extends IterativeRobot {
 			if(shooterToggle.getState()) {
 //			if(xboxGun.getButtonToggleState(DBJoystick.BUTTON_Y)) {
 				shooter.start();
+				SmartDashboard.putString("Shooter Wheels", "Spinning");
 			}else{
 				shooter.stop();
+				SmartDashboard.putString("Shooter Wheels", "Stopped");
+
 			}
 			
 			//Raise/lower shooter
@@ -207,16 +214,10 @@ public class Robot extends IterativeRobot {
 			}else if (xboxDriver.getPOV() == DBJoystick.POV_SOUTH) {
 				intakeLifter.liftDownAutomatic();
 			}
-//			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
-//				shooterRight.set(0.5);
-//				shooterLeft.set(0.5);
-//			} else {
-//				shooterRight.set(0);
-//				shooterLeft.set(0);
-//			}
 		}
 		
 		{//Intake
+			//Intake in/out/fire/stop
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
@@ -226,36 +227,18 @@ public class Robot extends IterativeRobot {
 			}else{
 				intake.stop();
 			}
-			
-			if (gearShiftToggle.getState()) {
-				SmartDashboard.putString("Shifter Value", "Low Gear");
-			} else {
-				SmartDashboard.putString("Shifter Value", "High Gear");
-			}
-			if (dpadeast.getState()) {
-				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
-			} else {
-				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
-			}
 		}
 		
 		{//Climbing Mech
+			//Start climbing mode
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {
 				climbingMech.startClimbing();
 			}
 			
+			//Climb
 			if (climbingMech.isActive) {
 				climbingMech.moveHook(xboxGun.getRawAxis(DBJoystick.AXIS_LEFT_Y));
 			}
-		}
-		
-		
-		//move
-		if(dpadeast.getState()) {
-			SmartDashboard.putString("Drive Angle Lock Toggle", "Engaged");
-		} else {
-			SmartDashboard.putString("Drive Angle Lock Toggle", "Disengaged");
-
 		}
 	}
 

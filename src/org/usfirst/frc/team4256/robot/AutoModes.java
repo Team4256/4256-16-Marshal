@@ -18,18 +18,24 @@ public class AutoModes {
 	public static final double AUTO_LIFTER_UP_MOTOR_SPEED = .5;
 	public static final double AUTO_LIFTER_DOWN_MOTOR_SPEED = 1;
 	
-	public static final double DISTANCE_CENTER_TO_BARRIER = 000;//TODO
-	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
-	public static final double DISTANCE_DEFENCE_WIDTH = 50;//TODO add divider width, long enough
-	
-	public static final long TIMEOUT_DISTANCE_CENTER_TO_BARRIER = 5000;//TODO
-	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
-	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
+//	public static final double DISTANCE_CENTER_TO_BARRIER = 000;//TODO
+//	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
+//	public static final double DISTANCE_DEFENCE_WIDTH = 50;//TODO add divider width, long enough
+//	
+//	public static final long TIMEOUT_DISTANCE_CENTER_TO_BARRIER = 5000;//TODO
+//	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
+//	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
+
+	public static final double DISTANCE_BETWEEN_OBSTACLES = 1346.2/25.4;
+	public static final double DISTANCE_OBSTACLE_EDGE_TO_WALL = 4873.645/25.4;
+	public static final double LATERAL_DISTANCE_FIRST_OBSTACLE_TO_CENTER_TARGET = 3663.6008/25.4;
+	public static final double ROBOT_DISTANCE_OFFSET = 50;
 	
 	public static final double RAMP_ANGLE = 8;//Actual angle is 12, but 6 should be enough
 
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
+	public static int startPosition;
 	
 	public static boolean inAutonomous() {
 		return Robot.gamemode == Robot.Gamemode.AUTONOMOUS;
@@ -43,12 +49,11 @@ public class AutoModes {
 	public static void start() {
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.zeroYaw();
-		Robot.visionTable.putNumber("ShooterAngle", Robot.shooter.isRaised? 39.1 : 33);
-
-		//		int autoMode =  (int) SmartDashboard.getNumber("AutonomousObstacles");
-		//		int position = (int) SmartDashboard.getNumber("ObstaclePosition");
+		
+		//Get SmartDashboard variables
 		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
 		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
+
 		int position = (int) SmartDashboard.getNumber("Position");
 
 
@@ -56,18 +61,61 @@ public class AutoModes {
 //		AutoModes.test();
 		//		drive.arcadeDrive(0, 1);
 
+		startPosition = (int) SmartDashboard.getNumber("Position");
+		double speed = -1;
+
+		//Start selected autonomous mode
 		switch (autoMode) {
-//		case 0: //Portcullis 
+		case 0: //Portcullis 
 //			AutoModes.oneBall(Obstacle.portcullis);
-//			break;
+			//Approach
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveToLimitSwitch(speed, Robot.intakeLifter.frontLimitSwitch, 5000);
+
+			//Cross
+			AutoModes.intakeLifterUp();
+			AutoModes.moveForwardForTime(speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(speed);
+			break;
 		case 1: 	//Cheval De Frise 
-			AutoModes.oneBall(Obstacle.cheval_de_frise);
+//			AutoModes.oneBall(Obstacle.cheval_de_frise);
+			speed = -.75;
+			//Approach
+			AutoModes.moveForwardForTime(speed, 800);
+			
+			//Cross
+			AutoModes.intakeLifterDown();
+			Robot.drive.slowGear();
+			Timer.delay(.1);
+			AutoModes.moveForwardForTime(speed, 1500);
+			
+			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 2: 	//Moat 
-			AutoModes.oneBall(Obstacle.moat);
+//			AutoModes.oneBall(Obstacle.moat);
+			
+			//Approach
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveForwardForTime(speed, 500);
+
+			//Cross
+			AutoModes.moveForwardForTime(speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 3: 	//Ramparts 
-			AutoModes.oneBall(Obstacle.ramparts);
+//			AutoModes.oneBall(Obstacle.ramparts);
+
+			//Approach
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveForwardForTime(speed, 500);
+			
+			//Cross
+			AutoModes.rotateTimeBased(speed, 1, 700);
+			AutoModes.moveForwardForTime(speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(speed);
 			break;
 //		case 4:     //Drawbridge 
 //			AutoModes.oneBall(new Obstacle("drawbridge", Difficulty.impossible, position));
@@ -75,11 +123,27 @@ public class AutoModes {
 //		case 5: 	//Sally Port 
 //			AutoModes.oneBall(new Obstacle("sally_port", Difficulty.impossible, position));
 //			break;
-//		case 6:		//Rock Wall 
-//			AutoModes.oneBall(new Obstacle("rock_wall", Difficulty.simple, position));
-//			break;
+		case 6:		//Rock Wall 
+//			AutoModes.oneBall(Obstacle.rock_wall);
+			//Approach
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveForwardForTime(speed, 500);
+
+			//Cross
+			AutoModes.moveForwardForTime(speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(speed);
+			break;
 		case 7:		//Rough Terrain
-			AutoModes.oneBall(Obstacle.rough_terrain);
+//			AutoModes.oneBall(Obstacle.rough_terrain);
+			//Approach
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveForwardForTime(speed, 500);
+
+			//Cross
+			AutoModes.moveForwardForTime(speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 8: //Corner Shot
 			syncIntakeLifterDownSlight();
@@ -89,42 +153,75 @@ public class AutoModes {
 			Robot.intake.intakeRoller.set(1);
 			break;
 		default:	//Low Bar
-		AutoModes.oneBall(Obstacle.low_bar);
+//			AutoModes.oneBall(Obstacle.low_bar);
+			//Approach (backwards)
+			AutoModes.syncIntakeLifterDown();
+			AutoModes.moveForwardForTime(-speed, 500);
+			
+			//Cross (backwards)
+			AutoModes.moveForwardForTime(-speed, 1000);
+			
+			moveFromObstacleToTargetAndFire(-speed);
 		}
-		//two ball eventually
+	}
+	
+	public static void moveFromObstacleToTargetAndFire(double speed) {
+		//Prepare to fire
+		Robot.shooter.start();
+		Robot.shooter.raise();
+		
+		//Drive to target
+		if(startPosition == 1) {
+			double rotateAngle = 60;
+//			double driveDistance = DISTANCE_OBSTACLE_EDGE_TO_WALL
+//					-LATERAL_DISTANCE_FIRST_OBSTACLE_TO_CENTER_TARGET*Math.tan(60)
+//					-ROBOT_DISTANCE_OFFSET;
+			AutoModes.moveForwardForTime(speed, (long) (900));//temp
+			Timer.delay(.1);
+			AutoModes.rotateToGyroPosition(rotateAngle);
+			Timer.delay(.1);
+			AutoModes.moveForwardForTime(speed, 400);//temp
+		}else if(startPosition == 2) {
+			AutoModes.rotateToGyroPosition(-15);
+			Timer.delay(0.1);
+			AutoModes.moveForwardForTime(speed, 800);
+			Timer.delay(0.1);
+			AutoModes.rotateToGyroPosition(0);
+		}else if(startPosition == 2.5) {
+			AutoModes.rotateToGyroPosition(60);
+			Timer.delay(0.1);
+			AutoModes.moveForwardForTime(speed, 900);
+			Timer.delay(0.1);
+			AutoModes.rotateToGyroPosition(0);
+		}else if(startPosition == 3) {
+			AutoModes.rotateToGyroPosition(30);
+			Timer.delay(.1);
+			AutoModes.moveForwardForTime(speed, 800);
+			Timer.delay(.1);
+			AutoModes.rotateToGyroPosition(0);
+		}else if(startPosition == 4) {
+			AutoModes.moveForwardForTime(speed, 400);
+			Timer.delay(.1);
+			AutoModes.rotateToGyroPosition(-15);
+			Timer.delay(.1);
+			AutoModes.rotateToGyroPosition(0);	
+		}else if(startPosition == 5) {
+			double rotateAngle = 120;
+//			double driveDistance = DISTANCE_OBSTACLE_EDGE_TO_WALL
+//					-Math.abs(LATERAL_DISTANCE_FIRST_OBSTACLE_TO_CENTER_TARGET-5*DISTANCE_BETWEEN_OBSTACLES)*Math.tan(60)
+//					-ROBOT_DISTANCE_OFFSET;
+			AutoModes.moveForwardForTime(speed, (long) (800));//temp
+			Timer.delay(.2);
+			AutoModes.rotateToGyroPosition(rotateAngle);
+		}
+		
+		//Align and fire
+		AutoModes.driveWithinShotRange();
+		AutoModes.alignAndFire();
 	}
 
 	///////////////////MODES//////////////////
 	public static void test() {
-//		Obstacle.low_bar.moveToBarrier(1);
-//		driveWithinShotRange();
-//		Robot.shooter.start();
-//		Robot.shooter.raise();
-//		fire();
-		
-		
-//		alignToTargetIncremental();
-//		rotateToGyroPosition(270);
-//		Timer.delay(.5);
-//		rotateToGyroPosition(90);
-//		Timer.delay(.5);
-		
-//		AutoModes.syncIntakeLifterDown();
-//		
-		
-//		rotateToGyroPosition(45);
-//		Timer.delay(.5);
-//		rotateToGyroPosition(270);
-//		Timer.delay(.5);
-//		rotateToGyroPosition(90);
-		//moveForwardForDistance(ROBOT_SPEED, 36, 3000);
-//		Obstacle.low_bar.crossBarrier(1);
-//		AutoModes.moveForwardForTime(.75*AutoModes.ROBOT_SPEED, 800);
-		oneBall(Obstacle.cheval_de_frise);
-		
-//		SmartDashboard.putNumber("speed", 0);
-//		SmartDashboard.putNumber("time (s)", 5);
-//		moveForwardForTime(SmartDashboard.getNumber("speed"), SmartDashboard.getNumber("time (s)")*1000);
 	}
 	
 	public static void oneBall(Obstacle obstacleToCross) {
@@ -384,7 +481,8 @@ public class AutoModes {
 		lastGroundElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
-		while(direction*(Robot.gyro.getElevation() - lastGroundElevation) >= RAMP_ANGLE-1 && 
+//		while(direction*(Robot.gyro.getElevation() - lastGroundElevation) >= RAMP_ANGLE-1 && 
+		while(Robot.gyro.getElevation() <= lastGroundElevation + direction*(RAMP_ANGLE-2) && 
 				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
 			SmartDashboard.putNumber("Elevation", Robot.gyro.getElevation());
 //			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
@@ -394,17 +492,20 @@ public class AutoModes {
 		stop();
 	}
 	
-	public static void moveForwardOffRamp(double driveSpeed, long timeoutMillis) {
+	public static void moveForwardOffRamp(double direction, double driveSpeed, long timeoutMillis) {
 		double startElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
 		//Wait for robot reach down ramp
-		while(Math.abs(Robot.gyro.getElevation() - startElevation) <= 2*RAMP_ANGLE && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+//		while(Math.abs(Robot.gyro.getElevation() - startElevation) <= 2*RAMP_ANGLE && 
+		while(Robot.gyro.getElevation() >= lastGroundElevation - direction*(RAMP_ANGLE-2) && 
+				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
 			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 		
 		//Wait for robot to become level
-		while(Robot.gyro.getElevation() - lastGroundElevation >= 1/*1 is max error*/ && System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+		while(Math.abs(Robot.gyro.getElevation() - lastGroundElevation) >= 1/*1 is max error*/ && 
+				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
 			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 

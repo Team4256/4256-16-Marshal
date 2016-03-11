@@ -1,17 +1,42 @@
 <xml version="1.0">
 <dashboard>
+<<<<<<< Updated upstream
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
 		<location x="17" y="17"/>
 		<property name="Image File" value="C:\Eclipse Mars Programs\GitHub\FRC-2016-Competition\Auto Modes Image.png"/>
 	</static-widget>
+=======
+	<widget field="Elevation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="875"/>
+	</widget>
+	<widget field="Angle Lock Toggle" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="1283" y="604"/>
+		<width>358</width>
+		<height>143</height>
+		<property name="Foreground" value="0.153.153.255"/>
+		<property name="Background" value="0.0.0.255"/>
+		<property name="Font Size" value="40"/>
+	</widget>
+>>>>>>> Stashed changes
 	<widget field="Are we in range?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="60" y="375"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+<<<<<<< Updated upstream
 		<location x="870" y="16"/>
 		<width>475</width>
 		<height>360</height>
 		<property name="Size" value="320x240"/>
+=======
+		<location x="201" y="-12"/>
+		<width>501</width>
+		<height>453</height>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
+		<location x="1254" y="5"/>
+		<width>544</width>
+		<height>440</height>
+>>>>>>> Stashed changes
 	</static-widget>
 	<widget field="target values" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="852"/>
@@ -58,7 +83,11 @@
 		<location x="75" y="336"/>
 	</widget>
 	<widget field="Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+<<<<<<< Updated upstream
 		<location x="106" y="307"/>
+=======
+		<location x="810" y="908"/>
+>>>>>>> Stashed changes
 	</widget>
 	<widget field="AUTONOMOUS MODE" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="731" y="937"/>

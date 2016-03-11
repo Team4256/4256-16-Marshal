@@ -3,6 +3,7 @@ package org.usfirst.frc.team4256.robot;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive4256 {
 	public static final double DRIVE_TURN_OFFSET = .12;
@@ -37,6 +38,7 @@ public class Drive4256 {
 		if(isAligning) {
 			align(Robot.xboxGun);
 		}else{
+			//Get rotational offset (due to wheel resistance/friction)
 			double driveTurnOffset = rotateValue;
 			if(rotateValue < 0) {
 				driveTurnOffset *= DRIVE_TURN_BACKWARDS_OFFSET;
@@ -44,9 +46,13 @@ public class Drive4256 {
 				driveTurnOffset *= DRIVE_TURN_OFFSET;
 			}
 
+			//Arcade drive. Lock angle if set.
 			if (lockedAngle != null) {
-				robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
+				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
+				robotDrive.arcadeDrive(moveValue, rotateValue + 
+						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
 			}else {
+				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 			}
 		}
@@ -62,11 +68,13 @@ public class Drive4256 {
 	}
 
 	public void slowGear() {
+		SmartDashboard.putString("Shifter Value", "Low Gear");
 		gearShifter.set(DoubleSolenoid.Value.kForward);
 //		rightGearShifter.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void fastGear() {
+		SmartDashboard.putString("Shifter Value", "High Gear");
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
 //		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
 	}

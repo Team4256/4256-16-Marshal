@@ -150,6 +150,7 @@ public class Robot extends IterativeRobot {
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
+	
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
@@ -175,8 +176,10 @@ public class Robot extends IterativeRobot {
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
+		SmartDashboard.putNumber("Hayden-untested distance",Robot.visionTable.getNumber("HaydenTargetDistance", 0));
+		SmartDashboard.putNumber("currently-used distance", Robot.visionTable.getNumber("TargetDistance", 0));
+		SmartDashboard.putNumber("goal<->robot angle differential", Robot.visionTable.getNumber("AngleDifferential", 0));
 		
-
 		//Turret
 		{
 			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);

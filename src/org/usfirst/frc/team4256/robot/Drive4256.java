@@ -13,12 +13,21 @@ public class Drive4256 {
 	DoubleSolenoid gearShifter;
 	Double lockedAngle;
 //	DoubleSolenoid rightGearShifter;
+
+	CANTalon wheelFrontLeft;
+	CANTalon wheelBackLeft;
+	CANTalon wheelFrontRight;
+	CANTalon wheelBackRight;
 	
 	boolean isAligning;
 	double targetOffset;
 
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid gearShifter) {
 		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
+		wheelFrontLeft = LFMotor;
+		wheelBackLeft = LBMotor;
+		wheelFrontRight = RFMotor;
+		wheelBackRight = RBMotor;
 
 		LBMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
 		LBMotor.set(LFMotor.getDeviceID());
@@ -56,6 +65,13 @@ public class Drive4256 {
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 			}
 		}
+	}
+	
+	public void enableBreakMode(boolean brake) {
+		wheelBackLeft.enableBrakeMode(brake);
+		wheelBackRight.enableBrakeMode(brake);
+		wheelFrontLeft.enableBrakeMode(brake);
+		wheelFrontRight.enableBrakeMode(brake);
 	}
 
 	public void gearShift(boolean gear) {
@@ -97,7 +113,7 @@ public class Drive4256 {
 		alignToTarget(controller, .3, .15, .2);
 		
 		//Stop alignment if the target has been aligned and the robot is not rotating
-		if(alignToTarget(controller, .03, .1, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
+		if(alignToTarget(controller, .06, .1, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
 			isAligning = false;
 		}
 	}

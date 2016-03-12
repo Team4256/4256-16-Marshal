@@ -94,9 +94,7 @@ public class Robot extends IterativeRobot {
 		
 		{//Camera
 			camera.setQuality(100);
-			camera.startAutomaticCapture("cam1");
-			
-			
+//			camera.startAutomaticCapture("cam1");
 		}
 		
 		{//SmartDashboard
@@ -135,6 +133,11 @@ public class Robot extends IterativeRobot {
 //		AutoModes.test();
 		
 	}
+	
+	public void teleopInit() {
+		Robot.drive.fastGear();
+//		Robot.drive.enableBreakMode(false);
+	}
 
 	/**
 	 * This function is called periodically during operator control
@@ -150,6 +153,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
+		SmartDashboard.putNumber("Angle", gyro.getAngle());
 		//Update systems
 //		turret.update();
 		light.set(Value.kForward);
@@ -213,6 +217,12 @@ public class Robot extends IterativeRobot {
 				intakeLifter.liftUpAutomatic();
 			}else if (xboxDriver.getPOV() == DBJoystick.POV_SOUTH) {
 				intakeLifter.liftDownAutomatic();
+			}
+			
+			if(intakeLifter.frontLimitSwitch.get()) {
+				SmartDashboard.putBoolean("Front limit", false);
+			}else{
+				SmartDashboard.putBoolean("Front limit", true);
 			}
 		}
 		

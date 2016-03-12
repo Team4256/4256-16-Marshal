@@ -21,6 +21,7 @@ public class Launcher {
 		
 		shooterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
 		shooterRight.set(shooterLeft.getDeviceID());
+//		SmartDashboard.putNumber("shooter speed", .95);
 	}
 
 	public void stop() {
@@ -28,6 +29,7 @@ public class Launcher {
 	}
 	
 	public void start() {
+//		shooterLeft.set(SmartDashboard.getNumber("shooter speed", .95));
 		shooterLeft.set(SHOOTER_SPEED);
 	}
 	

@@ -1,5 +1,17 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Shooter Scale" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="921"/>
+	</widget>
+	<widget field="goal<->robot angle differential" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="875"/>
+	</widget>
+	<widget field="Hayden-untested distance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="645"/>
+	</widget>
+	<widget field="currently-used distance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="576"/>
+	</widget>
 	<widget field="Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="381" y="851"/>
 	</widget>

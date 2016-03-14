@@ -11,6 +11,8 @@ public class Intake {
 	public State currentAction = State.nothing;
 	public static enum State {loadTurret, intakeOut, intake, nothing}
 	
+	boolean shouldHaveBall = false;
+	
 	public VictorSP intakeRoller;
 	
 	public DigitalInput stagingLimitSwitch;
@@ -25,18 +27,13 @@ public class Intake {
 	}
 	
 	private void set() {
-		if (currentAction == State.intake || currentAction == State.loadTurret) {
+		if (currentAction == State.intake || currentAction == State.loadTurret
+				|| (shouldHaveBall && !stagingLimitSwitch.get())) {
 			set(1);
-//			Robot.shooter.start();
-//			Robot.shooterLeft.set(.3);//temp
 		}else if (currentAction == State.intakeOut) {
 			set(-1);
-//			Robot.shooter.stop();
-//			Robot.shooterLeft.set(0);//temp
 		}else{
 			set(0);
-//			Robot.shooter.stop();
-//			Robot.shooterLeft.set(0);//temp
 		}
 	}
 	
@@ -45,27 +42,28 @@ public class Intake {
 			currentAction = State.nothing;
 		}
 	}
+	
 	public void intakeIn() {
 			currentAction = State.intake;
 	}
 	
 	public void intakeOut() {
+		shouldHaveBall = false;
 		currentAction = State.intakeOut;
 	}
 	
 	public void loadTurret() {
-//		this.firingStartTime = System.currentTimeMillis();
-//		this.firingTotalTime = firingTime;
+		shouldHaveBall = false;
 		currentAction = State.loadTurret;
 	}
 	
-//	public void loadTurret() {
-//		//fireHigh(FIRE_HIGH_TIME);
-//		loadTurret(LOAD_TURRET_TIME);
-//	}
-	
 	public void update() {
+//		if(shouldHaveBall && !stagingLimitSwitch.get()) {
+//			currentAction = State.intake;
+//		}
+		
 		if(currentAction == State.intake && stagingLimitSwitch.get()) {
+			shouldHaveBall = true;
 			currentAction = State.nothing;
 		}
 		set();

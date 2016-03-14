@@ -94,7 +94,7 @@ public class Robot extends IterativeRobot {
 		
 		{//Camera
 			camera.setQuality(100);
-//			camera.startAutomaticCapture("cam1");
+			camera.startAutomaticCapture("cam1");
 		}
 		
 		{//SmartDashboard
@@ -114,6 +114,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	private static boolean autonomousThreadRunning = false;
+//	ALL AUTONOMOUS SPEEDS ARE INVERTED (ie. - IS FORWARD & + POSITIVE IS BACKWARDS) *SALTY DOES NOT KNOW WHY
 	public void autonomousInit() {
 		if(!autonomousThreadRunning) {
 			AutoModes.exeSrvc.execute(new Runnable() {
@@ -148,6 +149,7 @@ public class Robot extends IterativeRobot {
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
+	
 	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	
@@ -197,6 +199,13 @@ public class Robot extends IterativeRobot {
 				SmartDashboard.putString("Shooter Wheels", "Stopped");
 
 			}
+//			if(shooterToggle2.getState()) {
+//				shooter.start2();
+//			}else{
+//				shooter.stop2();
+//			
+//			}
+//			
 			
 			//Raise/lower shooter
 			if(turretLifterToggle.getState()) {

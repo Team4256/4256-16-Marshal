@@ -23,14 +23,17 @@ public class Launcher {
 		shooterRight.set(shooterLeft.getDeviceID());
 //		SmartDashboard.putNumber("shooter speed", .95);
 	}
-
+//	
 	public void stop() {
 		shooterLeft.set(0);
 	}
-	
+	Toggle shooterToggle = new Toggle(Robot.xboxGun, DBJoystick.BUTTON_B);
 	public void start() {
+//		double shooterScale = (shooterToggle.getState() ? 1 : SHOOTER_SPEED);
 //		shooterLeft.set(SmartDashboard.getNumber("shooter speed", .95));
 		shooterLeft.set(SHOOTER_SPEED);
+//		SmartDashboard.putBoolean("Shooter Scale", shooterToggle.getState());
+		
 	}
 	
 	public void fire() {

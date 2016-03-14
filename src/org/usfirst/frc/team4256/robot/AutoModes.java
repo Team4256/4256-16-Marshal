@@ -84,15 +84,15 @@ public class AutoModes {
 //			AutoModes.oneBall(Obstacle.cheval_de_frise);
 			speed = -.75;
 			//Approach
-			AutoModes.moveForwardForTime(speed, 800);
+			AutoModes.moveForwardForTime(speed, 1400);
 			
 			//Cross
 			AutoModes.intakeLifterDown();
 			Robot.drive.slowGear();
 			Timer.delay(.1);
-			AutoModes.moveForwardForTime(speed, 1500);
+			AutoModes.moveForwardForTime(-0.5, 2500);
 			
-			moveFromObstacleToTargetAndFire(speed);
+//			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 2: 	//Moat 
 //			AutoModes.oneBall(Obstacle.moat);
@@ -143,9 +143,9 @@ public class AutoModes {
 			AutoModes.moveForwardForTime(speed, 500);
 
 			//Cross
-			AutoModes.moveForwardForTime(speed, 1000);
+			AutoModes.moveForwardForTime(speed, 1500);
 			
-			moveFromObstacleToTargetAndFire(speed);
+//			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 8:default: //Corner Shot
 //			syncIntakeLifterDownSlight();
@@ -182,10 +182,16 @@ public class AutoModes {
 			Robot.shooter.shooterLeft.set(1);
 			Robot.shooter.raise();
 			AutoModes.moveForwardForTime(-speed, 1200);
+			//{added
 			Timer.delay(.1);
-			AutoModes.rotateToGyroPosition(30);
+			rotateTimeBased(0, 1, 800); //400 msecs rotated 20 degrees
 			Timer.delay(.1);
 			fire();
+			Timer.delay(.1);
+			rotateTimeBased(0, -1, 800);
+			moveForwardForTime(speed, 2200);
+			//}
+//			AutoModes.rotateToGyroPosition(30);
 			break;
 		case 9:	//Low Bar
 //			AutoModes.oneBall(Obstacle.low_bar);
@@ -200,6 +206,11 @@ public class AutoModes {
 			AutoModes.moveForwardForTime(-speed, 1000);
 			
 			moveFromObstacleToTargetAndFire(-speed);
+			break;
+		case 99:
+			Robot.drive.arcadeDrive(0, 0.4);
+			Timer.delay(.5);
+			break;
 		}
 	}
 	

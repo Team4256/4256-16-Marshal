@@ -110,10 +110,11 @@ public class Drive4256 {
 	private void align(DBJoystick controller) {
 		//Align if target is farther from center
 		alignToTarget(controller, .6, 0, 0);
-		alignToTarget(controller, .3, .15, .2);
+		alignToTarget(controller, .55, .08, .25);
+		alignToTarget(controller, .3, .1, .1);
 		
 		//Stop alignment if the target has been aligned and the robot is not rotating
-		if(alignToTarget(controller, .06, .1, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
+		if(alignToTarget(controller, .06, .08, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
 			isAligning = false;
 		}
 	}
@@ -132,7 +133,7 @@ public class Drive4256 {
 		
 		if(Math.abs(targetOffset) > accuracy) {
 			targetOffset = AutoModes.getTargetOffset();
-			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .55, .56));
+			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .66));
 			
 			if(pauseIncrementDelay != 0) {
 				isAligning = !teleopDelay(driveIncrementDelay, controller);

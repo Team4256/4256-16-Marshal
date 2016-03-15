@@ -197,15 +197,7 @@ public class Robot extends IterativeRobot {
 			}else{
 				shooter.stop();
 				SmartDashboard.putString("Shooter Wheels", "Stopped");
-
 			}
-//			if(shooterToggle2.getState()) {
-//				shooter.start2();
-//			}else{
-//				shooter.stop2();
-//			
-//			}
-//			
 			
 			//Raise/lower shooter
 			if(turretLifterToggle.getState()) {
@@ -215,6 +207,27 @@ public class Robot extends IterativeRobot {
 			}else{
 				shooter.lower();
 				SmartDashboard.putString("Shooter Position", "Down");
+			}
+			
+			//Check if robot is within shooting range
+			if(visionTable.getBoolean("TargetVisibility", false)) {
+				//Check target alignment
+				double targetRotationalOffset = Math.abs(visionTable.getNumber("TargetX", 0)-visionTable.getNumber("ImageWidth", -1)/2);
+				SmartDashboard.putBoolean("Aligned", (targetRotationalOffset <= 6));
+				
+				//Check target distance
+				Range shootingYRange;
+				if(shooter.isRaised) {
+					shootingYRange = shooter.shootingYRangeLong;
+				}else{
+					shootingYRange = shooter.shootingYRangeShort;
+				}
+				
+				double targetVerticalOffset = Math.abs(visionTable.getNumber("TargetY", -1)-shootingYRange.getCenter());
+				SmartDashboard.putBoolean("In range", (targetVerticalOffset <= shootingYRange.getRange()));
+			}else{
+				SmartDashboard.putBoolean("Aligned", false);
+				SmartDashboard.putBoolean("In range", false);
 			}
 		}
 

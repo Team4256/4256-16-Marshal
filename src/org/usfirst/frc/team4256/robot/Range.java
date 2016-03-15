@@ -26,4 +26,8 @@ public class Range {
 	public boolean isWithinRange(double n) {
 		return (min <= n&&n <= max);
 	}
+	
+	public static boolean withinRange(double n, Range range) {
+		return range.isWithinRange(n);
+	}
 }

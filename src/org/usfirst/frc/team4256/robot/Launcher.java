@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;
 	
+	Range shootingYRangeShort = new Range(146, 182);
+	Range shootingYRangeLong = new Range(187, 221);
+	
 	CANTalon shooterLeft;
 	CANTalon shooterRight;
 	DoubleSolenoid turretLifter;

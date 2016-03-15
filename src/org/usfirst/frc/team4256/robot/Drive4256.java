@@ -114,7 +114,7 @@ public class Drive4256 {
 		alignToTarget(controller, .3, .1, .1);
 		
 		//Stop alignment if the target has been aligned and the robot is not rotating
-		if(alignToTarget(controller, .06, .08, .2) && Math.abs(Robot.gyro.getRate()) < 1) {
+		if(alignToTarget(controller, .06, .08, .2) && !Robot.gyro.isMoving()) {
 			isAligning = false;
 		}
 	}

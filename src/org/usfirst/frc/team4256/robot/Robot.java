@@ -120,7 +120,8 @@ public class Robot extends IterativeRobot {
 			AutoModes.exeSrvc.execute(new Runnable() {
 				@Override
 				public void run() {
-					AutoModes.start();
+					AutoModes.test();
+//					AutoModes.start();
 				}});
 		}
 	}
@@ -156,6 +157,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
+		SmartDashboard.putNumber("RawAngle", gyro.getRawAngle());
 		SmartDashboard.putNumber("Angle", gyro.getAngle());
 		//Update systems
 //		turret.update();

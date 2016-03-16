@@ -31,7 +31,7 @@ public class AutoModes {
 	public static final double LATERAL_DISTANCE_FIRST_OBSTACLE_TO_CENTER_TARGET = 3663.6008/25.4;
 	public static final double ROBOT_DISTANCE_OFFSET = 50;
 	
-	public static final double RAMP_ANGLE = 8;//Actual angle is 12, but 6 should be enough
+	public static final double RAMP_ANGLE = 6;//Actual angle is 12, but 6 should be enough
 
 	
 	public static ExecutorService exeSrvc = Executors.newCachedThreadPool();
@@ -270,8 +270,17 @@ public class AutoModes {
 		AutoModes.alignAndFire();
 	}
 
+	
+	
 	///////////////////MODES//////////////////
-	public static void test() {
+	public static void test() {//TODO test marker
+		Robot.gamemode = Gamemode.AUTONOMOUS;
+		Robot.gyro.zeroYaw();
+		Robot.drive.fastGear();
+		
+		moveForwardToRamp(.7, new Range(100, 50000));
+		Timer.delay(1);
+		moveForwardOffRamp(.7, 50000);
 	}
 	
 	public static void oneBall(Obstacle obstacleToCross) {
@@ -529,35 +538,39 @@ public class AutoModes {
 	
 	//------elevation------
 	public static double lastGroundElevation;
-	public static void moveForwardToRamp(double direction, double driveSpeed, long timeoutMillis) {
+	public static void moveForwardToRamp(double driveSpeed, Range duration) {
+		double direction = (driveSpeed<0? -1:1);
+		moveForwardForTime(direction*driveSpeed, (long) duration.min);
+		
 		lastGroundElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
 //		while(direction*(Robot.gyro.getElevation() - lastGroundElevation) >= RAMP_ANGLE-1 && 
-		while(Robot.gyro.getElevation() <= lastGroundElevation + direction*(RAMP_ANGLE-2) && 
-				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+		while(Robot.gyro.getElevation()-lastGroundElevation <= direction*(RAMP_ANGLE) && 
+				System.currentTimeMillis()-startTime < duration.getRange() && inAutonomous()) {
 			SmartDashboard.putNumber("Elevation", Robot.gyro.getElevation());
 //			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
-			Robot.drive.arcadeDrive(direction*driveSpeed, 0);
+			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 
 		stop();
 	}
 	
-	public static void moveForwardOffRamp(double direction, double driveSpeed, long timeoutMillis) {
+	public static void moveForwardOffRamp(double driveSpeed, long timeoutMillis) {
+		double direction = (driveSpeed<0? -1:1);
+		
 		double startElevation = Robot.gyro.getElevation();
 		long startTime = System.currentTimeMillis();
 		
 		//Wait for robot reach down ramp
-//		while(Math.abs(Robot.gyro.getElevation() - startElevation) <= 2*RAMP_ANGLE && 
-		while(Robot.gyro.getElevation() >= lastGroundElevation - direction*(RAMP_ANGLE-2) && 
-				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+		while(Robot.gyro.getElevation()-lastGroundElevation >= -direction*(RAMP_ANGLE) && 
+				System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
 			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 		
 		//Wait for robot to become level
 		while(Math.abs(Robot.gyro.getElevation() - lastGroundElevation) >= 1/*1 is max error*/ && 
-				System.currentTimeMillis()-startTime < timeoutMillis  && inAutonomous()) {
+				System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
 			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 

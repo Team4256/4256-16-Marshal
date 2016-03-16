@@ -18,7 +18,7 @@ public class NavaxGyro extends AHRS {
 	}
 	
 	public double getElevation() {
-		return -super.getRoll();
+		return super.getRoll();
 	}
 
 	private void updateAngle() {
@@ -27,6 +27,10 @@ public class NavaxGyro extends AHRS {
 	
 	private double getNormalizedAngle() {
 		return targetAngle.getNormalizedValueForContinous(super.getAngle());
+	}
+
+	public double getRawAngle() {
+		return super.getAngle();
 	}
 	
 	public double getAngle() {

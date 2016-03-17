@@ -14,7 +14,7 @@ public class NavaxGyro extends AHRS {
 	public NavaxGyro(edu.wpi.first.wpilibj.SerialPort.Port kmxp) {
 		super(kmxp);
 		zeroYaw();
-		targetAngle = new RangedDouble(new Range(0, 360), 0);
+		targetAngle = new RangedDouble(new Range(0, 360), 0, true);
 	}
 	
 	public double getElevation() {
@@ -48,12 +48,24 @@ public class NavaxGyro extends AHRS {
 	public double getAngleDisplacementFromAngleAsMotorValue(double targetAngle/*, double deadband, double minimumMagnitude*/) {
 		updateAngle();
 		SmartDashboard.putNumber("angle displacement", this.targetAngle.getDisplacementFrom(targetAngle));
-		double motorValue = this.targetAngle.getDisplacementFrom(targetAngle)/180;
-		if(motorValue < 0) {
-			return -.6;
-		}else{
-			return .6;
+		double displacementAngle = this.targetAngle.getDisplacementFrom(targetAngle);
+		
+//		if(Math.abs(displacementAngle) <= 1) {
+//			return 0;
+//		}
+		
+		double motorValue = displacementAngle/90;
+		if(motorValue > 1) {
+			return 1;
+		}else if(motorValue < -1) {
+			return -1;
 		}
+		return motorValue;
+//		if(motorValue < 0) {
+//			return -.6;
+//		}else{
+//			return .6;
+//		}
 		
 		
 //		return this.targetAngle.range.toRange(targetAngle, Range.MOTOR_RANGE)*.5;

@@ -120,8 +120,8 @@ public class Robot extends IterativeRobot {
 			AutoModes.exeSrvc.execute(new Runnable() {
 				@Override
 				public void run() {
-					AutoModes.test();
-//					AutoModes.start();
+//					AutoModes.test();
+					AutoModes.start();
 				}});
 		}
 	}

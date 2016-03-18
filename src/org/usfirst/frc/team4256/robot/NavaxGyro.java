@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class NavaxGyro extends AHRS {
 	private RangedDouble targetAngle;
+	private double offset = 0;
 
 	
 	/**
@@ -13,8 +14,14 @@ public class NavaxGyro extends AHRS {
 	 */
 	public NavaxGyro(edu.wpi.first.wpilibj.SerialPort.Port kmxp) {
 		super(kmxp);
+		reset();
 		zeroYaw();
 		targetAngle = new RangedDouble(new Range(0, 360), 0, true);
+	}
+	
+	public void zeroYaw() {
+		super.zeroYaw();
+//		offset = super.getAngle();
 	}
 	
 	public double getElevation() {
@@ -22,15 +29,15 @@ public class NavaxGyro extends AHRS {
 	}
 
 	private void updateAngle() {
-		targetAngle.setValue(super.getAngle());
+		targetAngle.setValue(getRawAngle());
 	}
 	
 	private double getNormalizedAngle() {
-		return targetAngle.getNormalizedValueForContinous(super.getAngle());
+		return targetAngle.getNormalizedValueForContinous(getRawAngle());
 	}
 
 	public double getRawAngle() {
-		return super.getAngle();
+		return super.getAngle()-offset;
 	}
 	
 	public double getAngle() {

@@ -109,12 +109,28 @@ public class Drive4256 {
 	
 	private void align(DBJoystick controller) {
 		//Align if target is farther from center
-		alignToTarget(controller, .6, 0, 0);
-		alignToTarget(controller, .55, .08, .25);
-		alignToTarget(controller, .3, .1, .1);
+//		alignToTarget(controller, .6, 0, 0);
+//		alignToTarget(controller, .58, .15, .15);
+//		alignToTarget(controller, .3, .15, .06);
+//		alignToTarget(controller, .1, .15, .08);
 		
-		//Stop alignment if the target has been aligned and the robot is not rotating
-		if(alignToTarget(controller, .06, .08, .2) && !Robot.gyro.isMoving()) {
+		
+//		alignToTarget(controller, .6, 0, 0);
+//		alignToTarget(controller, .58, .15, .15);
+//		alignToTarget(controller, .2, .16, .02);
+//		alignToTarget(controller, .1, .15, .04);
+//		
+//		//Stop alignment if the target has been aligned and the robot is not rotating
+//		if(alignToTarget(controller, .03, .13, .1) && !Robot.gyro.isMoving()) {
+//			isAligning = false;
+//		}
+//		alignToTarget(controller, .6, 0, 0);
+//		alignToTarget(controller, .58, .1, .15);
+//		alignToTarget(controller, .3, .1, .1);
+		alignToTarget(controller, .3, .12, .02);
+		alignToTarget(controller, .2, .08, .02);
+		alignToTarget(controller, .1, .08, .1);
+		if(alignToTarget(controller, .03, .08, .2) && !Robot.gyro.isRotating()) {
 			isAligning = false;
 		}
 	}
@@ -133,11 +149,11 @@ public class Drive4256 {
 		
 		if(Math.abs(targetOffset) > accuracy) {
 			targetOffset = AutoModes.getTargetOffset();
-			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .66));
+			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .56));
 			
 			if(pauseIncrementDelay != 0) {
 				isAligning = !teleopDelay(driveIncrementDelay, controller);
-				if(isAligning) return false;
+				if(!isAligning) return false;
 				robotDrive.arcadeDrive(0, 0);
 				isAligning = !teleopDelay(pauseIncrementDelay, controller);
 			}
@@ -151,20 +167,19 @@ public class Drive4256 {
 	/**
 	 * Delays unless a joystick control is activated.
 	 * Returns true if the joystick has been activated.
-	 * @param delayMillis - the milliseconds to delay.
+	 * @param timeoutSeconds - the SECONDS to delay.
 	 * @param controller -  the controller to check actions for.
 	 * @return
 	 */
-	private static boolean teleopDelay(double delayMillis, DBJoystick controller) {
+	private static boolean teleopDelay(double timeoutSeconds, DBJoystick controller) {
 		long startTime = System.currentTimeMillis();
-		Robot.gyro.resetDisplacement();
 		
-		while(System.currentTimeMillis()-startTime < delayMillis) {
+		while(System.currentTimeMillis()-startTime <= timeoutSeconds*1000) {
 			if(controller.anyControlIsActive()) {
 				return true;
 			}
 		}
-		
+		SmartDashboard.putNumber("teleop delay", System.currentTimeMillis()-startTime);
 		return false;
 	}
 }

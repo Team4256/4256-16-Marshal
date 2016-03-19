@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 public class Intake {
 	
-	public static final double ROLLER_IN_SPEED = 1;
+	public static final double ROLLER_IN_SPEED = .8;
 	public static final double ROLLER_OUT_SPEED = 1;
 	
 	public State currentAction = State.nothing;

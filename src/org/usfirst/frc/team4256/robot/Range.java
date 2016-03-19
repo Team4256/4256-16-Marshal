@@ -23,6 +23,10 @@ public class Range {
 		return min+range/2;
 	}
 	
+	public double fromPercent(double percent) {
+		return min+range*percent/100;
+	}
+	
 	public boolean isWithinRange(double n) {
 		return (min <= n&&n <= max);
 	}

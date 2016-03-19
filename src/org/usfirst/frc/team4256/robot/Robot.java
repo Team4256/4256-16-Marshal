@@ -121,7 +121,9 @@ public class Robot extends IterativeRobot {
 				@Override
 				public void run() {
 //					AutoModes.test();
+					long startTime = System.currentTimeMillis();
 					AutoModes.start();
+					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
 				}});
 		}
 	}
@@ -138,6 +140,8 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopInit() {
 		Robot.drive.fastGear();
+		gearShiftToggle.state = true;
+		intake.currentAction = Intake.State.nothing;
 //		Robot.drive.enableBreakMode(false);
 	}
 

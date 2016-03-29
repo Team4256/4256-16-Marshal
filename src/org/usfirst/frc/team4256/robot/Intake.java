@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
 	
@@ -66,6 +67,8 @@ public class Intake {
 			shouldHaveBall = true;
 			currentAction = State.nothing;
 		}
+		
+		SmartDashboard.putBoolean("Ball", shouldHaveBall);
 		set();
 		
 	}

@@ -1,94 +1,55 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Shifter Value" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="227" y="400"/>
+	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
-		<location x="1147" y="14"/>
-		<width>736</width>
-		<height>361</height>
+		<location x="723" y="47"/>
+		<width>498</width>
+		<height>411</height>
 	</static-widget>
-	<widget field="Aligned" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="1154" y="406"/>
-		<width>511</width>
-		<height>59</height>
-	</widget>
 	<widget field="In range" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="1163" y="488"/>
-		<width>507</width>
-		<height>444</height>
+		<location x="716" y="596"/>
+		<width>568</width>
+		<height>288</height>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
-		<location x="21" y="19"/>
-		<width>438</width>
-		<height>307</height>
-		<property name="Image File" value="C:\Users\FRC1\workspace\FRC-2016-Competition\Auto Modes Image.png"/>
-	</static-widget>
-	<widget field="Shifter Value" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="510" y="489"/>
-		<width>428</width>
-		<height>55</height>
-		<property name="Foreground" value="0.204.0.255"/>
-		<property name="Background" value="0.0.0.255"/>
-		<property name="Font Size" value="40"/>
-	</widget>
-	<widget field="Shooter Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="486" y="407"/>
-		<width>366</width>
-		<height>55</height>
-		<property name="Foreground" value="255.255.0.255"/>
-		<property name="Background" value="0.0.0.255"/>
-		<property name="Font Size" value="40"/>
-	</widget>
-	<widget field="NumberOfBalls" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="80" y="432"/>
-	</widget>
-	<widget field="Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="114" y="392"/>
+	<widget field="Aligned" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="719" y="470"/>
+		<width>560</width>
+		<height>91</height>
 	</widget>
 	<widget field="AUTONOMOUS MODE" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="36" y="353"/>
+		<location x="400" y="311"/>
+		<height>42</height>
 	</widget>
-	<widget field="Autonomous mode:" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="599"/>
+	<widget field="Shooter Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="348" y="488"/>
 	</widget>
-	<widget field="ObstaclePosition" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="309"/>
+	<widget field="Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="477" y="258"/>
+		<width>205</width>
+		<height>45</height>
 	</widget>
-	<widget field="AutonomousObstacles" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="42"/>
-	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="484" y="12"/>
-		<width>481</width>
-		<height>370</height>
-		<property name="Size" value="320x240"/>
-	</static-widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="currently-used distance"/>
-	<hidden field="Auto Run Time"/>
-	<hidden field="Shooter Wheels"/>
-	<hidden field="motorMagnitude"/>
-	<hidden field="goal<->robot angle differential"/>
-	<hidden field="Elevation"/>
-	<hidden field="AutonomousObstacles5"/>
-	<hidden field="AutonomousObstacles4"/>
-	<hidden field="target values"/>
-	<hidden field="current based limit?"/>
-	<hidden field="target offset"/>
-	<hidden field="dist x"/>
-	<hidden field="dist y"/>
-	<hidden field="Are we in range?"/>
-	<hidden field="RawAngle"/>
-	<hidden field="Front limit"/>
+	<hidden field="--"/>
 	<hidden field="             "/>
-	<hidden field="dist z"/>
+	<hidden field="max"/>
+	<hidden field="Auto Run Time"/>
 	<hidden field="AutonomousObstacles1"/>
 	<hidden field="AutonomousObstacles3"/>
-	<hidden field="dist left"/>
+	<hidden field="Shooter Wheels"/>
 	<hidden field="AutonomousObstacles2"/>
-	<hidden field="Hayden-untested distance"/>
-	<hidden field="angle displacement"/>
-	<hidden field="teleop delay"/>
+	<hidden field="motorMagnitude"/>
+	<hidden field="-"/>
+	<hidden field="Elevation"/>
+	<hidden field="AutonomousObstacles5"/>
 	<hidden field="Angle"/>
+	<hidden field="AutonomousObstacles4"/>
 	<hidden field="Angle Lock Toggle"/>
+	<hidden field="target offset"/>
+	<hidden field="NumberOfBalls"/>
+	<hidden field="RawAngle"/>
+	<hidden field="Front limit"/>
 </xml>

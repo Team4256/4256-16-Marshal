@@ -1,7 +1,12 @@
 <xml version="1.0">
 <dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="561" y="12"/>
+		<width>517</width>
+		<height>357</height>
+	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
-		<location x="1147" y="14"/>
+		<location x="1279" y="21"/>
 		<width>736</width>
 		<height>361</height>
 	</static-widget>
@@ -16,7 +21,7 @@
 		<height>444</height>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
-		<location x="21" y="19"/>
+		<location x="23" y="27"/>
 		<width>438</width>
 		<height>307</height>
 		<property name="Image File" value="C:\Users\FRC1\workspace\FRC-2016-Competition\Auto Modes Image.png"/>
@@ -55,12 +60,6 @@
 	<widget field="AutonomousObstacles" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="42"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="484" y="12"/>
-		<width>481</width>
-		<height>370</height>
-		<property name="Size" value="320x240"/>
-	</static-widget>
 </dashboard>
 <live-window>
 </live-window>

@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot {
 	
 	static DigitalInput frontLimitSwitch = new DigitalInput(2);
 	
-	static CameraServer camera = CameraServer.getInstance();  
+//	static CameraServer camera = CameraServer.getInstance();  
 	
 	
 	
@@ -93,14 +93,14 @@ public class Robot extends IterativeRobot {
 		}
 		
 		{//Camera
-			camera.setQuality(100);
-			camera.startAutomaticCapture("cam1");
+//			camera.setQuality(100);
+//			camera.startAutomaticCapture("cam1");
 		}
 		
 		{//SmartDashboard
 			//SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
 			//SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
-			SmartDashboard.putNumber("AUTONOMOUS MODE", 9);
+			SmartDashboard.putNumber("AUTONOMOUS MODE", 8);
 			SmartDashboard.putNumber("Position", 1);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
 			SmartDashboard.putString("             ","AUTONOMOUS MODE");
@@ -160,6 +160,13 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
+		
+//		if(AutoModes.runningAutoModeInTeleop) {
+//			return;
+//		}else if(xboxDriver.getRawButton(DBJoystick.BUTTON_A)) {
+//			AutoModes.runAutoModeFromTeleop(300);
+//		}
+		
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
 		SmartDashboard.putNumber("RawAngle", gyro.getRawAngle());
 		SmartDashboard.putNumber("Angle", gyro.getAngle());
@@ -183,16 +190,13 @@ public class Robot extends IterativeRobot {
 			drive.lockAngle(dpadeast.getState());
 		}
 		
-		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
-		SmartDashboard.putNumber("Hayden-untested distance",Robot.visionTable.getNumber("HaydenTargetDistance", 0));
-		SmartDashboard.putNumber("currently-used distance", Robot.visionTable.getNumber("TargetDistance", 0));
-		SmartDashboard.putNumber("goal<->robot angle differential", Robot.visionTable.getNumber("AngleDifferential", 0));
 		
 		//Turret
 		{
-			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				drive.alignToTarget();
+			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {
+				drive.superAlignToTarget();
 			}
 			
 			//Toggle shooter motors
@@ -213,27 +217,6 @@ public class Robot extends IterativeRobot {
 			}else{
 				shooter.lower();
 				SmartDashboard.putString("Shooter Position", "Down");
-			}
-			
-			//Check if robot is within shooting range
-			if(visionTable.getBoolean("TargetVisibility", false)) {
-				//Check target alignment
-				double targetRotationalOffset = Math.abs(visionTable.getNumber("TargetX", 0)-visionTable.getNumber("ImageWidth", -1)/2);
-				SmartDashboard.putBoolean("Aligned", (targetRotationalOffset <= 6));
-				
-				//Check target distance
-				Range shootingYRange;
-				if(shooter.isRaised) {
-					shootingYRange = shooter.shootingYRangeLong;
-				}else{
-					shootingYRange = shooter.shootingYRangeShort;
-				}
-				
-				double targetVerticalOffset = Math.abs(visionTable.getNumber("TargetY", -1)-shootingYRange.getCenter());
-				SmartDashboard.putBoolean("In range", (targetVerticalOffset <= shootingYRange.getRange()));
-			}else{
-				SmartDashboard.putBoolean("Aligned", false);
-				SmartDashboard.putBoolean("In range", false);
 			}
 		}
 
@@ -301,6 +284,10 @@ public class Robot extends IterativeRobot {
 		//This can be done with an *enum for location, and *boolean declaring if the robot contains a ball
 		
 		
+	}
+	
+	public void disabledInit() {
+		AutoModes.runningAutoModeInTeleop = false;
 	}
 
 	/**

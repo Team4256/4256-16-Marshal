@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive4256 {
-	public static final double DRIVE_TURN_OFFSET = .12;
+	public static final double DRIVE_TURN_OFFSET = 0;//.12 - scewed to left with new drive fixs
 	public static final double DRIVE_TURN_BACKWARDS_OFFSET = 0;
 	
-	RobotDrive robotDrive;
+	static RobotDrive robotDrive;
 	DoubleSolenoid gearShifter;
 	Double lockedAngle;
 //	DoubleSolenoid rightGearShifter;
@@ -20,6 +20,7 @@ public class Drive4256 {
 	CANTalon wheelBackRight;
 	
 	boolean isAligning;
+	boolean isSuperAligning;
 	double targetOffset;
 
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid gearShifter) {
@@ -38,13 +39,17 @@ public class Drive4256 {
 		LFMotor.setInverted(true);
 		LBMotor.setInverted(true);
 		this.robotDrive = new RobotDrive(LFMotor/*, LBMotor*/, RFMotor/*, RBMotor*/);
+		this.robotDrive.setSafetyEnabled(false);
 
 		this.gearShifter = gearShifter;
 //		this.rightGearShifter = rightGearShifter;
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
-		if(isAligning) {
+		//Drive
+		if(isSuperAligning) {
+			superAlign(Robot.xboxGun);
+		}else if(isAligning) {
 			align(Robot.xboxGun);
 		}else{
 			//Get rotational offset (due to wheel resistance/friction)
@@ -65,6 +70,27 @@ public class Drive4256 {
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 			}
 		}
+		
+		//Check if robot is within shooting range
+		if(Robot.visionTable.getBoolean("TargetVisibility", false)) {
+			//Check target alignment
+			double targetRotationalOffset = Math.abs(Robot.visionTable.getNumber("TargetX", 0)-Robot.visionTable.getNumber("ImageWidth", -1)/2);
+			SmartDashboard.putBoolean("Aligned", (targetRotationalOffset <= 6));
+			
+			//Check target distance
+			Range shootingYRange;
+			if(Robot.shooter.isRaised) {
+				shootingYRange = Robot.shooter.shootingYRangeLong;
+			}else{
+				shootingYRange = Robot.shooter.shootingYRangeShort;
+			}
+			
+			double targetVerticalOffset = Math.abs(Robot.visionTable.getNumber("TargetY", -1)-shootingYRange.getCenter());
+			SmartDashboard.putBoolean("In range", (targetVerticalOffset <= shootingYRange.getRange()));
+		}else{
+			SmartDashboard.putBoolean("Aligned", false);
+			SmartDashboard.putBoolean("In range", false);
+		}
 	}
 	
 	public void enableBreakMode(boolean brake) {
@@ -84,13 +110,13 @@ public class Drive4256 {
 	}
 
 	public void slowGear() {
-		SmartDashboard.putString("Shifter Value", "Low Gear");
+		SmartDashboard.putString("Shifter Value", "High Gear");//switched for practice
 		gearShifter.set(DoubleSolenoid.Value.kForward);
 //		rightGearShifter.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void fastGear() {
-		SmartDashboard.putString("Shifter Value", "High Gear");
+		SmartDashboard.putString("Shifter Value", "Low Gear");//switched for robot
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
 //		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
 	}
@@ -102,37 +128,50 @@ public class Drive4256 {
 			lockedAngle = null;
 		}
 	}
+	
+	public void superAlignToTarget() {
+		isSuperAligning = true;
+	}
 
 	public void alignToTarget() {
 		isAligning = true;
 	}
 	
-	private void align(DBJoystick controller) {
-		//Align if target is farther from center
-//		alignToTarget(controller, .6, 0, 0);
-//		alignToTarget(controller, .58, .15, .15);
-//		alignToTarget(controller, .3, .15, .06);
-//		alignToTarget(controller, .1, .15, .08);
+	private void superAlign(DBJoystick controller) {
+		if (moveToTarget(Robot.shooter.shootingYRangeShort)) {
+			if (align(Robot.xboxGun)) {
+				Robot.shooter.fire();
+				isSuperAligning = false;
+			}
+		}
+	}
+
+	public boolean moveToTarget(Range shootingYRange) {
+		double driveSpeed = Robot.visionTable.getNumber("TargetY", -1) >= shootingYRange.max-15 ? .65 : 1;
+		double targetY = Robot.visionTable.getNumber("TargetY", -1);
+//		long startTime = System.currentTimeMillis();
 		
-		
-//		alignToTarget(controller, .6, 0, 0);
-//		alignToTarget(controller, .58, .15, .15);
-//		alignToTarget(controller, .2, .16, .02);
-//		alignToTarget(controller, .1, .15, .04);
-//		
-//		//Stop alignment if the target has been aligned and the robot is not rotating
-//		if(alignToTarget(controller, .03, .13, .1) && !Robot.gyro.isMoving()) {
-//			isAligning = false;
-//		}
-//		alignToTarget(controller, .6, 0, 0);
-//		alignToTarget(controller, .58, .1, .15);
-//		alignToTarget(controller, .3, .1, .1);
+		//Drive until target is at the farthest shooting range
+		if(targetY >= shootingYRange.max) {
+			arcadeDrive(driveSpeed, AutoModes.capMaximumMotorValue(AutoModes.getTargetOffset(), .85));
+		}else if(targetY >= shootingYRange.fromPercent(75)) {
+			driveSpeed = .5;
+			arcadeDrive(driveSpeed, AutoModes.capMaximumMotorValue(AutoModes.getTargetOffset(), .8));
+		}else{
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean align(DBJoystick controller) {
 		alignToTarget(controller, .3, .12, .02);
 		alignToTarget(controller, .2, .08, .02);
 		alignToTarget(controller, .1, .08, .1);
 		if(alignToTarget(controller, .03, .08, .2) && !Robot.gyro.isRotating()) {
 			isAligning = false;
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -145,11 +184,21 @@ public class Drive4256 {
 	 * @return whether or not the target is within the specified accuracy
 	 */
 	private boolean alignToTarget(DBJoystick controller, double accuracy, double driveIncrementDelay, double pauseIncrementDelay) {
+		//Terminate if target not visible
+		if(!Robot.visionTable.getBoolean("TargetVisibility", false)) {
+			isAligning = false;
+			isSuperAligning = false;
+			return false;
+		}
+		
+		//Get target offset
 		targetOffset = AutoModes.getTargetOffset();
 		
+		//Rotate towards target center
 		if(Math.abs(targetOffset) > accuracy) {
 			targetOffset = AutoModes.getTargetOffset();
-			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .56));
+//			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .56));
+			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .48, .56));
 			
 			if(pauseIncrementDelay != 0) {
 				isAligning = !teleopDelay(driveIncrementDelay, controller);
@@ -163,15 +212,8 @@ public class Drive4256 {
 			return true;
 		}
 	}
-
-	/**
-	 * Delays unless a joystick control is activated.
-	 * Returns true if the joystick has been activated.
-	 * @param timeoutSeconds - the SECONDS to delay.
-	 * @param controller -  the controller to check actions for.
-	 * @return
-	 */
-	private static boolean teleopDelay(double timeoutSeconds, DBJoystick controller) {
+	
+	public static boolean teleopDelay(double timeoutSeconds, DBJoystick controller) {
 		long startTime = System.currentTimeMillis();
 		
 		while(System.currentTimeMillis()-startTime <= timeoutSeconds*1000) {
@@ -179,7 +221,7 @@ public class Drive4256 {
 				return true;
 			}
 		}
-		SmartDashboard.putNumber("teleop delay", System.currentTimeMillis()-startTime);
+		
 		return false;
 	}
 }

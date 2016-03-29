@@ -53,6 +53,7 @@ public class Intake {
 	}
 	
 	public void loadTurret() {
+		Robot.drive.isAligning = false;
 		shouldHaveBall = false;
 		currentAction = State.loadTurret;
 	}

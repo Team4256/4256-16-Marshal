@@ -56,7 +56,7 @@ public class AutoModes {
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.reset();
 		Robot.gyro.zeroYaw();
-		Robot.drive.fastGear();
+		Robot.drive.slowGear();
 		//Robot.drive.enableBreakMode(true);
 		
 		//Get SmartDashboard variables
@@ -155,10 +155,10 @@ public class AutoModes {
 //			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 8:default: //Corner Shot
-//			syncIntakeLifterDownSlight();
+			syncIntakeLifterDownSlight();
 			Robot.shooter.start();
 			Robot.shooter.raise();
-			Timer.delay(1);
+			Timer.delay(2);
 			Robot.intake.intakeRoller.set(Intake.ROLLER_IN_SPEED);
 			break;
 		case 20: //Corner Shot and back through low bar
@@ -203,16 +203,20 @@ public class AutoModes {
 		case 9:	//Low Bar
 //			AutoModes.oneBall(Obstacle.low_bar);
 			//Approach (backwards)
-			startPosition = 1;
-			speed = -.75;
-			syncIntakeLifterDown();
-			AutoModes.moveForwardForTime(-speed, 800);
-//			AutoModes.moveForwardForTime(-speed, 500);
-			
-			//Cross (backwards)
-			AutoModes.moveForwardForTime(-speed, 1000);
-			
-			moveFromObstacleToTargetAndFire(-speed);
+//			startPosition = 1;
+//			speed = -.75;
+//			syncIntakeLifterDown();
+//			AutoModes.moveForwardForTime(-speed, 800);
+////			AutoModes.moveForwardForTime(-speed, 500);
+//			
+//			//Cross (backwards)
+//			AutoModes.moveForwardForTime(-speed, 1000);
+//			
+//			moveFromObstacleToTargetAndFire(-speed);
+//			break;
+			Robot.drive.slowGear();
+			speed = -.9;
+			moveForwardForTime(speed, DISTANCE_TO_TIME(44, speed));
 			break;
 		case 99:
 			Robot.drive.arcadeDrive(0, 0.4);
@@ -223,7 +227,8 @@ public class AutoModes {
 			lowBar(speed);
 			break;
 		case 101:	//Portcullis with gyro
-			speed = -1;
+			speed = -.7;
+			Robot.drive.fastGear();
 			
 			//Go to portcullis
 			private_syncIntakeLifter(-1, 1000);
@@ -236,27 +241,37 @@ public class AutoModes {
 			//Go under portcullis and lift
 			speed = -.7;
 			moveForwardForTime(speed, 1000);
-			Robot.intakeLifter.moveLifter(.4);
+			Robot.intakeLifter.moveLifter(1);//maybe increase speed
 			
+			//
+			moveForwardForTime(-.2, 300);
+			moveForwardForTime(speed, 3000-300);
+			//
 			//Go forward while lifting, cross barrier
 //			speed = -.55;
 //			moveForwardOffRamp(speed, 8000);
-			moveForwardForTime(speed, 3000);
+			
+//			moveForwardForTime(speed, 3000);
 			Robot.intakeLifter.moveLifter(0);
 			
 			//Drive to tower and fire
 			speed = -.7;
 			syncIntakeLifterDown();
+			Robot.drive.slowGear();
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 102:	//Cheval De Frise with gyro
 			speed = -.9;
 			
 			//Mount cheval de frise
-			syncIntakeLifterDownSlight();
+			//syncIntakeLifterDownSlight();
+			Robot.drive.slowGear();
 			moveForwardForTime(speed, DISTANCE_TO_TIME(10, speed));
 			lastGroundElevation = Robot.gyro.getElevation();
-			moveForwardForTime(speed, DISTANCE_TO_TIME(35, speed));
+			//moveForwardForTime(speed, DISTANCE_TO_TIME(41, speed));//changed during competition from 35
+			moveForwardForTime(speed, DISTANCE_TO_TIME(52, speed));//guaranteed to have hit it
+			Timer.delay(.2);
+			moveForwardForTime(.5, 400);//back up a tiny bit to get ready for lifter
 			intakeLifterDown();
 			Timer.delay(.5);
 			
@@ -298,6 +313,71 @@ public class AutoModes {
 			Robot.drive.slowGear();
 			speed = -.7;
 			moveFromObstacleToTargetAndFire(speed);
+			break;
+		case 105:	//Moat with gyro
+			speed = .8;
+			
+			//Mount cheval de frise
+//			syncIntakeLifterDownHalf();
+			Robot.shooter.lower();
+//			moveForwardToRamp(speed, new Range(100, 5000));
+//			moveForwardForTime(speed, DISTANCE_TO_TIME(5, speed));
+//			moveForwardOffRamp(speed, 2500);
+			moveForwardForTime(speed, DISTANCE_TO_TIME(156, speed));
+			//Drive to tower and fire
+			syncIntakeLifterDown();
+			speed = -.7;
+			moveFromObstacleToTargetAndFireBackwards(speed);
+			break;
+		case 111:	//Portcullis with gyro - no shot
+			speed = -.7;
+			Robot.drive.fastGear();
+			
+			//Go to portcullis
+			private_syncIntakeLifter(-1, 1000);
+			Timer.delay(.3);
+			moveForwardForTime(speed, 100);
+			lastGroundElevation = Robot.gyro.getElevation();
+			moveForwardForTime(speed, 600);
+			Robot.intakeLifter.moveLifter(-.6);
+			
+			//Go under portcullis and lift
+			speed = -.7;
+			moveForwardForTime(speed, 1000);
+			Robot.intakeLifter.moveLifter(1);//maybe increase speed
+			
+			//Go forward while lifting, cross barrier
+//			speed = -.55;
+//			moveForwardOffRamp(speed, 8000);
+			moveForwardForTime(speed, 3000);
+			Robot.intakeLifter.moveLifter(0);
+			
+			//just drive a little more
+			moveForwardForTime(speed, 300);
+//			//Drive to tower and fire
+//			speed = -.7;
+//			syncIntakeLifterDown();
+			break;
+		case 112:	//Cheval De Frise with gyro - no shot
+			speed = -.9;
+			
+			//Mount cheval de frise
+//			syncIntakeLifterDownSlight();
+			Robot.drive.slowGear();
+			moveForwardForTime(speed, DISTANCE_TO_TIME(10, speed));
+			lastGroundElevation = Robot.gyro.getElevation();
+			//moveForwardForTime(speed, DISTANCE_TO_TIME(41, speed));//changed during competition from 35
+			moveForwardForTime(speed, DISTANCE_TO_TIME(52, speed));//guaranteed to have hit it
+			Timer.delay(.2);
+			moveForwardForTime(.5, 450);//back up a tiny bit to get ready for lifter
+			intakeLifterDown();
+			Timer.delay(.5);
+			
+			//Cross barrier
+			speed = -1;
+			moveForwardForTime(speed, DISTANCE_TO_TIME(62, speed));
+			Timer.delay(.1);
+			moveForwardForTime(speed, DISTANCE_TO_TIME(16, speed));
 			break;
 		case 200:	//Low Bar with gyro, 2 ball with spy bot
 			speed = .9;
@@ -375,19 +455,28 @@ public class AutoModes {
 		moveForwardOffRamp(speed, 2500);
 		
 		//Go to tower
-		syncIntakeLifterUp();
+		syncIntakeLifterUpFull();
 		moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
-//		rotateDegreesTimeBased(0, speed, 70);
-		rotateToGyroPosition(45);
+		
+//		moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
+//		moveForwardForTime(speed, .15, DISTANCE_TO_TIME(30, speed));
+//		rotateToGyroPosition(45);
+
+		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(45)) > 1 && inAutonomous()) {
+			double turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+			Robot.drive.arcadeDrive(.45, turnSpeed);
+		}stop();
 		
 		//Drive to target, align, fire
 		Robot.shooter.shooterLeft.set(1);
-		moveToTarget(speed, new Range(100, 4000));
+		moveToTarget(speed, new Range(100, 4000), 30);
+		syncIntakeLifterDown();
 		alignAndFire();
 	}
 	
 	public static void moveFromObstacleToTargetAndFire(double speed) {
 		speed = -.9;
+		Robot.drive.slowGear();
 		//Final angle to turn to based on robot orientation
 		double finalAngleForCenterTarget = (speed<0? 175:0);
 		//Prepare to fire
@@ -415,7 +504,16 @@ public class AutoModes {
 //			speed = -.7;
 //			moveForwardForTime(-speed, DISTANCE_TO_TIME(24, speed));
 		}
+
+		//Drive to target, align, fire
+		speed = Math.abs(.7);
+		moveToTarget(speed, new Range(0, 2000));
+//		alignToTargetIncremental();
+//		Timer.delay(.2);
+		alignAndFire();
 	}
+	
+		//for rough terrain
 		public static void moveFromObstacleToTargetAndFireBackwards(double speed) {
 			speed = .9;
 			//Final angle to turn to based on robot orientation
@@ -459,7 +557,7 @@ public class AutoModes {
 	public static void test() {//TODO test marker
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.zeroYaw();
-		Robot.drive.fastGear();
+		Robot.drive.slowGear();
 		
 //		rotateTimeBased(0, .9, 6000);
 		moveForwardForTime(.9, 4000);
@@ -573,7 +671,11 @@ public class AutoModes {
 	
 	//------intake lifter sync------
 	public static void syncIntakeLifterUp() {
-		private_syncIntakeLifter(AUTO_LIFTER_UP_MOTOR_SPEED, 800);
+		private_syncIntakeLifter(AUTO_LIFTER_UP_MOTOR_SPEED, 600);
+	}
+	
+	public static void syncIntakeLifterUpFull() {
+		private_syncIntakeLifter(AUTO_LIFTER_UP_MOTOR_SPEED, 1000);
 	}
 	
 	public static void syncIntakeLifterDown() {
@@ -589,7 +691,7 @@ public class AutoModes {
 	}
 
 	public static void syncIntakeLifterDownSlight() {
-		private_syncIntakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 80);
+		private_syncIntakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 150);
 	}
 
 	private static int intakeLifterLastThreadIndex = 0;
@@ -617,7 +719,7 @@ public class AutoModes {
 	}
 	
 	public static void intakeLifterDown() {
-		private_intakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 650);
+		private_intakeLifter(-AUTO_LIFTER_DOWN_MOTOR_SPEED, 700);
 	}
 	
 	private static void private_intakeLifter(double liftSpeed, long timeoutMillis) {
@@ -845,8 +947,12 @@ public class AutoModes {
 
 		stop();
 	}
-	
+
 	public static void moveToTarget(double driveSpeed, Range duration) {
+		moveToTarget(driveSpeed, duration, 15);
+	}
+	
+	public static void moveToTarget(double driveSpeed, Range duration, double distToSlowFrom) {
 		long startTime = System.currentTimeMillis();
 		
 		//Drive until robot sees target
@@ -856,13 +962,13 @@ public class AutoModes {
 		}
 		
 		//Drive until target is at the farthest shooting range
-		while(Robot.visionTable.getNumber("TargetY", -1) >= Robot.shooter.shootingYRangeShort.max &&
-				System.currentTimeMillis()-startTime < duration.max && inAutonomous()) {
+		while(Robot.visionTable.getNumber("TargetY", -1) >= Robot.shooter.shootingYRangeShort.fromPercent(75)/*.max*/ &&
+				/*System.currentTimeMillis()-startTime < duration.max &&*/ inAutonomous()) {
 			//Slow when close
-			if(Robot.visionTable.getNumber("TargetY", -1) <= Robot.shooter.shootingYRangeShort.max+15) {
+			if(Robot.visionTable.getNumber("TargetY", -1) <= Robot.shooter.shootingYRangeShort.max+distToSlowFrom) {
 				driveSpeed = .5;
 			}
-			Robot.drive.arcadeDrive(driveSpeed, correctMotorValue(getTargetOffset(), 0, .55));
+			Robot.drive.arcadeDrive(driveSpeed, 0);//correctMotorValue(getTargetOffset(), 0, .35));//changed in competition from .55 to .35
 		}
 		
 //		//Drive until target is in middle shooting range at slower speed

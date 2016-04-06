@@ -65,6 +65,28 @@ public class Drive4256 {
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 			}
 		}
+		
+		//Check if robot is within shooting range
+		if(Robot.visionTable.getBoolean("TargetVisibility", false)) {
+			//Check target alignment
+			double targetRotationalOffset = Math.abs(Robot.visionTable.getNumber("TargetX", 0)-Robot.visionTable.getNumber("ImageWidth", -1)/2);
+			SmartDashboard.putBoolean("Aligned", (targetRotationalOffset <= 6));
+			
+			//Check target distance
+			Range shootingYRange;
+			if(Robot.shooter.isRaised) {
+				shootingYRange = Robot.shooter.shootingYRangeLong;
+			}else{
+				shootingYRange = Robot.shooter.shootingYRangeShort;
+			}
+			
+			//Updates dashboard with range info
+			double targetY = Robot.visionTable.getNumber("TargetY", -1);
+			SmartDashboard.putBoolean("In range", shootingYRange.min <= targetY && shootingYRange.max >= targetY);
+		}else{
+			SmartDashboard.putBoolean("Aligned", false);
+			SmartDashboard.putBoolean("In range", false);
+		}
 	}
 	
 	public void enableBreakMode(boolean brake) {
@@ -86,12 +108,14 @@ public class Drive4256 {
 	public void slowGear() {
 		SmartDashboard.putString("Shifter Value", "Low Gear");
 		gearShifter.set(DoubleSolenoid.Value.kForward);
+		Robot.gearShiftToggle.state = false;
 //		rightGearShifter.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void fastGear() {
 		SmartDashboard.putString("Shifter Value", "High Gear");
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
+		Robot.gearShiftToggle.state = true;
 //		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
 	}
 	
@@ -108,6 +132,7 @@ public class Drive4256 {
 	}
 	
 	private void align(DBJoystick controller) {
+		slowGear();//Added in competition
 		//Align if target is farther from center
 //		alignToTarget(controller, .6, 0, 0);
 //		alignToTarget(controller, .58, .15, .15);
@@ -175,7 +200,8 @@ public class Drive4256 {
 		long startTime = System.currentTimeMillis();
 		
 		while(System.currentTimeMillis()-startTime <= timeoutSeconds*1000) {
-			if(controller.anyControlIsActive()) {
+//			if(controller.anyControlIsActive()) {
+			if(Robot.xboxDriver.anyControlIsActive() || Robot.xboxGun.anyControlIsActive()) {
 				return true;
 			}
 		}

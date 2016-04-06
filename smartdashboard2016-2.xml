@@ -30,26 +30,25 @@
 		<width>205</width>
 		<height>45</height>
 	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
+		<location x="68" y="36"/>
+		<width>318</width>
+		<height>254</height>
+		<property name="Image File" value="C:\Users\FRC1\workspace\FRC-2016-Competition\Auto Modes Image.png"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
+		<location x="723" y="47"/>
+		<width>498</width>
+		<height>411</height>
+	</static-widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="--"/>
 	<hidden field="             "/>
-	<hidden field="max"/>
-	<hidden field="Auto Run Time"/>
+	<hidden field="AutonomousObstacles5"/>
+	<hidden field="AutonomousObstacles4"/>
 	<hidden field="AutonomousObstacles1"/>
 	<hidden field="AutonomousObstacles3"/>
-	<hidden field="Shooter Wheels"/>
 	<hidden field="AutonomousObstacles2"/>
-	<hidden field="motorMagnitude"/>
-	<hidden field="-"/>
-	<hidden field="Elevation"/>
-	<hidden field="AutonomousObstacles5"/>
-	<hidden field="Angle"/>
-	<hidden field="AutonomousObstacles4"/>
-	<hidden field="Angle Lock Toggle"/>
-	<hidden field="target offset"/>
 	<hidden field="NumberOfBalls"/>
-	<hidden field="RawAngle"/>
-	<hidden field="Front limit"/>
 </xml>

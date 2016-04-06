@@ -100,15 +100,14 @@ public class Robot extends IterativeRobot {
 		{//SmartDashboard
 			//SmartDashboard.putData("AutonomousObstacles", Obstacle.autonomousObstacles);
 			//SmartDashboard.putData("ObstaclePosition", Obstacle.obstaclePosition);
-			SmartDashboard.putNumber("AUTONOMOUS MODE", 9);
-			SmartDashboard.putNumber("Position", 1);
+			SmartDashboard.putNumber("AUTONOMOUS MODE", 103);
+			SmartDashboard.putNumber("Position", 3);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
-			SmartDashboard.putString("             ","AUTONOMOUS MODE");
-
+			SmartDashboard.putString("AUTONOMOUS MODE","AUTONOMOUS MODE");
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
-				SmartDashboard.putData("AutonomousObstacles"+(i+1), Obstacle.autonomusObstacleDropDowns[i]);
-				((Obstacle) Obstacle.autonomusObstacleDropDowns[i].getSelected()).position = i+1;
+				//SmartDashboard.putData("AutonomousObstacles"+(i+1), Obstacle.autonomusObstacleDropDowns[i]);
+				//((Obstacle) Obstacle.autonomusObstacleDropDowns[i].getSelected()).position = i+1;
 			}
 		}
 	}
@@ -148,7 +147,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control
 	 */
-	Toggle gearShiftToggle = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
+	static Toggle gearShiftToggle = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
 	Toggle turretElevationToggle = new Toggle(xboxGun, DBJoystick.BUTTON_LB);
 	//Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
@@ -190,7 +189,7 @@ public class Robot extends IterativeRobot {
 		
 		//Turret
 		{
-			SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
+			//SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				drive.alignToTarget();
 			}
@@ -213,27 +212,6 @@ public class Robot extends IterativeRobot {
 			}else{
 				shooter.lower();
 				SmartDashboard.putString("Shooter Position", "Down");
-			}
-			
-			//Check if robot is within shooting range
-			if(visionTable.getBoolean("TargetVisibility", false)) {
-				//Check target alignment
-				double targetRotationalOffset = Math.abs(visionTable.getNumber("TargetX", 0)-visionTable.getNumber("ImageWidth", -1)/2);
-				SmartDashboard.putBoolean("Aligned", (targetRotationalOffset <= 6));
-				
-				//Check target distance
-				Range shootingYRange;
-				if(shooter.isRaised) {
-					shootingYRange = shooter.shootingYRangeLong;
-				}else{
-					shootingYRange = shooter.shootingYRangeShort;
-				}
-				
-				double targetVerticalOffset = Math.abs(visionTable.getNumber("TargetY", -1)-shootingYRange.getCenter());
-				SmartDashboard.putBoolean("In range", (targetVerticalOffset <= shootingYRange.getRange()));
-			}else{
-				SmartDashboard.putBoolean("Aligned", false);
-				SmartDashboard.putBoolean("In range", false);
 			}
 		}
 

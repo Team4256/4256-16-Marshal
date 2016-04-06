@@ -68,6 +68,10 @@ public class Intake {
 			currentAction = State.nothing;
 		}
 		
+		if(currentAction == State.loadTurret) {
+			Robot.drive.fastGear();//Added in competition
+		}
+		
 		SmartDashboard.putBoolean("Ball", shouldHaveBall);
 		set();
 		

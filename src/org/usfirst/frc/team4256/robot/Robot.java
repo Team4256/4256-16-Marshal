@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
     
 	//AI
 	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
-	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
+	static Gyrometer4256 gyro = new Gyrometer4256(SerialPort.Port.kMXP, 0.0, 0.0);
 
 	//Drive
 	static Drive4256 drive;	
@@ -103,7 +103,8 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putNumber("AUTONOMOUS MODE", 103);
 			SmartDashboard.putNumber("Position", 3);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
-			SmartDashboard.putString("AUTONOMOUS MODE","AUTONOMOUS MODE");
+			SmartDashboard.putNumber("Goal", 2);//1 is left, 2 is center, 3 is right
+			
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
 				//SmartDashboard.putData("AutonomousObstacles"+(i+1), Obstacle.autonomusObstacleDropDowns[i]);
@@ -179,20 +180,28 @@ public class Robot extends IterativeRobot {
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			drive.lockAngle(dpadeast.getState());
+			//start hayden changes
+			//drive.lockAngle(dpadeast.getState());
+			double moveValue = xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale;
+			double rotateValue = xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*0.75;
+			Drive4256.headingCorrection(moveValue, rotateValue, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
+			while (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
+				Drive4256.align(1000, 3);
+			}
+			SmartDashboard.putNumber("acceleration from gyro", Robot.gyro.getAcceleration());
+			//stop hayden changes
 		}
 		
+		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
-		SmartDashboard.putNumber("Hayden-untested distance",Robot.visionTable.getNumber("HaydenTargetDistance", 0));
-		SmartDashboard.putNumber("currently-used distance", Robot.visionTable.getNumber("TargetDistance", 0));
 		SmartDashboard.putNumber("goal<->robot angle differential", Robot.visionTable.getNumber("AngleDifferential", 0));
 		
 		//Turret
 		{
 			//SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
-				drive.alignToTarget();
-			}
+//			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
+//				drive.alignToTarget();
+//			}
 			
 			//Toggle shooter motors
 			if(shooterToggle.getState()) {

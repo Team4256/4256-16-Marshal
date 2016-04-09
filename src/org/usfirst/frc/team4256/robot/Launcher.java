@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;
 	
-//	Range shootingYRangeShort = new Range(155, 170);//changed in competition from 150
-	Range shootingYRangeShort = new Range(168, 183);//was 165, 175
-	Range shootingYRangeLong = new Range(187, 221);
 
-//	Range shootingYRangeShort = new Range(146, 182);
-//	Range shootingYRangeLong = new Range(187, 221);
+	//Range shootingYRangeShort = new Range(168, 183);//numbers for competition //was 165, 175
+	//Range shootingYRangeLong = new Range(187, 221);//numbers for competition
+
+	Range shootingYRangeShort = new Range(165, 175);//for practice bot
+	Range shootingYRangeLong = new Range(187, 221);//for practice bot
 	
 	CANTalon shooterLeft;
 	CANTalon shooterRight;

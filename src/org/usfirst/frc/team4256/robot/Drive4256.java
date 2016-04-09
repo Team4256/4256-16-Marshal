@@ -42,8 +42,10 @@ public class Drive4256 {
 		this.gearShifter = gearShifter;
 //		this.rightGearShifter = rightGearShifter;
 	}
-
 	public void arcadeDrive(double moveValue, double rotateValue) {
+		arcadeDrive(moveValue, rotateValue, true);
+	}
+	public void arcadeDrive(double moveValue, double rotateValue, boolean squareInputs) {
 		if(isAligning) {
 			align(Robot.xboxGun);
 		}else{
@@ -62,7 +64,7 @@ public class Drive4256 {
 						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
 			}else {
 				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
-				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
+				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset, squareInputs);
 			}
 		}
 		
@@ -138,13 +140,10 @@ public class Drive4256 {
 //		alignToTarget(controller, .58, .15, .15);
 //		alignToTarget(controller, .3, .15, .06);
 //		alignToTarget(controller, .1, .15, .08);
-		
-		
 //		alignToTarget(controller, .6, 0, 0);
 //		alignToTarget(controller, .58, .15, .15);
 //		alignToTarget(controller, .2, .16, .02);
 //		alignToTarget(controller, .1, .15, .04);
-//		
 //		//Stop alignment if the target has been aligned and the robot is not rotating
 //		if(alignToTarget(controller, .03, .13, .1) && !Robot.gyro.isMoving()) {
 //			isAligning = false;
@@ -159,7 +158,60 @@ public class Drive4256 {
 			isAligning = false;
 		}
 	}
-
+	//begin haydens changes------------------------------------------------------------------------------
+	private static double heading = 0.0;
+	private static boolean previousState = false;
+	public static void headingCorrection(final double moveValue, final double rotateValue, final boolean enable) {
+		heading = enable && !previousState ? Robot.gyro.getCurrentAngle() : heading;
+		previousState = enable;
+		if (enable) {
+			Robot.drive.arcadeDrive(Math.pow(moveValue, 2.0), rotate(heading, 500.0, 2.0), false);
+		}else {
+			Robot.drive.arcadeDrive(moveValue, rotateValue, true);
+		}
+	}
+	
+	private static double rotateStartPath = 0.0;
+	private static double rotateValue = 0.0;
+	private static double increment = 0.0;
+	private static double previousHeading = 0.0;
+	public static double rotate(final double heading, final double theoreticalTimeMS, final double tolerance) {//TODO could use max speed instead of theoretical time
+		if (heading != previousHeading) {
+			rotateStartPath = Robot.gyro.getCurrentPath(heading);
+			rotateValue = 0.0;
+			increment = 0.0;
+			previousHeading = heading;
+		}if (Math.abs(Robot.gyro.getCurrentPath(heading)) > tolerance) {
+			double a = 4.0*rotateStartPath/Math.pow(theoreticalTimeMS, 2.0);//TODO if maxspeed, then a = (2*Math.pow(maxspeed, 2.0))/getCurrentPath()
+			if (Math.abs(Robot.gyro.getCurrentPath(heading)) <= Math.abs(rotateStartPath)/2) {
+				a = -a;
+			}
+			if (Robot.gyro.getAcceleration() - a < -0.05) {
+				increment += Math.signum(a)*0.05;//TODO might want to increase or decrease the amount I am adding based on how far off I am from a
+			}else if (Robot.gyro.getAcceleration() - a > 0.05) {
+				increment += Math.signum(-a)*0.05;
+			}else {
+				increment = Math.signum(a)*increment;
+			}
+			rotateValue += increment;
+		}return rotateValue;
+	}
+	
+	public static void align(final double theoreticalTimeMS, final double tolerance) {
+		Robot.drive.slowGear();
+		double targetHeading = previousHeading;
+		if (Math.abs(Robot.gyro.getCurrentAngle() - previousHeading) < 5.0) {
+			targetHeading = Robot.gyro.getCurrentAngle() + Robot.visionTable.getNumber("AngleDifferential", 0);
+		}
+		previousHeading = targetHeading;
+		SmartDashboard.putNumber("current angle", Robot.gyro.getCurrentAngle());
+		SmartDashboard.putNumber("targetHeading", targetHeading);
+		SmartDashboard.putNumber("rotateValue", rotate(targetHeading, theoreticalTimeMS, tolerance));
+		Robot.drive.arcadeDrive(0.0, rotate(targetHeading, theoreticalTimeMS, tolerance), false);
+	}
+	//end haydens changes----------------------------------------------------------------------
+	
+	
 	/**
 	 * Will rotate the drive system towards the target.
 	 * 
@@ -173,7 +225,6 @@ public class Drive4256 {
 		targetOffset = AutoModes.getTargetOffset();
 		
 		if(Math.abs(targetOffset) > accuracy) {
-			targetOffset = AutoModes.getTargetOffset();
 			robotDrive.arcadeDrive(0, AutoModes.correctMotorValue(targetOffset, .45, .56));
 			
 			if(pauseIncrementDelay != 0) {

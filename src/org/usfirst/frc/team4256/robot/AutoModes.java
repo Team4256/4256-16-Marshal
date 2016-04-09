@@ -199,7 +199,7 @@ public class AutoModes {
 			Robot.drive.fastGear();//should be fast gear but backwards on practice robot
 			syncIntakeLifterDownRockWall();
 			Timer.delay(.5);
-			moveForwardForTime(speed, DISTANCE_TO_TIME(168, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
 			Timer.delay(.5);
 			//Drive to tower and fire
 			Robot.drive.slowGear();
@@ -394,7 +394,7 @@ public class AutoModes {
 		}else if (goal == 2) {//good (from comp)
 			if(startPosition == 2) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 60);
-				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
+				moveForwardForTime(speed, DISTANCE_TO_TIME(80, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 3) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 30);

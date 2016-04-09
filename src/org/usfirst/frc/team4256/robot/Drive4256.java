@@ -130,7 +130,7 @@ public class Drive4256 {
 	public void alignToTarget() {
 		isAligning = true;
 	}
-	
+
 	private void align(DBJoystick controller) {
 		slowGear();//Added in competition
 		//Align if target is farther from center
@@ -152,11 +152,18 @@ public class Drive4256 {
 //		alignToTarget(controller, .6, 0, 0);
 //		alignToTarget(controller, .58, .1, .15);
 //		alignToTarget(controller, .3, .1, .1);
-		alignToTarget(controller, .3, .12, .02);
+		boolean updateIt = false;
+		if (!alignToTarget(controller, .3, .12, .02)) {
+			updateIt = true;
+		}
+		long startTime = System.currentTimeMillis();
 		alignToTarget(controller, .2, .08, .02);
-		alignToTarget(controller, .1, .08, .1);
-		if(alignToTarget(controller, .03, .08, .2) && !Robot.gyro.isRotating()) {
+		alignToTarget(controller, .1, .08, .05);
+		if(alignToTarget(controller, .03, .08, .05) && !Robot.gyro.isRotating()) {
 			isAligning = false;
+		}
+		if (updateIt) {
+			SmartDashboard.putNumber("alignTime", System.currentTimeMillis() - startTime);
 		}
 	}
 

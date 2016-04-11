@@ -341,6 +341,7 @@ public class AutoModes {
 	
 	public static void lowBar(double speed) {
 		//Cross barrier
+		Robot.drive.slowGear();
 		syncIntakeLifterDown();
 		Robot.shooter.lower();
 		moveForwardToRamp(speed, new Range(100, 5000));

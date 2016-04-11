@@ -40,6 +40,7 @@ public class Robot extends IterativeRobot {
 	//AI
 	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
 	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
+	static Gyrometer4256 gyro1 = new Gyrometer4256(0, 0);
 
 	//Drive
 	static Drive4256 drive;	
@@ -154,7 +155,7 @@ public class Robot extends IterativeRobot {
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	
-	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
+	Toggle lockHeading = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	
 	public void teleopPeriodic() {
@@ -179,7 +180,7 @@ public class Robot extends IterativeRobot {
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			drive.lockAngle(dpadeast.getState());
+			FILTER4256.headingCorrection(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
@@ -193,6 +194,7 @@ public class Robot extends IterativeRobot {
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				drive.alignToTarget();
 			}
+			POLISH4256.shotAlignment(2.0, 2.0, xboxGun.getRawButton(DBJoystick.BUTTON_RB));
 			
 			//Toggle shooter motors
 			if(shooterToggle.getState()) {

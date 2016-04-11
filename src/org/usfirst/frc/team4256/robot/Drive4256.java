@@ -44,6 +44,9 @@ public class Drive4256 {
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
+		arcadeDrive(moveValue, rotateValue, true);
+	}
+	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
 		if(isAligning) {
 			align(Robot.xboxGun);
 		}else{
@@ -59,10 +62,10 @@ public class Drive4256 {
 			if (lockedAngle != null) {
 				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
 				robotDrive.arcadeDrive(moveValue, rotateValue + 
-						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
+						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset, squaredInputs);
 			}else {
 				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
-				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
+				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset, squaredInputs);
 			}
 		}
 		

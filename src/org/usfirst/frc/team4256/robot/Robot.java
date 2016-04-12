@@ -178,10 +178,9 @@ public class Robot extends IterativeRobot {
 		//Drive
 		{
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
-//IAN IAN IAN IAN IAN!!!!!!!!! if the robot does not move, then uncomment the code below (just delete the slashes, and redeploy)!!!!!!!!!!!!!!!!!!!!!!!!!
-			//drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
+			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			FILTER4256.headingCorrection(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
+			//FILTER4256.headingCorrection(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
 		}
 		
 		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());

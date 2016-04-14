@@ -166,21 +166,21 @@ public class AutoModes {
 			Timer.delay(.1);
 			
 			//Drive to tower and fire
-			speed = -.9;
+			speed = -.7;//-.7 in cinci, -.9 on saturday
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 103:	//Rough terrain with gyro
 			speed = .9;
 			Robot.drive.fastGear();
 			Robot.shooter.lower();
-			moveForwardForTime(speed, DISTANCE_TO_TIME(92.5, speed));//156 in slow gear//was 105 in high gear
+			moveForwardForTime(speed, DISTANCE_TO_TIME(92.5, speed));//156 in slow gear
 			//Drive to tower and fire
-			Timer.delay(.15);
 			if(startPosition != 4) {//y y y y ?????
 				syncLifterDownHalf();
 			}
-			speed = .7;
+			speed = -.7;//-.7 in cinci, .7 on saturday
 			Robot.drive.slowGear();
+			Timer.delay(.1);
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 104:	//RockWall with gyro
@@ -190,11 +190,11 @@ public class AutoModes {
 			Robot.drive.fastGear();//should be fast gear but backwards on practice robot
 			syncIntakeLifterDownRockWall();
 			Timer.delay(.5);
-			moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));//168 for slow gear
 			Timer.delay(.5);
 			//Drive to tower and fire
 			Robot.drive.slowGear();
-			speed = -.9;
+			speed = -.7;//-.7 in cinci, -.9 on saturday
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 105:	//Moat with gyro
@@ -209,7 +209,7 @@ public class AutoModes {
 			moveForwardForTime(speed, DISTANCE_TO_TIME(156, speed));
 			//Drive to tower and fire
 			syncIntakeLifterDown();
-			speed = .9;
+			speed = .9;//-.7 in cinci, -.9 on saturday
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 111:	//Portcullis with gyro - no shot
@@ -359,6 +359,7 @@ public class AutoModes {
 	}
 	
 	public static void moveFromObstacleToTargetAndFire(double speed) {
+		//speed = -.9 in cinci, meaning param wasn't even being used back then
 		Robot.drive.slowGear();
 		//Final angle to turn to based on robot orientation
 		double finalAngleForLeftTarget = (speed<0? 180+60: 60);

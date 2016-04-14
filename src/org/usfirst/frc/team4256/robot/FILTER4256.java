@@ -85,7 +85,7 @@ public class FILTER4256 {//things that are used to aid the driver, yet are not s
 	
 	public static double getCurrentPath_Motor(final float goalAngle) {
 		double motorValue = (double)Robot.gyro.getCurrentPath(goalAngle)/90;
-		motorValue = Math.abs(motorValue) > 1 ? Math.signum(motorValue)*1 : motorValue;
+		motorValue = Math.abs(motorValue) > 1 ? Math.signum(motorValue) : motorValue;
 		return motorValue;
 	}
 }

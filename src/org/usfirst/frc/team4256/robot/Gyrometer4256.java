@@ -16,6 +16,7 @@ public class Gyrometer4256 extends AHRS {
 	}
 	private double lastLegalDirection = 1.0;
 	private double lastMeasuredAngle = 0.0;
+	private double lastMeasuredAcceleration = 0.0;
 	private double lastMeasuredRate = 0.0;
 	private long lastMeasuredRateTime = System.currentTimeMillis();
 	/**
@@ -128,11 +129,12 @@ public class Gyrometer4256 extends AHRS {
 		return false;
 	}
 	
-	public double getAcceleration() {//TODO may have to change for AHRS
-		double a = (getRate()*1000.0 - lastMeasuredRate)/(System.currentTimeMillis() - lastMeasuredRateTime);
-		lastMeasuredRate = getRate()*1000.0;
-		lastMeasuredRateTime = System.currentTimeMillis();
-		return a;
+	public double getAcceleration() {//if I update too often my change in rate will be too low
+		if (System.currentTimeMillis() - lastMeasuredRateTime >= 200) {//TODO adjust this value to change how often a gets updated
+			lastMeasuredAcceleration = (getRate()*1000.0 - lastMeasuredRate)/(System.currentTimeMillis() - lastMeasuredRateTime);
+			lastMeasuredRate = getRate()*1000.0;
+			lastMeasuredRateTime = System.currentTimeMillis();
+		}return lastMeasuredAcceleration;
 	}
 	
 	public float getElevation() {

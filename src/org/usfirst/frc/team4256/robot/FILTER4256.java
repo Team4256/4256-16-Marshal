@@ -7,10 +7,12 @@ public class FILTER4256 {//things that are used to aid the driver, yet are not s
 	private static Map<String, Boolean> previousStates = new HashMap<String, Boolean>();
 	public static Map<String, Boolean> toggleStates = new HashMap<String, Boolean>();
 	private static Map<String, Long> stickyTimes = new HashMap<String, Long>();
+	public static double minimumRotationSpeed = 0.45;//TODO calibrate
 	private static float rotateAngle = 0;
 	private static double rotateValue = 0.0;
 	private static double rotateIncrement = 0.0;
 	private static boolean previousStateR = false;
+	private static double currentPath = 0.0;
 	
 	public static boolean toggleize(final String key, final boolean currentState) {
 		if (previousStates.get(key) == null) {
@@ -62,17 +64,17 @@ public class FILTER4256 {//things that are used to aid the driver, yet are not s
 		if (enable) {
 			if (!previousStateR) {
 				rotateAngle = goalAngle;
-				rotateValue = 0.0;//TODO could be Math.signum(a or path)*minimumRotationSpeed
+				currentPath = (double)Robot.gyro.getCurrentPath(rotateAngle);
+				rotateValue = Math.signum(currentPath)*(minimumRotationSpeed - 0.05);
 				rotateIncrement = 0.0;
 			}
 			if (Math.abs((double)Robot.gyro.getCurrentPath(rotateAngle)) > Math.abs(tolerance)) {
-				double path = (double)Robot.gyro.getCurrentPath(rotateAngle);
-				double a = 4.0*path/Math.pow(theoreticalTimeS, 2.0);//TODO do calculations that take into account my current speed rather than Vi of 0
-				if (Math.abs((double)Robot.gyro.getCurrentPath(rotateAngle)) <= Math.abs(path)/2.0) {
+				double a = 4.0*currentPath/Math.pow(theoreticalTimeS, 2.0);//TODO take into account my current speed rather than Vi of 0
+				if (Math.abs((double)Robot.gyro.getCurrentPath(rotateAngle)) <= Math.abs(currentPath)/2.0) {
 					a = -a;
 					rotateIncrement = -rotateIncrement;
 				}
-				if (Math.abs(Robot.gyro.getAcceleration()) - Math.abs(a) < -5.0) {
+				if (Math.abs(Robot.gyro.getAcceleration()) - Math.abs(a) < -5.0) {//getAcceleration may need to update slower to get meaningful data
 					rotateIncrement += Math.signum(a)*0.05;//TODO adjust this value experimentally
 				}else if (Math.abs(Robot.gyro.getAcceleration()) - Math.abs(a) > 5.0) {
 					rotateIncrement += Math.signum(-a)*0.05;

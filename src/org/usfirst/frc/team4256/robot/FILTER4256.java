@@ -47,9 +47,9 @@ public class FILTER4256 {//things that are used to aid the driver, yet are not s
 	**/
 	public static void headingCorrection(final double moveValue, final double rotateValue, final boolean enable) {
 		if (enable) {
-			Robot.drive.arcadeDrive(Math.pow(moveValue, 2.0), rotate(enable, Robot.gyro1.getCurrentAngle(), 0.5, 2.0), false);//TODO adjust these values experimentally
+			Robot.drive.arcadeDriveNoSquare(moveValue*moveValue, rotate(enable, Robot.gyro.getCurrentAngle(), 0.5, 2.0));//TODO adjust these values experimentally
 		}else {
-			Robot.drive.arcadeDrive(moveValue, rotateValue, true);
+			Robot.drive.arcadeDrive(moveValue, rotateValue);
 		}
 	}
 	/**
@@ -65,21 +65,27 @@ public class FILTER4256 {//things that are used to aid the driver, yet are not s
 				rotateValue = 0.0;//TODO could be Math.signum(a or path)*minimumRotationSpeed
 				rotateIncrement = 0.0;
 			}
-			if (Math.abs((double)Robot.gyro1.getCurrentPath(rotateAngle)) > Math.abs(tolerance)) {
-				double path = (double)Robot.gyro1.getCurrentPath(rotateAngle);
+			if (Math.abs((double)Robot.gyro.getCurrentPath(rotateAngle)) > Math.abs(tolerance)) {
+				double path = (double)Robot.gyro.getCurrentPath(rotateAngle);
 				double a = 4.0*path/Math.pow(theoreticalTimeS, 2.0);//TODO do calculations that take into account my current speed rather than Vi of 0
-				if (Math.abs((double)Robot.gyro1.getCurrentPath(rotateAngle)) <= Math.abs(path)/2.0) {
+				if (Math.abs((double)Robot.gyro.getCurrentPath(rotateAngle)) <= Math.abs(path)/2.0) {
 					a = -a;
 					rotateIncrement = -rotateIncrement;
 				}
-				if (Math.abs(Robot.gyro1.getAcceleration()) - Math.abs(a) < -5.0) {
+				if (Math.abs(Robot.gyro.getAcceleration()) - Math.abs(a) < -5.0) {
 					rotateIncrement += Math.signum(a)*0.05;//TODO adjust this value experimentally
-				}else if (Math.abs(Robot.gyro1.getAcceleration()) - Math.abs(a) > 5.0) {
+				}else if (Math.abs(Robot.gyro.getAcceleration()) - Math.abs(a) > 5.0) {
 					rotateIncrement += Math.signum(-a)*0.05;
 				}rotateValue += rotateIncrement;
 			}
 		}
 		previousStateR = enable;
 		return rotateValue;
+	}
+	
+	public static double getCurrentPath_Motor(final float goalAngle) {
+		double motorValue = (double)Robot.gyro.getCurrentPath(goalAngle)/90;
+		motorValue = Math.abs(motorValue) > 1 ? Math.signum(motorValue)*1 : motorValue;
+		return motorValue;
 	}
 }

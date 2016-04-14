@@ -134,4 +134,8 @@ public class Gyrometer4256 extends AHRS {
 		lastMeasuredRateTime = System.currentTimeMillis();
 		return a;
 	}
+	
+	public float getElevation() {
+		return getRoll();
+	}
 }

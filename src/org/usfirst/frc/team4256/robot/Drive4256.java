@@ -11,7 +11,7 @@ public class Drive4256 {
 	
 	RobotDrive robotDrive;
 	DoubleSolenoid gearShifter;
-	Double lockedAngle;
+	Float lockedAngle;
 //	DoubleSolenoid rightGearShifter;
 
 	CANTalon wheelFrontLeft;
@@ -42,11 +42,11 @@ public class Drive4256 {
 		this.gearShifter = gearShifter;
 //		this.rightGearShifter = rightGearShifter;
 	}
-
-	public void arcadeDrive(double moveValue, double rotateValue) {
-		arcadeDrive(moveValue, rotateValue, true);
+	public void arcadeDriveNoSquare(double moveValue, double rotateValue) {
+		robotDrive.arcadeDrive(moveValue, rotateValue, false);
 	}
-	public void arcadeDrive(double moveValue, double rotateValue, boolean squaredInputs) {
+	
+	public void arcadeDrive(double moveValue, double rotateValue) {
 		if(isAligning) {
 			align(Robot.xboxGun);
 		}else{
@@ -61,11 +61,10 @@ public class Drive4256 {
 			//Arcade drive. Lock angle if set.
 			if (lockedAngle != null) {
 				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
-				robotDrive.arcadeDrive(moveValue, rotateValue + 
-						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset, squaredInputs);
+				robotDrive.arcadeDrive(moveValue, rotateValue + (double)FILTER4256.getCurrentPath_Motor(lockedAngle) + driveTurnOffset);
 			}else {
 				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
-				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset, squaredInputs);
+				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
 			}
 		}
 		
@@ -124,7 +123,7 @@ public class Drive4256 {
 	
 	public void lockAngle(boolean updateAngle) {
 		if(updateAngle && lockedAngle == null) {
-			lockedAngle = Robot.gyro.getAngle();
+			lockedAngle = Robot.gyro.getCurrentAngle();
 		}else{
 			lockedAngle = null;
 		}

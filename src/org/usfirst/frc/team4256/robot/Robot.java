@@ -38,9 +38,7 @@ public class Robot extends IterativeRobot {
 	static Relay light;
     
 	//AI
-	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
-	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
-	static Gyrometer4256 gyro1 = new Gyrometer4256(0, 0);
+	static Gyrometer4256 gyro = new Gyrometer4256(0, 0);
 
 	//Drive
 	static Drive4256 drive;	
@@ -155,38 +153,26 @@ public class Robot extends IterativeRobot {
 	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
 	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	
-	Toggle lockHeading = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
+	//Toggle lockHeading = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
-		SmartDashboard.putNumber("Elevation", gyro.getElevation());
-		SmartDashboard.putNumber("RawAngle", gyro.getRawAngle());
-		SmartDashboard.putNumber("Angle", gyro.getAngle());
+		SmartDashboard.putNumber("Current Tilt", gyro.getElevation());
+		SmartDashboard.putNumber("Current Angle", gyro.getCurrentAngle());
 		//Update systems
-//		turret.update();
 		light.set(Value.kForward);
 		intake.update();
 		intakeLifter.update();
-		
-//		if(xboxGun.getRawButton(DBJoystick.BUTTON_START)) {
-//			camera.startAutomaticCapture("cam2");
-//		}else{
-//			camera.startAutomaticCapture("cam1");
-//		}
+
 
 		//Drive
 		{
-			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
-			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
 			drive.gearShift(gearShiftToggle.getState());
-			//FILTER4256.headingCorrection(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
+			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
+			FILTER4256.headingCorrection(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale, xboxDriver.getRawButton(DBJoystick.BUTTON_Y));
 		}
 		
-		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
-		SmartDashboard.putNumber("Hayden-untested distance",Robot.visionTable.getNumber("HaydenTargetDistance", 0));
-		SmartDashboard.putNumber("currently-used distance", Robot.visionTable.getNumber("TargetDistance", 0));
-		SmartDashboard.putNumber("goal<->robot angle differential", Robot.visionTable.getNumber("AngleDifferential", 0));
 		
 		//Turret
 		{
@@ -198,7 +184,6 @@ public class Robot extends IterativeRobot {
 			
 			//Toggle shooter motors
 			if(shooterToggle.getState()) {
-//			if(xboxGun.getButtonToggleState(DBJoystick.BUTTON_Y)) {
 				shooter.start();
 				SmartDashboard.putString("Shooter Wheels", "Spinning");
 			}else{

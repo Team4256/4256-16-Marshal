@@ -394,7 +394,7 @@ public class AutoModes {
 		}else if (goal == 2) {//good (from comp)
 			if(startPosition == 2) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 60);
-				moveForwardForTime(speed, DISTANCE_TO_TIME(80, speed));
+				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 3) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 30);
@@ -734,6 +734,7 @@ public class AutoModes {
 //		alignToTarget(.4, .15, .15);
 //		alignToTarget(.2, .15, .2);
 //		alignToTarget(.03, .1, .2);
+		
 		do {
 //			alignToTarget(.6, 0, 0);
 //			alignToTarget(.58, .1, .15);

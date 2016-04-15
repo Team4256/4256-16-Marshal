@@ -152,19 +152,20 @@ public class Drive4256 {
 //		alignToTarget(controller, .6, 0, 0);
 //		alignToTarget(controller, .58, .1, .15);
 //		alignToTarget(controller, .3, .1, .1);
-		boolean updateIt = false;
-		if (!alignToTarget(controller, .3, .12, .02)) {
-			updateIt = true;
-		}
-		long startTime = System.currentTimeMillis();
+		//boolean updateIt = false;
+		//if (!alignToTarget(controller, .3, .12, .02)) {
+		//	updateIt = true;
+		//}
+		alignToTarget(controller, .3, .12, .02);
+		//long startTime = System.currentTimeMillis();
 		alignToTarget(controller, .2, .08, .02);
-		alignToTarget(controller, .1, .08, .05);
-		if(alignToTarget(controller, .03, .08, .05) && !Robot.gyro.isRotating()) {
+		alignToTarget(controller, .1, .08, .1);//.1 cinci //.05 no go
+		if(alignToTarget(controller, .03, .08, .1) && !Robot.gyro.isRotating()) {//.2 cinci //.05 no go
 			isAligning = false;
 		}
-		if (updateIt) {
-			SmartDashboard.putNumber("alignTime", System.currentTimeMillis() - startTime);
-		}
+//		if (updateIt) {
+//			SmartDashboard.putNumber("alignTime", System.currentTimeMillis() - startTime);
+//		}
 	}
 
 	/**

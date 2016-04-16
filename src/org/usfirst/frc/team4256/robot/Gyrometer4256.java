@@ -20,7 +20,7 @@ public class Gyrometer4256 extends AHRS {
 	private double lastMeasuredRate = 0.0;
 	private long lastMeasuredRateTime = System.currentTimeMillis();
 	/**
-	 * This function modifies the input to create a value between 0 and 359...
+	 * This function modifies the input to create a value between 0 and 359
 	**/
 	private static float validateAngle(final float angle) {
 		if (angle < 0) {

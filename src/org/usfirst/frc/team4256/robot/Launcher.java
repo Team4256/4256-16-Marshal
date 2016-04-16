@@ -7,10 +7,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;
-	
-//	Range shootingYRangeShort = new Range(155, 170);//changed in competition from 150
-	Range shootingYRangeShort = new Range(168, 183);//was 165, 175
-	Range shootingYRangeLong = new Range(187, 221);
+	//The second number on the image is the y which is range
+//	Range shootingYRangeShort = new Range(155, 170);//changed in Cinc competition from 150
+//	Range shootingYRangeShort = new Range(168, 183);//was 165, 175
+	Range shootingYRangeShort = new Range(150, 170);//practice robot blue gym 4/15/16
+	Range shootingYRangeLong = new Range(187, 221);  //  This is the long shot (shooter up position)
 
 //	Range shootingYRangeShort = new Range(146, 182);
 //	Range shootingYRangeLong = new Range(187, 221);

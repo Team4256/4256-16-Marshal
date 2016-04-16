@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ClimbingMech {
-	public static final double CLIMBING_WINCH_SPEED = .3;
+	public static final double CLIMBING_WINCH_SPEED = .5;
 	
 	public CANTalon climbingWinch;
 	public DoubleSolenoid flinger;

@@ -157,6 +157,7 @@ public class AutoModes {
 			
 			//Cross barrier
 			speed = -1;
+			private_intakeLifter(-LIFTER_DOWN_SPEED, 200);
 			moveForwardForTime(speed, DISTANCE_TO_TIME(62, speed));
 			Timer.delay(.1);
 			moveForwardForTime(speed, DISTANCE_TO_TIME(16, speed));
@@ -377,14 +378,16 @@ public class AutoModes {
 		Robot.shooter.shooterLeft.set(1);
 		if (goal == 1) {//change for this one
 			if(startPosition == 2) {//needs testing, should go to left goal
-				moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -5);
+				moveForwardForTime(speed, DISTANCE_TO_TIME(110, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
 			}else if(startPosition == 3) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
-				moveForwardForTime(speed, DISTANCE_TO_TIME(95, speed));
+				moveForwardForTime(speed, DISTANCE_TO_TIME(112, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
 			}else if(startPosition == 4) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -60);
+				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);	
 			}else if(startPosition == 5) {
@@ -403,6 +406,7 @@ public class AutoModes {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
+				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);	
 			}else if(startPosition == 5) {
@@ -417,13 +421,13 @@ public class AutoModes {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
 			}else if(startPosition == 3) {
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 50);
-				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
+				moveForwardForTime(speed, DISTANCE_TO_TIME(140, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
 			}else if(startPosition == 4) {
 				if(speed > 0) {//means going backwards
 					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 25);
-					syncIntakeLifterDown();
-					moveForwardForTime(speed, DISTANCE_TO_TIME(140, speed));
+					syncLifterDownHalf();
+					moveForwardForTime(speed, DISTANCE_TO_TIME(150, speed));
 				}else {
 					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 20);
 					moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
@@ -710,7 +714,8 @@ public class AutoModes {
 		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(angle)) > 1 && inAutonomous()) {
 //			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
 			turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(angle)/180, turnSpeedRange.min, turnSpeedRange.max);
-			Robot.drive.arcadeDrive(0, turnSpeed);
+			Robot.drive.arcadeDrive(0, 
+					turnSpeed);
 		}
 		
 		stop();

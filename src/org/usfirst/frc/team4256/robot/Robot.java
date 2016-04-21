@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
 	
 	//Solenoid
 	static DoubleSolenoid turretLifter = new DoubleSolenoid(0, 2, 3);
-	static DoubleSolenoid winchStop = new DoubleSolenoid(0, 5, 6); // TODO
+	static DoubleSolenoid flinger = new DoubleSolenoid(0, 5, 6); // TODO
 	
 	//Relays
 	static Relay light;
@@ -53,7 +53,7 @@ public class Robot extends IterativeRobot {
 	static CANTalon shooterLeft = new CANTalon(21);
 	static CANTalon shooterRight = new CANTalon(20);
 	
-	static CANTalon lifterWinch = new CANTalon(15);
+	static CANTalon climbingWinch = new CANTalon(15);
 	
 	
 	//Systems
@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
 			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
 			intake = new Intake(0, 5, 8, 0);
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
-			climbingMech = new ClimbingMech(lifterWinch, winchStop);
+			climbingMech = new ClimbingMech(climbingWinch, flinger);
 		}
 		
 		{//Camera
@@ -102,6 +102,7 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putNumber("AUTONOMOUS MODE", 103);
 			SmartDashboard.putNumber("Position", 3);
 			SmartDashboard.putNumber("NumberOfBalls", 1);
+			SmartDashboard.putNumber("Goal", 2);
 			SmartDashboard.putString("AUTONOMOUS MODE","AUTONOMOUS MODE");
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
@@ -155,6 +156,7 @@ public class Robot extends IterativeRobot {
 	
 	//Toggle lockHeading = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
 	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
+	Toggle climber = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
@@ -240,10 +242,12 @@ public class Robot extends IterativeRobot {
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {
 				climbingMech.startClimbing();
 			}
-			
+	
 			//Climb
-			if (climbingMech.isActive) {
-				climbingMech.moveHook(xboxGun.getRawAxis(DBJoystick.AXIS_LEFT_Y));
+			if (climber.getState()) {
+				climbingMech.raiseHook();
+			}else{
+				climbingMech.stopHook();
 			}
 		}
 	}

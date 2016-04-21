@@ -10,29 +10,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoModes {
-	private static final double VELOCITY_7 = ((double) 170)/6000;//inches per millisecond at .7 speed on practice bot
-	private static final double VELOCITY_9 = ((double) 196)/4000;//inches per millisecond at .7 speed on practice bot
-	private static final double ANGULAR_VELOCITY_7 = .2;//degrees per millisecond at .7 speed on practice bot
+	private static final double V7 = ((double) 170)/6000;//inches per millisecond at .7 speed on practice bot
+	private static final double V9 = ((double) 196)/4000;//inches per millisecond at .7 speed on practice bot
+	private static final double ANGULAR_V7 = .2;//degrees per millisecond at .7 speed on practice bot
 	
-	private static final double ROBOT_SPEED = -1;
-	private static final Range TURN_SPEED_RANGE = new Range(.7, .9);
-	private static final Range TURN_SLOW_SPEED_RANGE = new Range(.6, .95);
-	public static final double LIFTER_UP_SPEED = .5;
-	public static final double LIFTER_DOWN_SPEED = 1;
-	
-//	public static final double DISTANCE_CENTER_TO_BARRIER = 000;//TODO
-//	public static final double DISTANCE_ACROSS_BARRIER = 000;//TODO
-//	public static final double DISTANCE_DEFENCE_WIDTH = 50;//TODO add divider width, long enough
-//	
-//	public static final long TIMEOUT_DISTANCE_CENTER_TO_BARRIER = 5000;//TODO
-//	public static final long TIMEOUT_DISTANCE_ACROSS_BARRIER = 5000;//TODO
-//	public static final long TIMEOUT_DISTANCE_DEFENCE_WIDTH = 5000;//TODO
+	public static final double LIFTER_MOTORUP = .5;
+	public static final double LIFTER_MOTORDOWN = 1;
+	private static final Range ANGULAR_MOTORSLOW = new Range(.6, .95);
 
-	public static final double DISTANCE_BETWEEN_OBSTACLES = 1346.2/25.4;
-	public static final double DISTANCE_OBSTACLE_TO_WALL = 4873.645/25.4;
-	public static final double LATERAL_DISTANCE_FIRST_OBSTACLE_TO_CENTER_TARGET = 3663.6008/25.4;
-	public static final double ROBOT_DISTANCE_OFFSET = 50;
-	
 	public static final double RAMP_ANGLE = 6;//Actual angle is 12, but 6 should be enough
 
 	
@@ -347,7 +332,7 @@ public class AutoModes {
 //		rotateToGyroPosition(45);
 
 		while(Math.abs(Robot.gyro.getCurrentPath(45)) > 1 && inAutonomous()) {
-			double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+			double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, .7, .9);
 			Robot.drive.arcadeDrive(.45, turnSpeed);
 		}stop();
 		
@@ -368,66 +353,66 @@ public class AutoModes {
 		if (goal == 1) {//change for this one
 			if(startPosition == 2) {//needs testing, should go to left goal
 				moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}else if(startPosition == 3) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -20);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(95, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -60);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -60);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);	
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);	
 			}else if(startPosition == 5) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -80);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -80);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}
 		}else if (goal == 2) {//good (from comp)
 			if(startPosition == 2) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 60);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, 60);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);
 			}else if(startPosition == 3) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 30);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, 30);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -20);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);	
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);	
 			}else if(startPosition == 5) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -50);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -50);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(78, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);
 			}
 		}else if (goal == 3) {//test still, should go to right goal
 			if(startPosition == 2) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 70);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, 70);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForRightTarget);
 			}else if(startPosition == 3) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 50);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, 50);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForRightTarget);
 			}else if(startPosition == 4) {
 				if(speed > 0) {//means going backwards
-					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 25);
+					rotateToGyroPosition(ANGULAR_MOTORSLOW, 25);
 					syncIntakeLifterDown();
 					moveForwardForTime(speed, DISTANCE_TO_TIME(140, speed));
 				}else {
-					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 20);
+					rotateToGyroPosition(ANGULAR_MOTORSLOW, 20);
 					moveForwardForTime(speed, DISTANCE_TO_TIME(100, speed));
 				}
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForRightTarget);
 			}else if(startPosition == 5) {
 				if(speed > 0) {//means going backwards
-					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, .2);
+					rotateToGyroPosition(ANGULAR_MOTORSLOW, .2);
 					moveForwardForTime(speed, DISTANCE_TO_TIME(120, speed));
 				}else {
-					rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 5);
+					rotateToGyroPosition(ANGULAR_MOTORSLOW, 5);
 					moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				}
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForRightTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForRightTarget);
 			}
 		}
 		//Prepare to fire
@@ -493,11 +478,11 @@ public class AutoModes {
 		
 		//Pick up ball
 		rotateToGyroPosition(270);
-		moveForwardForTime(ROBOT_SPEED, 1000);
+		moveForwardForTime(1, 1000);
 		//TODO pick up ball
 		
 		//Return to barrier
-		moveForwardForTime(-ROBOT_SPEED, 1000);
+		moveForwardForTime(-1, 1000);
 		rotateToGyroPosition(0);
 		
 		//Fire second ball
@@ -562,27 +547,27 @@ public class AutoModes {
 	
 	//------intake lifter sync------
 	public static void syncIntakeLifterUp() {
-		private_syncIntakeLifter(LIFTER_UP_SPEED, 600);
+		private_syncIntakeLifter(LIFTER_MOTORUP, 600);
 	}
 	
 	public static void syncIntakeLifterUpFull() {
-		private_syncIntakeLifter(LIFTER_UP_SPEED, 1000);
+		private_syncIntakeLifter(LIFTER_MOTORUP, 1000);
 	}
 	
 	public static void syncIntakeLifterDown() {
-		private_syncIntakeLifter(-LIFTER_DOWN_SPEED, 800);
+		private_syncIntakeLifter(-LIFTER_MOTORDOWN, 800);
 	}
 	
 	public static void syncIntakeLifterDownRockWall() {
-		private_syncIntakeLifter(-LIFTER_DOWN_SPEED, 800);
+		private_syncIntakeLifter(-LIFTER_MOTORDOWN, 800);
 	}
 	
 	public static void syncLifterDownHalf() {
-		private_syncIntakeLifter(-LIFTER_DOWN_SPEED, 400);
+		private_syncIntakeLifter(-LIFTER_MOTORDOWN, 400);
 	}
 
 	public static void syncLifterDownSlight() {
-		private_syncIntakeLifter(-LIFTER_DOWN_SPEED, 150);
+		private_syncIntakeLifter(-LIFTER_MOTORDOWN, 150);
 	}
 
 	private static int intakeLifterLastThreadIndex = 0;
@@ -606,11 +591,11 @@ public class AutoModes {
 	
 	//------intake lifter------
 	public static void intakeLifterUp() {
-		private_intakeLifter(LIFTER_UP_SPEED, 800);
+		private_intakeLifter(LIFTER_MOTORUP, 800);
 	}
 	
 	public static void intakeLifterDown() {
-		private_intakeLifter(-LIFTER_DOWN_SPEED, 700);
+		private_intakeLifter(-LIFTER_MOTORDOWN, 700);
 	}
 	
 	private static void private_intakeLifter(double liftSpeed, long timeoutMillis) {
@@ -632,20 +617,20 @@ public class AutoModes {
 		speed = Math.abs(speed);
 		//TODO plug in formula or test more values
 		if(speed == .7) {
-			return (long) (distanceInInches/VELOCITY_7);
+			return (long) (distanceInInches/V7);
 		}else if(speed == .9) {
-			return (long) (distanceInInches/VELOCITY_9);
+			return (long) (distanceInInches/V9);
 		}
-		return (long) ((.7/speed)*distanceInInches/VELOCITY_7);
+		return (long) ((.7/speed)*distanceInInches/V7);
 	}
 	
 	public static long DEGREES_TO_TIME(double degrees, double speed) {
 		speed = Math.abs(speed);
 		//TODO plug in formula or test more values
 		if(speed == .7) {
-			return (long) (degrees/ANGULAR_VELOCITY_7);
+			return (long) (degrees/ANGULAR_V7);
 		}
-		return (long) (degrees/ANGULAR_VELOCITY_7);
+		return (long) (degrees/ANGULAR_V7);
 	}
 	
 
@@ -691,7 +676,7 @@ public class AutoModes {
 	}
 
 	public static void rotateToGyroPosition(double angle) {
-		rotateToGyroPosition(TURN_SPEED_RANGE, angle);
+		rotateToGyroPosition(new Range(.7, .9), angle);
 	}
 	
 	public static void rotateToGyroPosition(Range turnSpeedRange, double angle) {

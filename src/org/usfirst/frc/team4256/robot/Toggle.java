@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4256.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 
 public class Toggle {
 	private DBJoystick joystick;

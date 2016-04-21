@@ -49,47 +49,6 @@ public class AutoModes {
 
 		//Start selected autonomous mode
 		switch (autoMode) {
-//		case 20: //Corner Shot and back through low bar
-////			syncIntakeLifterDownSlight();
-//			Robot.shooter.start();
-//			Robot.shooter.raise();
-//			Timer.delay(1);
-//			Robot.intake.intakeRoller.set(Intake.ROLLER_IN_SPEED);
-//			
-//			syncIntakeLifterDown();
-//			Robot.shooter.lower();
-//			moveForwardForTime(.8, 250);
-//			rotateToGyroPosition(90);
-//			moveForwardForTime(1, 1000);
-//			moveForwardForTime(.75, 1200);
-//			break;
-//		case 21:	//Low Bar far shot
-//			startPosition = 1;
-//			speed = -.75;
-//			syncIntakeLifterDown();
-//			AutoModes.moveForwardForTime(-speed, 800);
-//			
-//			//Cross (backwards)
-//			AutoModes.moveForwardForTime(-speed, 1000);
-//			
-//			//Line up to target and fire
-//			Robot.shooter.shooterLeft.set(1);
-//			Robot.shooter.raise();
-//			AutoModes.moveForwardForTime(-speed, 1200);
-//			//{added
-//			Timer.delay(.1);
-//			rotateTimeBased(0, 1, 800); //400 msecs rotated 20 degrees
-//			Timer.delay(.1);
-//			fire();
-//			Timer.delay(.1);
-//			rotateTimeBased(0, -1, 800);
-//			moveForwardForTime(speed, 2200);
-//			break;
-//		case 9:	//Low Bar
-//			Robot.drive.slowGear();
-//			speed = -.9;
-//			moveForwardForTime(speed, DISTANCE_TO_TIME(44, speed));
-//			break;
 		case 100:	//Low Bar with gyro
 			speed = .9;
 			lowBar(speed);
@@ -141,7 +100,7 @@ public class AutoModes {
 			//Cross barrier
 			speed = -1;
 			moveForwardForTime(speed, DISTANCE_TO_TIME(16, speed));
-			private_intakeLifter(-LIFTER_DOWN_SPEED, 200);
+			private_intakeLifter(-LIFTER_MOTORDOWN, 200);
 			moveForwardForTime(speed, DISTANCE_TO_TIME(62, speed));
 			Timer.delay(.1);
 			
@@ -333,15 +292,15 @@ public class AutoModes {
 		if (goal == 1) {//change for this one
 			if(startPosition == 2) {//needs testing, should go to left goal
 
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -5);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -5);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(110, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}else if(startPosition == 3) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -20);
 				moveForwardForTime(speed, DISTANCE_TO_TIME(112, speed));
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForLeftTarget);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -60);
+				rotateToGyroPosition(ANGULAR_MOTORSLOW, -60);
 				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);	

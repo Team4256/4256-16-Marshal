@@ -2,8 +2,6 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Turret {

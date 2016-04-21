@@ -23,7 +23,6 @@ public class Drive4256 {
 	double targetOffset;
 
 	public Drive4256(CANTalon LFMotor, CANTalon RFMotor, CANTalon LBMotor, CANTalon RBMotor, DoubleSolenoid gearShifter) {
-		//when shifters are in, robot is on fast gear; when shifters are out, robot is on slow gear
 		wheelFrontLeft = LFMotor;
 		wheelBackLeft = LBMotor;
 		wheelFrontRight = RFMotor;

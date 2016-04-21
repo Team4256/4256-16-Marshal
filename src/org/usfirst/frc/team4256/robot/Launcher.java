@@ -2,8 +2,6 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;

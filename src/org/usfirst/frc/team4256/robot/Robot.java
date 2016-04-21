@@ -182,7 +182,7 @@ public class Robot extends IterativeRobot {
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				drive.alignToTarget();
 			}
-			POLISH4256.shotAlignment(2.0, 2.0, xboxGun.getRawButton(DBJoystick.BUTTON_RB));
+			POLISH4256.shotAlignment3(xboxGun.getRawButton(DBJoystick.BUTTON_RB));
 			
 			//Toggle shooter motors
 			if(shooterToggle.getState()) {

@@ -54,7 +54,8 @@ public class Robot extends IterativeRobot {
 	static CANTalon shooterLeft = new CANTalon(21);
 	static CANTalon shooterRight = new CANTalon(20);
 	
-	static CANTalon climbingWinch = new CANTalon(15);
+	static CANTalon climbingWinchLeft = new CANTalon(15);
+	static CANTalon climbingWinchRight = new CANTalon(16);
 	
 	
 	//Systems
@@ -89,7 +90,7 @@ public class Robot extends IterativeRobot {
 			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
 			intake = new Intake(0, 5, 8, 0);
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
-			climbingMech = new ClimbingMech(climbingWinch, flinger);
+			climbingMech = new ClimbingMech(climbingWinchLeft, climbingWinchRight, flinger);
 		}
 		
 		{//Camera

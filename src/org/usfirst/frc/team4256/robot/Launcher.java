@@ -10,7 +10,7 @@ public class Launcher {
 	//The second number on the image is the y which is range
 //	Range shootingYRangeShort = new Range(155, 170);//changed in Cinc competition from 150
 //	Range shootingYRangeShort = new Range(168, 183);//was 165, 175
-	Range shootingYRangeShort = new Range(150, 170);//practice robot blue gym 4/15/16
+	Range shootingYRangeShort = new Range(130, 145);//stem symposium (pilot's right belt was loose) //was 150, 170
 	Range shootingYRangeLong = new Range(187, 221);  //  This is the long shot (shooter up position)
 
 //	Range shootingYRangeShort = new Range(146, 182);

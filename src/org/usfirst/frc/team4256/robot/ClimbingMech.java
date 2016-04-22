@@ -6,13 +6,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class ClimbingMech {
 	public static final double CLIMBING_WINCH_SPEED = 1;
 	
-	public CANTalon climbingWinch;
+	public CANTalon climbingWinchLeft;
+	public CANTalon climbingWinchRight;
 	public DoubleSolenoid flinger;
 	
 	boolean isActive = false;
 	
-	public ClimbingMech(CANTalon climbingWinch, DoubleSolenoid winchStop){
-		this.climbingWinch = climbingWinch;
+	public ClimbingMech(CANTalon climbingWinchLeft, CANTalon climbingWinchRight, DoubleSolenoid winchStop){
+		this.climbingWinchLeft = climbingWinchLeft;
+		this.climbingWinchRight = climbingWinchRight;
 		this.flinger = winchStop;
 	}
 	
@@ -22,10 +24,15 @@ public class ClimbingMech {
 	}
 	
 	public void raiseHook() {
-		climbingWinch.set(CLIMBING_WINCH_SPEED);
+		setHookSpeed(CLIMBING_WINCH_SPEED);
 	}
 	
 	public void stopHook() {
-		climbingWinch.set(0);
+		setHookSpeed(0);
+	}
+	
+	private void setHookSpeed(double speed) {
+		climbingWinchLeft.set(speed);
+		climbingWinchRight.set(-speed);
 	}
 }

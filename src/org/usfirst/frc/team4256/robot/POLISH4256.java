@@ -33,18 +33,19 @@ public class POLISH4256 {//things that are used regardless of the driver, yet ar
 		}
 	}
 	
-	public static void shotAlignment3(boolean enable) {
+	public static void shotAlignment3(int button) {
 		Float startAngle = null;
 		Long startTime = null;
-		while(enable) {
+		while(Robot.xboxGun.getRawButton(button)) {
 			if (!Robot.visionTable.getBoolean("TargetVisibility", false)) {
-				Robot.drive.arcadeDrive(0.0, 0.9);
+				Robot.drive.arcadeDrive(0.0, 0.8);
 			}else if (Math.abs(Robot.visionTable.getNumber("AngleDifferential", 0.0)) > 2.0) {//make sure target offset is incorporated into the vision calculations for this angle
 				if (startAngle == null) {startAngle = Robot.gyro.getCurrentAngle();}
 				if (startTime == null) {startTime = System.currentTimeMillis()/1000;}
-				float deltaAngle = Robot.gyro.getCurrentPath(startAngle);
+				float deltaAngle = 10 + Robot.gyro.getCurrentPath(startAngle);
 				float deltaTime = (System.currentTimeMillis()/1000) - startTime;
-				double rotateValue = deltaAngle/deltaTime > 0.7 ? 0.7 : (double)(deltaAngle/deltaTime);//may need to multiply time by ten or maybe even square it to slow down quickly enough
+				//use salt's correct motor value, between .8 and .45
+				double rotateValue = deltaAngle/deltaTime > 0.5 ? 0.5 : (double)(deltaAngle/deltaTime);//may need to multiply time by ten or maybe even square it to slow down quickly enough
 				Robot.drive.arcadeDrive(0.0, rotateValue*Math.signum(Robot.gyro.getCurrentPath((float)Robot.visionTable.getNumber("AngleDifferential", 0.0))));
 			}
 		}

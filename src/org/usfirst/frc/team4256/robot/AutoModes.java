@@ -99,16 +99,17 @@ public class AutoModes {
 			
 			//Cross barrier
 			speed = -1;
-			moveForwardForTime(speed, DISTANCE_TO_TIME(16, speed));
-			private_intakeLifter(-LIFTER_MOTORDOWN, 200);
-			moveForwardForTime(speed, DISTANCE_TO_TIME(62, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(78, speed));
+//			private_intakeLifter(-LIFTER_MOTORDOWN, 200);
+			//moveForwardForTime(speed, DISTANCE_TO_TIME(62, speed));
 			Timer.delay(.1);
 			
 			//Drive to tower and fire
-			speed = -.7;//-.7 in cinci, -.9 on saturday
+			speed = -.9;//-.7 in cinci, -.9 on saturday
 			moveFromObstacleToTargetAndFire(speed);
 			break;
 		case 103:	//Rough terrain with gyro
+			syncLifterDownHalf();
 			speed = .9;
 			Robot.drive.fastGear();
 			Robot.shooter.lower();
@@ -301,7 +302,6 @@ public class AutoModes {
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);
 			}else if(startPosition == 4) {
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, -60);
-				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForLeftTarget);	
 			}else if(startPosition == 5) {
@@ -320,7 +320,6 @@ public class AutoModes {
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, -20);
-                syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(ANGULAR_MOTORSLOW, finalAngleForCenterTarget);	
 			}else if(startPosition == 5) {

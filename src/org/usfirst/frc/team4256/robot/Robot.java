@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot {
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1));
 			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
-			intake = new Intake(0, 5, 8, 0);
+			intake = new Intake(0, 5, 8, 0);//first number was 0
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(climbingWinch, flinger);
 		}
@@ -182,10 +182,12 @@ public class Robot extends IterativeRobot {
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
 				drive.alignToTarget();
 			}
-			POLISH4256.shotAlignment3(xboxGun.getRawButton(DBJoystick.BUTTON_RB));
+			POLISH4256.shotAlignment3(DBJoystick.BUTTON_RB);
 			
 			//Toggle shooter motors
-			if(shooterToggle.getState()) {
+			if(xboxGun.getPOV() == DBJoystick.POV_WEST) {
+				shooter.shootLeft();
+			}else if(shooterToggle.getState()) {
 				shooter.start();
 				SmartDashboard.putString("Shooter Wheels", "Spinning");
 			}else{

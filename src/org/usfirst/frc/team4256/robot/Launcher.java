@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Launcher {
 	public static final double SHOOTER_SPEED = .95;
@@ -25,9 +26,18 @@ public class Launcher {
 		this.shooterRight = shooterRight;
 		this.turretLifter = turretLifter;
 		
-		shooterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
-		shooterRight.set(shooterLeft.getDeviceID());
+		changeControlMode(true);
 //		SmartDashboard.putNumber("shooter speed", .95);
+	}
+	
+	private void changeControlMode(boolean makeFollower) {
+		if(makeFollower) {
+			shooterRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+			shooterRight.set(shooterLeft.getDeviceID());
+		}else{
+			shooterRight.changeControlMode(CANTalon.TalonControlMode.Speed);
+			shooterRight.set(0);
+		}
 	}
 //	
 	public void stop() {
@@ -35,11 +45,18 @@ public class Launcher {
 	}
 	Toggle shooterToggle = new Toggle(Robot.xboxGun, DBJoystick.BUTTON_B);
 	public void start() {
+		changeControlMode(true);
 //		double shooterScale = (shooterToggle.getState() ? 1 : SHOOTER_SPEED);
 //		shooterLeft.set(SmartDashboard.getNumber("shooter speed", .95));
 		shooterLeft.set(SHOOTER_SPEED);
 //		SmartDashboard.putBoolean("Shooter Scale", shooterToggle.getState());
 		
+	}
+	
+	public void shootLeft() {
+		changeControlMode(false);
+		shooterLeft.set(.94);
+		shooterRight.set(SHOOTER_SPEED);
 	}
 	
 	public void fire() {

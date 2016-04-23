@@ -121,7 +121,7 @@ public class Drive4256 {
 	
 	public void lockAngle(boolean updateAngle) {
 		if(updateAngle && lockedAngle == null) {
-			lockedAngle = Robot.gyro.getCurrentAngle();
+			lockedAngle = (double)Robot.gyro.getCurrentAngle();
 		}else{
 			lockedAngle = null;
 		}

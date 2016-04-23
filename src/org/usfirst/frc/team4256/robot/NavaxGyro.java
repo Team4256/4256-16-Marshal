@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class NavaxGyro extends AHRS {
 	private float tareAngle = 0;
@@ -75,7 +76,8 @@ public class NavaxGyro extends AHRS {
 			currentAngle = 360 - tareAngle + validateAngle(getFusedHeading());
 		}else {
 			currentAngle = validateAngle(getFusedHeading()) - tareAngle;
-		}return validateAngle(currentAngle);
+		}SmartDashboard.putNumber("Angle", validateAngle(currentAngle));
+		return validateAngle(currentAngle);
 	}
 	/**
 	 * This function returns the path to the border that is nearest to the specified angle.
@@ -152,6 +154,6 @@ public class NavaxGyro extends AHRS {
     }
     
     private void updateAngle() {
-        targetAngle.setValue(getRawAngle());
+        targetAngle.setValue(getCurrentAngle());
     }
 }

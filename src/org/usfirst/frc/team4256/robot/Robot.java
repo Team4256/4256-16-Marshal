@@ -147,7 +147,7 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control
 	 */
-	Toggle shifterToggle_Driver = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
+	static Toggle shifterToggle_Driver = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
 	Toggle shotMotorToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
 	Toggle shotAngleToggle_Gunner = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	Toggle climbToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_START);

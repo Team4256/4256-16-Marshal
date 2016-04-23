@@ -334,20 +334,20 @@ public class AutoModes {
 			}
 		}else if (goal == 2) {//good (from comp)
 			if(startPosition == 2) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 60);
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 60);//rotate to 60 degrees by turning clockwise
 				moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 3) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 30);
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, 30);//rotate to 30 degrees by turning clockwise
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);//rotate to 340 degrees by turning counter-clockwise
 				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);	
 			}else if(startPosition == 5) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -50);
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -50);//rotate to 310 degrees by turning counter-clockwise
 				moveForwardForTime(speed, DISTANCE_TO_TIME(78, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}
@@ -652,10 +652,10 @@ public class AutoModes {
 		while(Math.abs(Robot.gyro.getCurrentPath((float)angle)) > 2 && inAutonomous()) {
 //			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
 			turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath((float)angle)/180, turnSpeedRange.min, turnSpeedRange.max);
-			Robot.drive.arcadeDrive(0, 
-					turnSpeed);
+			SmartDashboard.putNumber("turnSpeed for Autonomous", turnSpeed);
+			SmartDashboard.putNumber("goalAngle for Autonomous", angle);
+			Robot.drive.arcadeDrive(0, turnSpeed);
 		}
-		
 		stop();
 	}
 	

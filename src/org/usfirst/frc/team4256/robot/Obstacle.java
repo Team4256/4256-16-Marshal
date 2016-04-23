@@ -1,10 +1,7 @@
 package org.usfirst.frc.team4256.robot;
 
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Obstacle {
 	static SendableChooser autonomousObstacles = new SendableChooser();

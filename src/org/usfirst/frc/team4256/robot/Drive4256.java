@@ -59,7 +59,7 @@ public class Drive4256 {
 			if (lockedAngle != null) {
 				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
 				robotDrive.arcadeDrive(moveValue, rotateValue + 
-						Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
+						Robot.gyro.motorizeCurrentPath(lockedAngle) + driveTurnOffset);
 			}else {
 				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
@@ -108,20 +108,20 @@ public class Drive4256 {
 	public void slowGear() {
 		SmartDashboard.putString("Shifter Value", "Low Gear");
 		gearShifter.set(DoubleSolenoid.Value.kForward);
-		Robot.gearShiftToggle.state = false;
+		Robot.shifterToggle_Driver.state = false;
 //		rightGearShifter.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void fastGear() {
 		SmartDashboard.putString("Shifter Value", "High Gear");
 		gearShifter.set(DoubleSolenoid.Value.kReverse);
-		Robot.gearShiftToggle.state = true;
+		Robot.shifterToggle_Driver.state = true;
 //		rightGearShifter.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void lockAngle(boolean updateAngle) {
 		if(updateAngle && lockedAngle == null) {
-			lockedAngle = Robot.gyro.getAngle();
+			lockedAngle = Robot.gyro.getCurrentAngle();
 		}else{
 			lockedAngle = null;
 		}
@@ -160,7 +160,7 @@ public class Drive4256 {
 		//long startTime = System.currentTimeMillis();
 		alignToTarget(controller, .2, .08, .02);
 		alignToTarget(controller, .1, .08, .1);//.1 cinci //.05 no go
-		if(alignToTarget(controller, .03, .08, .1) && !Robot.gyro.isRotating()) {//.2 cinci //.05 no go
+		if(alignToTarget(controller, .03, .08, .2) && !Robot.gyro.isRotating()) {//.2 cinci //.05 no go
 			isAligning = false;
 		}
 //		if (updateIt) {

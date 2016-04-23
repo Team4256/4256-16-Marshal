@@ -1,8 +1,6 @@
 
 package org.usfirst.frc.team4256.robot;
 
-
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -12,6 +10,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,8 +37,7 @@ public class Robot extends IterativeRobot {
 	static Relay light;
     
 	//AI
-	//static Gyro4256 gyro = new Gyro4256(new AnalogInput(0));
-	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
+	static NavaxGyro gyro = new NavaxGyro(0, 0);
 
 	//Drive
 	static Drive4256 drive;	
@@ -76,7 +74,7 @@ public class Robot extends IterativeRobot {
 	
 	static CameraServer camera = CameraServer.getInstance();  
 	
-	
+	static TargetPID targetPID;
 	
 	//static Launcher robotLauncher;
 	
@@ -91,6 +89,8 @@ public class Robot extends IterativeRobot {
 			intake = new Intake(0, 5, 8, 0);
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(climbingWinchLeft, climbingWinchRight, flinger);
+			//PID
+			targetPID = new TargetPID("Target PID", 0.8, 0.01, 5.0);
 		}
 		
 		{//Camera
@@ -128,9 +128,7 @@ public class Robot extends IterativeRobot {
 				}});
 		}
 	}
-
 	
-
 	/**
 	 * This function is called periodically during autonomous
 	 */
@@ -141,7 +139,7 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopInit() {
 		Robot.drive.fastGear();
-		gearShiftToggle.state = true;
+		shifterToggle_Driver.state = true;
 		intake.currentAction = Intake.State.nothing;
 //		Robot.drive.enableBreakMode(false);
 	}
@@ -149,57 +147,37 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control
 	 */
-	static Toggle gearShiftToggle = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
-	Toggle turretElevationToggle = new Toggle(xboxGun, DBJoystick.BUTTON_LB);
-	//Toggle toggleScissorLift = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
-	Toggle autoTrackingToggle = new Toggle(xboxGun, DBJoystick.BUTTON_START);
-	//Toggle intakeInToggle = new Toggle (xboxGun, DBJoystick.BUTTON_A);
-	Toggle shooterToggle = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
-	
-	Toggle dpadeast = new Toggle(xboxDriver, DBJoystick.BUTTON_Y);
-	Toggle turretLifterToggle = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
-	Toggle climber = new Toggle(xboxGun, DBJoystick.BUTTON_START);
+	Toggle shifterToggle_Driver = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
+	Toggle shotMotorToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
+	Toggle shotAngleToggle_Gunner = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
+	Toggle climbToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	
 	public void teleopPeriodic() {
 		gamemode = Gamemode.TELEOP;
-		SmartDashboard.putNumber("Elevation", gyro.getElevation());
-		SmartDashboard.putNumber("RawAngle", gyro.getRawAngle());
-		SmartDashboard.putNumber("Angle", gyro.getAngle());
-		//Update systems
-//		turret.update();
 		light.set(Value.kForward);
 		intake.update();
 		intakeLifter.update();
+		SmartDashboard.putNumber("Elevation", gyro.getElevation());
+		SmartDashboard.putNumber("Angle", gyro.getCurrentAngle());
+		SmartDashboard.putNumber("Goal Distance", Robot.visionTable.getNumber("TargetDistance", 0));
+		SmartDashboard.putNumber("Goal Angle", Robot.visionTable.getNumber("AngleDifferential", 0));	
 		
-//		if(xboxGun.getRawButton(DBJoystick.BUTTON_START)) {
-//			camera.startAutomaticCapture("cam2");
-//		}else{
-//			camera.startAutomaticCapture("cam1");
-//		}
-
-		//Drive
-		{
+		{//drive
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);
 			drive.arcadeDrive(xboxDriver.getRawAxis(DBJoystick.AXIS_LEFT_Y)*speedScale, .75*xboxDriver.getRawAxis(DBJoystick.AXIS_RIGHT_X)*speedScale);
-			drive.gearShift(gearShiftToggle.getState());
-			drive.lockAngle(dpadeast.getState());
+			drive.gearShift(shifterToggle_Driver.getState());
 		}
-		
-		SmartDashboard.putNumber("current based limit?", intakeLifter.lifterRight.getOutputCurrent());
-		SmartDashboard.putNumber("Hayden-untested distance",Robot.visionTable.getNumber("HaydenTargetDistance", 0));
-		SmartDashboard.putNumber("currently-used distance", Robot.visionTable.getNumber("TargetDistance", 0));
-		SmartDashboard.putNumber("goal<->robot angle differential", Robot.visionTable.getNumber("AngleDifferential", 0));
-		
-		//Turret
-		{
-			//SmartDashboard.putBoolean("Are we in range?", Math.abs(Robot.visionTable.getNumber("TargetDistance", 0) - 112) < 8);
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {
+
+		{//shooting
+			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {//toggle old alignment
 				drive.alignToTarget();
 			}
+			if(xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {//run new alignment
+	    		targetPID.enable();
+				drive.arcadeDrive(0.0, targetPID.getOutput());//TODO have it get in range automatically using inches
+	    	}
 			
-			//Toggle shooter motors
-			if(shooterToggle.getState()) {
-//			if(xboxGun.getButtonToggleState(DBJoystick.BUTTON_Y)) {
+			if(shotMotorToggle_Gunner.getState()) {//toggle shot motors
 				shooter.start();
 				SmartDashboard.putString("Shooter Wheels", "Spinning");
 			}else{
@@ -207,9 +185,7 @@ public class Robot extends IterativeRobot {
 				SmartDashboard.putString("Shooter Wheels", "Stopped");
 			}
 			
-			//Raise/lower shooter
-			if(turretLifterToggle.getState()) {
-//			if(xboxGun.getAxisToggleState(DBJoystick.AXIS_LT)) {
+			if(shotAngleToggle_Gunner.getState()) {//toggle shot angle
 				shooter.raise();
 				SmartDashboard.putString("Shooter Position", "Up");
 			}else{
@@ -218,9 +194,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 
-		//Intake Lifter
-		{
-			//Lift up or down
+		{//intake lifter
 			if(xboxDriver.axisPressed(DBJoystick.AXIS_LT)){
 				intakeLifter.liftDownManual();
 			}else if(xboxDriver.axisPressed(DBJoystick.AXIS_RT)){
@@ -230,7 +204,6 @@ public class Robot extends IterativeRobot {
 			}else if (xboxDriver.getPOV() == DBJoystick.POV_SOUTH) {
 				intakeLifter.liftDownAutomatic();
 			}
-			
 			if(intakeLifter.frontLimitSwitch.get()) {
 				SmartDashboard.putBoolean("Front limit", false);
 			}else{
@@ -238,8 +211,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		{//Intake
-			//Intake in/out/fire/stop
+		{//intake
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
@@ -251,18 +223,16 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		{//Climbing Mech
-			//Start climbing mode
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {
+		{//climbing
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {//fling hook
 				climbingMech.startClimbing();
 			}
-	
-			//Climb
-			if (climber.getState()) {
+			if (climbToggle_Gunner.getState()) {//reel it in
 				climbingMech.raiseHook();
 			}else{
 				climbingMech.stopHook();
 			}
+			//TODO need a way to toggle the "start climbing" solenoid while in the pit
 		}
 	}
 
@@ -281,16 +251,22 @@ public class Robot extends IterativeRobot {
 	public void teleopAutomated() {
 		//TODO exit if controller activated
 		//Must be able to enter loop at any time
-		//This can be done with an *enum for location, and *boolean declaring if the robot contains a ball
-		
-		
+		//This can be done with an *enum for location, and *boolean declaring if the robot contains a ball	
 	}
 
 	/**
 	 * This function is called periodically during test mode
 	 */
 	public void testPeriodic() {
-
+    	LiveWindow.run();
+    	SmartDashboard.putBoolean("Pid State", xboxGun.getRawButton(DBJoystick.BUTTON_RB));
+    	
+    	if(xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {
+    		targetPID.enable();
+			double power = targetPID.getOutput();//*(getTargetOffset() < 0 ? -1 : 1);
+			SmartDashboard.putNumber("Power", power);
+			drive.arcadeDrive(0.0, power);
+    	}
 	}
 
 }

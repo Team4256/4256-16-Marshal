@@ -68,14 +68,15 @@ public class NavaxGyro extends AHRS {
 	 * This function returns the current angle based on the tare angle.
 	**/
 	public float getCurrentAngle() {
-		if (isCalibrating()) {
-			return (float)lastMeasuredAngle;
-		}lastMeasuredAngle = getAngle();
+//		if (isCalibrating()) {
+//			return (float)lastMeasuredAngle;
+//		}
+		lastMeasuredAngle = getAngle();
 		float currentAngle;
-		if (0 <= validateAngle(getFusedHeading()) && validateAngle(getFusedHeading()) <= tareAngle) {
-			currentAngle = 360 - tareAngle + validateAngle(getFusedHeading());
+		if (0 <= validateAngle((float)getAngle()) && validateAngle((float)getAngle()) <= tareAngle) {
+			currentAngle = 360 - tareAngle + validateAngle((float)getAngle());
 		}else {
-			currentAngle = validateAngle(getFusedHeading()) - tareAngle;
+			currentAngle = validateAngle((float)getAngle()) - tareAngle;
 		}SmartDashboard.putNumber("Angle", validateAngle(currentAngle));
 		return validateAngle(currentAngle);
 	}

@@ -106,6 +106,7 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putNumber("NumberOfBalls", 1);
 			SmartDashboard.putNumber("Goal", 2);
 			SmartDashboard.putString("AUTONOMOUS MODE","AUTONOMOUS MODE");
+			SmartDashboard.putNumber("testinggoalangle", 0);
 			for(int i=0; i<Obstacle.autonomusObstacleDropDowns.length; i++) {
 				Obstacle.obstaclePosition.addObject(""+(i+1), i+1);
 				//SmartDashboard.putData("AutonomousObstacles"+(i+1), Obstacle.autonomusObstacleDropDowns[i]);
@@ -121,10 +122,10 @@ public class Robot extends IterativeRobot {
 			AutoModes.exeSrvc.execute(new Runnable() {
 				@Override
 				public void run() {
-					AutoModes.test();
-//					long startTime = System.currentTimeMillis();
-//					AutoModes.start();
-//					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
+					//AutoModes.test();
+					long startTime = System.currentTimeMillis();
+					AutoModes.start();
+					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
 				}});
 		}
 	}
@@ -160,7 +161,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
 		SmartDashboard.putNumber("Angle", gyro.getCurrentAngle());
 		SmartDashboard.putNumber("Goal Distance", Robot.visionTable.getNumber("TargetDistance", 0));
-		SmartDashboard.putNumber("Goal Angle", Robot.visionTable.getNumber("AngleDifferential", 0));	
+		SmartDashboard.putNumber("Goal Angle", Robot.visionTable.getNumber("AngleDifferential", 0));
+		SmartDashboard.putNumber("testing angle differential", Robot.gyro.getCurrentPath((float)SmartDashboard.getNumber("testinggoalangle")));
 		
 		{//drive
 			double speedScale = (xboxDriver.getRawButton(DBJoystick.BUTTON_RB) ? .5 : 1.0);

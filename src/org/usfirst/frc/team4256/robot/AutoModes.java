@@ -357,7 +357,7 @@ public class AutoModes {
 		Robot.drive.slowGear();
 		//Final angle to turn to based on robot orientation
 		double finalAngleForLeftTarget = (speed<0? 180+60: 60);
-		double finalAngleForCenterTarget = (speed<0? 180-5:0);
+		double finalAngleForCenterTarget = (speed<0? 180-10:0);
 		double finalAngleForRightTarget = (speed<0? 180-60: -60);
 		if (goal == 1) {//change for this one
 			if(startPosition == 2) {//needs testing, should go to left goal
@@ -388,7 +388,7 @@ public class AutoModes {
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);//rotate to 340 degrees by turning counter-clockwise
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -10);//rotate to 340 degrees by turning counter-clockwise
 				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);	

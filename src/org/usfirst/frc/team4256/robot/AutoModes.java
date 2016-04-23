@@ -47,9 +47,9 @@ public class AutoModes {
 		Robot.drive.slowGear();
 		
 		//Get SmartDashboard variables
-		int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
+		//int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
 		int autoMode =  (int) SmartDashboard.getNumber("AUTONOMOUS MODE");
-		int position = (int) SmartDashboard.getNumber("Position");
+		//int position = (int) SmartDashboard.getNumber("Position");
 		goal = (int) SmartDashboard.getNumber("Goal");
 		startPosition = (int) SmartDashboard.getNumber("Position");
 		double speed = -1;
@@ -269,6 +269,52 @@ public class AutoModes {
 			moveForwardForTime(speed, DISTANCE_TO_TIME(30, speed));
 			fire();
 			break;
+		case 300:	//2 * Low Bar with gyro
+			Robot.drive.fastGear();
+			speed = .9;
+			//Cross barrier
+			syncIntakeLifterDown();
+			Robot.shooter.raise();
+			moveForwardToRamp(speed, new Range(100, 5000));
+			moveForwardOffRamp(speed, 2500);
+			
+			//Go to tower
+			syncIntakeLifterUpFull();
+			moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
+
+			while(Math.abs(Robot.gyro.getCurrentPath(45)) > 2 && inAutonomous()) {
+				double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+				Robot.drive.arcadeDrive(.45, turnSpeed);
+			}stop();
+			
+			//Drive to target, align, fire
+			Robot.shooter.shooterLeft.set(1);
+			moveToTarget(speed, new Range(100, 4000), 30);
+			syncIntakeLifterDown();
+			alignAndFire();
+			
+			//Drive back through low bar
+			syncIntakeLifterDown();
+			rotateToGyroPosition(120);
+			moveForwardForTime(-speed, DISTANCE_TO_TIME(90, speed));
+			rotateToGyroPosition(0);
+			moveForwardToRamp(-speed, new Range(100, 5000));
+			moveForwardOffRamp(-speed, 2500);
+			
+			//Get ball and return to low bar
+			rotateToGyroPosition(-10);
+			moveForwardForTime(-speed, DISTANCE_TO_TIME(65, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(65, speed));
+			rotateToGyroPosition(0);
+			
+			//Cross low bar
+			moveForwardToRamp(speed, new Range(100, 5000));
+			moveForwardOffRamp(speed, 2500);
+			
+			//Aim at tower
+			moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
+			
+			break;
 		default: //Corner Shot
 			syncLifterDownSlight();
 			Robot.shooter.start();
@@ -398,10 +444,12 @@ public class AutoModes {
 	public static void test() {//TODO test marker
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.reset();
-		Robot.drive.slowGear();
+//		Robot.drive.slowGear();
+		Robot.drive.fastGear();
+		Timer.delay(.5);
 		
 //		rotateTimeBased(0, .9, 6000);
-		moveForwardForTime(.9, 4000);
+		moveForwardForTime(1, 2000);
 //		moveForwardToRamp(.7, new Range(100, 50000));
 //		Timer.delay(1);
 //		moveForwardOffRamp(.7, 50000);
@@ -585,6 +633,8 @@ public class AutoModes {
 			return (long) (distanceInInches/VELOCITY_7);
 		}else if(speed == .9) {
 			return (long) (distanceInInches/VELOCITY_9);
+		}else if(Robot.shifterToggle_Driver.state) {
+			return 0; //TODO test
 		}
 		return (long) ((.7/speed)*distanceInInches/VELOCITY_7);
 	}

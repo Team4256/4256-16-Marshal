@@ -121,10 +121,10 @@ public class Robot extends IterativeRobot {
 			AutoModes.exeSrvc.execute(new Runnable() {
 				@Override
 				public void run() {
-//					AutoModes.test();
-					long startTime = System.currentTimeMillis();
-					AutoModes.start();
-					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
+					AutoModes.test();
+//					long startTime = System.currentTimeMillis();
+//					AutoModes.start();
+//					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
 				}});
 		}
 	}

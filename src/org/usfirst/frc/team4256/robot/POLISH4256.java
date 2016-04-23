@@ -7,7 +7,7 @@ public class POLISH4256 {//things that are used regardless of the driver, yet ar
 		Robot.drive.arcadeDriveNoSquare(0, FILTER4256.rotate(enable, goalAngle, theoreticalTimeS, tolerance));
 	}
 	
-	public static void shotAlignment2(final double tolerance, final boolean enable) {
+	public static void shotAlignment2(final double tolerance, final int button) {
 		float readyAngle = 0;
 		final float doneAngle = Robot.gyro.getCurrentAngle() + (float)Robot.visionTable.getNumber("AngleDifferential", 0.0);
 		if (Robot.gyro.getCurrentPath(doneAngle + 50) > Robot.gyro.getCurrentPath(doneAngle - 50)) {
@@ -18,16 +18,16 @@ public class POLISH4256 {//things that are used regardless of the driver, yet ar
 		boolean ready = false;
 		boolean stopped = false;
 		boolean done = false;
-		while(enable && (!ready || !done)) {
+		while(Robot.xboxGun.getRawButton(button) && (!ready || !done)) {
 			if(!ready) {
 				Robot.drive.arcadeDrive(0.0, 0.7*Math.signum((double)(Robot.gyro.getCurrentPath(readyAngle))));
 				ready = Math.abs(Robot.gyro.getCurrentPath(readyAngle)) > tolerance ? false : true;
 			}else if(ready && !done) {
-				while(enable && !stopped && Robot.gyro.isRotating(2.0)){
+				while(Robot.xboxGun.getRawButton(button) && !stopped && Robot.gyro.isRotating(2.0)){
 					Robot.drive.arcadeDrive(0.0, 0.0);
 				}
 				stopped = true;
-				//put code here for rotating approximately 50 degrees and then making minor last adjustments
+				Robot.drive.arcadeDrive(0.0, 0.5*Math.signum(Robot.visionTable.getNumber("AngleDifferential", 0.0)));
 				done = Math.abs(Robot.gyro.getCurrentPath(doneAngle)) > tolerance ? false : true;
 			}
 		}

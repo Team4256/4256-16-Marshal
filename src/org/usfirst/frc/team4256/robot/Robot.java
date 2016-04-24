@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	static Relay light;
     
 	//AI
-	static NavaxGyro gyro = new NavaxGyro(0, 0);
+	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
 
 	//Drive
 	static Drive4256 drive;	
@@ -158,7 +158,7 @@ public class Robot extends IterativeRobot {
 		intake.update();
 		intakeLifter.update();
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
-		SmartDashboard.putNumber("Angle", gyro.getCurrentAngle());
+		SmartDashboard.putNumber("Angle", gyro.getRawAngle());
 		SmartDashboard.putNumber("Goal Distance", Robot.visionTable.getNumber("TargetDistance", 0));
 		SmartDashboard.putNumber("Goal Angle", Robot.visionTable.getNumber("AngleDifferential", 0));	
 		

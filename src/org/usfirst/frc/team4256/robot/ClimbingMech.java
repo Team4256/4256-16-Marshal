@@ -23,6 +23,14 @@ public class ClimbingMech {
 		flinger.set(DoubleSolenoid.Value.kForward);
 	}
 	
+	public void grabMech() {
+		flinger.set(DoubleSolenoid.Value.kReverse);
+	}
+	
+	public void releaseMech() {
+		flinger.set(DoubleSolenoid.Value.kForward);
+	}
+	
 	public void raiseHook() {
 		setHookSpeed(CLIMBING_WINCH_SPEED);
 	}

@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import org.usfirst.frc.team4256.robot.Robot.Gamemode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -45,6 +46,7 @@ public class AutoModes {
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.reset();
 		Robot.drive.slowGear();
+		Robot.climbingMech.grabMech();
 		
 		//Get SmartDashboard variables
 		//int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
@@ -282,8 +284,8 @@ public class AutoModes {
 			syncIntakeLifterUpFull();
 			moveForwardForTime(speed, DISTANCE_TO_TIME(45, speed));
 
-			while(Math.abs(Robot.gyro.getCurrentPath(45)) > 2 && inAutonomous()) {
-				double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+			while(Math.abs(Robot.gyro.getAngleDisplacementFrom(45)) > 2 && inAutonomous()) {
+				double turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
 				Robot.drive.arcadeDrive(.45, turnSpeed);
 			}backTrim();
 			

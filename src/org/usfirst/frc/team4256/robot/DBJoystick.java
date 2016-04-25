@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4256.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.wpi.first.wpilibj.Joystick;
 /**
@@ -144,6 +145,24 @@ public class DBJoystick extends Joystick {
 		
 		return false;
 	}
+	//------------------------------------------------------------------------------------------------------
+	//private static Map<String, Boolean> previousStates = new HashMap<String, Boolean>();
+	private static Map<String, Long> stickyTimes = new HashMap<String, Long>();
+	public static boolean viscousize(final String key, final boolean currentState, final double timeoutMS) {
+		/*if (previousStates.get(key) == null) {
+			previousStates.put(key, false);
+		}*/if (currentState/* && (currentState != previousStates.get(key))*/) {
+			stickyTimes.putIfAbsent(key, System.currentTimeMillis());
+			stickyTimes.replace(key, System.currentTimeMillis());
+		}
+		//previousStates.replace(key, currentState);
+		if (stickyTimes.get(key) != null) {
+			return System.currentTimeMillis() - stickyTimes.get(key) <= timeoutMS;
+		}else {
+			return false;
+		}
+	}
+	//---------------------------------------------------------------------------------------------------
 }
 
 

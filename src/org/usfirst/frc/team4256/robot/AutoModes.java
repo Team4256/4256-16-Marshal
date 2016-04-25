@@ -274,30 +274,29 @@ public class AutoModes {
 			speed = .9;
 			//Cross barrier
 			syncIntakeLifterDown();
-			Robot.shooter.raise();
+			Robot.shooter.raise();//far shot
 			moveForwardToRamp(speed, new Range(100, 5000));
 			moveForwardOffRamp(speed, 2500);
 			
 			//Go to tower
 			syncIntakeLifterUpFull();
-			moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(45, speed));
 
 			while(Math.abs(Robot.gyro.getCurrentPath(45)) > 2 && inAutonomous()) {
 				double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
 				Robot.drive.arcadeDrive(.45, turnSpeed);
-			}stop();
+			}backTrim();
 			
 			//Drive to target, align, fire
 			Robot.shooter.shooterLeft.set(1);
-			moveToTarget(speed, new Range(100, 4000), 30);
+			moveToTargetLong(speed, new Range(100, 4000));
 			syncIntakeLifterDown();
 			alignAndFire();
 			
 			//Drive back through low bar
-			syncIntakeLifterDown();
 			rotateToGyroPosition(120);
 			moveForwardForTime(-speed, DISTANCE_TO_TIME(90, speed));
-			rotateToGyroPosition(0);
+			rotateToGyroPosition(180);
 			moveForwardToRamp(-speed, new Range(100, 5000));
 			moveForwardOffRamp(-speed, 2500);
 			
@@ -848,12 +847,32 @@ public class AutoModes {
 		}
 		stop();
 	}
+	
+	public static void moveToTargetLong(double driveSpeed, Range duration) {
+		long startTime = System.currentTimeMillis();
+		
+		//Drive until robot sees target
+		while((!Robot.visionTable.getBoolean("TargetVisibility", false) || 
+				System.currentTimeMillis()-startTime < duration.min) && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, 0);
+		}
+		
+		//Drive until target is at the farthest shooting range
+		while(Robot.visionTable.getNumber("TargetY", -1) >= Robot.shooter.shootingYRangeLong.fromPercent(75)/*.max*/ && inAutonomous()) {
+			//Slow when close
+			if(Robot.visionTable.getNumber("TargetY", -1) <= Robot.shooter.shootingYRangeLong.max+15) {
+				driveSpeed = .5;
+			}
+			Robot.drive.arcadeDrive(driveSpeed, 0);//correctMotorValue(getTargetOffset(), 0, .35));//changed in competition from .55 to .35
+		}
+		backTrim();
+	}
 
 	public static void moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.motorizeCurrentPath(currentTargetAngle));
+			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 		
 		stop();
@@ -863,7 +882,13 @@ public class AutoModes {
 		Robot.drive.arcadeDrive(0, 0);
 	}
 	
-	
+	public static void backTrim() {
+		long startTime = System.currentTimeMillis();
+			
+		while(System.currentTimeMillis()-startTime < 75 && inAutonomous()) {
+			Robot.drive.arcadeDrive(.7, 0);
+		}
+	}
 
 	
 //	private static double accelerationFunctionCurrentSpeed = 0;

@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	static Relay light;
     
 	//AI
-	static NavaxGyro gyro = new NavaxGyro(0, 0);
+	static NavaxGyro gyro = new NavaxGyro(SerialPort.Port.kMXP);
 
 	//Drive
 	static Drive4256 drive;	
@@ -75,6 +75,7 @@ public class Robot extends IterativeRobot {
 	static CameraServer camera = CameraServer.getInstance();  
 	
 	static TargetPID targetPID;
+	int climbingSafety = 0;
 	
 	//static Launcher robotLauncher;
 	
@@ -113,6 +114,7 @@ public class Robot extends IterativeRobot {
 				//((Obstacle) Obstacle.autonomusObstacleDropDowns[i].getSelected()).position = i+1;
 			}
 		}
+		climbingMech.grabMech();
 	}
 
 	private static boolean autonomousThreadRunning = false;
@@ -142,6 +144,7 @@ public class Robot extends IterativeRobot {
 		Robot.drive.fastGear();
 		shifterToggle_Driver.state = true;
 		intake.currentAction = Intake.State.nothing;
+		climbingMech.grabMech();
 //		Robot.drive.enableBreakMode(false);
 	}
 
@@ -159,7 +162,7 @@ public class Robot extends IterativeRobot {
 		intake.update();
 		intakeLifter.update();
 		SmartDashboard.putNumber("Elevation", gyro.getElevation());
-		SmartDashboard.putNumber("Angle", gyro.getCurrentAngle());
+		SmartDashboard.putNumber("Angle", gyro.getRawAngle());
 		SmartDashboard.putNumber("Goal Distance", Robot.visionTable.getNumber("TargetDistance", 0));
 		SmartDashboard.putNumber("Goal Angle", Robot.visionTable.getNumber("AngleDifferential", 0));
 		SmartDashboard.putNumber("testing angle differential", Robot.gyro.getCurrentPath((float)SmartDashboard.getNumber("testinggoalangle")));
@@ -226,8 +229,16 @@ public class Robot extends IterativeRobot {
 		}
 		
 		{//climbing
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {//fling hook
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {//count the number of times that back has been pressed
+				climbingSafety++;
+			}
+			if (climbingSafety == 2) {//if I have hit it twice, then release the mechanism and get ready to climb
 				climbingMech.startClimbing();
+			}
+			if (climbingSafety > 2 && DBJoystick.viscousize("climbing piston", xboxGun.getRawButton(DBJoystick.BUTTON_BACK), 500)) {
+				climbingMech.releaseMech();//after the first two presses, the piston will remain out while the button is held down, then go back in after 500ms
+			}else if (climbingSafety > 2){
+				climbingMech.grabMech();
 			}
 			if (climbToggle_Gunner.getState()) {//reel it in
 				climbingMech.raiseHook();

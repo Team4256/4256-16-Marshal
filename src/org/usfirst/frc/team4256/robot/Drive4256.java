@@ -58,8 +58,7 @@ public class Drive4256 {
 			//Arcade drive. Lock angle if set.
 			if (lockedAngle != null) {
 				SmartDashboard.putString("Angle Lock Toggle", "Engaged");
-				robotDrive.arcadeDrive(moveValue, rotateValue + 
-						Robot.gyro.motorizeCurrentPath(lockedAngle) + driveTurnOffset);
+				robotDrive.arcadeDrive(moveValue, rotateValue + Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(lockedAngle) + driveTurnOffset);
 			}else {
 				SmartDashboard.putString("Angle Lock Toggle", "Disengaged");
 				robotDrive.arcadeDrive(moveValue, rotateValue + driveTurnOffset);
@@ -121,7 +120,7 @@ public class Drive4256 {
 	
 	public void lockAngle(boolean updateAngle) {
 		if(updateAngle && lockedAngle == null) {
-			lockedAngle = (double)Robot.gyro.getCurrentAngle();
+			lockedAngle = (double)Robot.gyro.getRawAngle();
 		}else{
 			lockedAngle = null;
 		}

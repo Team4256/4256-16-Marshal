@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import org.usfirst.frc.team4256.robot.Robot.Gamemode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -45,6 +46,7 @@ public class AutoModes {
 		Robot.gamemode = Gamemode.AUTONOMOUS;
 		Robot.gyro.reset();
 		Robot.drive.slowGear();
+		Robot.climbingMech.grabMech();
 		
 		//Get SmartDashboard variables
 		//int numBalls = (int) SmartDashboard.getNumber("NumberOfBalls");
@@ -274,30 +276,29 @@ public class AutoModes {
 			speed = .9;
 			//Cross barrier
 			syncIntakeLifterDown();
-			Robot.shooter.raise();
+			Robot.shooter.raise();//far shot
 			moveForwardToRamp(speed, new Range(100, 5000));
 			moveForwardOffRamp(speed, 2500);
 			
 			//Go to tower
 			syncIntakeLifterUpFull();
-			moveForwardForTime(speed, DISTANCE_TO_TIME(90, speed));
+			moveForwardForTime(speed, DISTANCE_TO_TIME(45, speed));
 
-			while(Math.abs(Robot.gyro.getCurrentPath(45)) > 2 && inAutonomous()) {
-				double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+			while(Math.abs(Robot.gyro.getAngleDisplacementFrom(45)) > 2 && inAutonomous()) {
+				double turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
 				Robot.drive.arcadeDrive(.45, turnSpeed);
-			}stop();
+			}backTrim();
 			
 			//Drive to target, align, fire
 			Robot.shooter.shooterLeft.set(1);
-			moveToTarget(speed, new Range(100, 4000), 30);
+			moveToTargetLong(speed, new Range(100, 4000));
 			syncIntakeLifterDown();
 			alignAndFire();
 			
 			//Drive back through low bar
-			syncIntakeLifterDown();
 			rotateToGyroPosition(120);
 			moveForwardForTime(-speed, DISTANCE_TO_TIME(90, speed));
-			rotateToGyroPosition(0);
+			rotateToGyroPosition(180);
 			moveForwardToRamp(-speed, new Range(100, 5000));
 			moveForwardOffRamp(-speed, 2500);
 			
@@ -341,8 +342,8 @@ public class AutoModes {
 //		moveForwardForTime(speed, .15, DISTANCE_TO_TIME(30, speed));
 //		rotateToGyroPosition(45);
 
-		while(Math.abs(Robot.gyro.getCurrentPath(45)) > 2 && inAutonomous()) {
-			double turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
+		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(45)) > 2 && inAutonomous()) {
+			double turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(45)/180, TURN_SPEED_RANGE.min, TURN_SPEED_RANGE.max);
 			Robot.drive.arcadeDrive(.45, turnSpeed);
 		}stop();
 		
@@ -428,7 +429,7 @@ public class AutoModes {
 			}
 		}
 		Robot.shooter.shooterLeft.set(1);
-		//Timer.delay(.5);
+		Timer.delay(.5);
 		//Drive to target, align, fire
 		speed = .7;
 		moveToTarget(speed, new Range(0, 2000));
@@ -699,9 +700,9 @@ public class AutoModes {
 		double turnSpeed = 0;
 		
 //		while(Robot.gyro.getAngle() < angle && inAutonomous()) {
-		while(Math.abs(Robot.gyro.getCurrentPath((float)angle)) > 2 && inAutonomous()) {
+		while(Math.abs(Robot.gyro.getAngleDisplacementFrom(angle)) > 2 && inAutonomous()) {
 //			turnSpeed = Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(angle);
-			turnSpeed = correctMotorValue(Robot.gyro.getCurrentPath((float)angle)/180, turnSpeedRange.min, turnSpeedRange.max);
+			turnSpeed = correctMotorValue(Robot.gyro.getAngleDisplacementFrom(angle)/180, turnSpeedRange.min, turnSpeedRange.max);
 			SmartDashboard.putNumber("turnSpeed for Autonomous", turnSpeed);
 			SmartDashboard.putNumber("goalAngle for Autonomous", angle);
 			Robot.drive.arcadeDrive(0, turnSpeed);
@@ -765,7 +766,7 @@ public class AutoModes {
 	public static void moveForwardForTime(double driveSpeed, double turnSpeed, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 //		Robot.drive.lockAngle(true);
-		double angle = (float)Robot.gyro.getCurrentAngle();
+		double angle = Robot.gyro.getRawAngle();
 		
 		while(System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
 //			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
@@ -848,12 +849,32 @@ public class AutoModes {
 		}
 		stop();
 	}
+	
+	public static void moveToTargetLong(double driveSpeed, Range duration) {
+		long startTime = System.currentTimeMillis();
+		
+		//Drive until robot sees target
+		while((!Robot.visionTable.getBoolean("TargetVisibility", false) || 
+				System.currentTimeMillis()-startTime < duration.min) && inAutonomous()) {
+			Robot.drive.arcadeDrive(driveSpeed, 0);
+		}
+		
+		//Drive until target is at the farthest shooting range
+		while(Robot.visionTable.getNumber("TargetY", -1) >= Robot.shooter.shootingYRangeLong.fromPercent(75)/*.max*/ && inAutonomous()) {
+			//Slow when close
+			if(Robot.visionTable.getNumber("TargetY", -1) <= Robot.shooter.shootingYRangeLong.max+15) {
+				driveSpeed = .5;
+			}
+			Robot.drive.arcadeDrive(driveSpeed, 0);//correctMotorValue(getTargetOffset(), 0, .35));//changed in competition from .55 to .35
+		}
+		backTrim();
+	}
 
 	public static void moveToLimitSwitch(double driveSpeed, DigitalInput limitSwitch, long timeoutMillis) {
 		long startTime = System.currentTimeMillis();
 		
 		while(limitSwitch.get() && System.currentTimeMillis()-startTime < timeoutMillis && inAutonomous()) {
-			Robot.drive.arcadeDrive(driveSpeed, Robot.gyro.motorizeCurrentPath(currentTargetAngle));
+			Robot.drive.arcadeDrive(driveSpeed, 0);
 		}
 		
 		stop();
@@ -863,7 +884,13 @@ public class AutoModes {
 		Robot.drive.arcadeDrive(0, 0);
 	}
 	
-	
+	public static void backTrim() {
+		long startTime = System.currentTimeMillis();
+			
+		while(System.currentTimeMillis()-startTime < 75 && inAutonomous()) {
+			Robot.drive.arcadeDrive(.7, 0);
+		}
+	}
 
 	
 //	private static double accelerationFunctionCurrentSpeed = 0;
@@ -878,14 +905,14 @@ public class AutoModes {
 		//Acceleration
 		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
 			speed = 2*(System.currentTimeMillis()-startTime)/timeoutMillis;
-			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.motorizeCurrentPath(currentTargetAngle));
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
 		}
 		
 		//Decelleration
 		startTime = System.currentTimeMillis();
 		while(System.currentTimeMillis()-startTime < timeoutMillis/2 && inAutonomous()) {
 			speed = 1-2*(System.currentTimeMillis()-startTime)/timeoutMillis;
-			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.motorizeCurrentPath(currentTargetAngle));
+			Robot.drive.arcadeDrive(speedRange*speed + driveMinSpeed, Robot.gyro.getAngleDisplacementFromAngleAsMotorValue(currentTargetAngle));
 		}
 		
 		stop();

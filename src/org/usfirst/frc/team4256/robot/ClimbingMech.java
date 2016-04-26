@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ClimbingMech {
-	public static final double CLIMBING_WINCH_SPEED = 1;
+	public static final double CLIMBING_WINCH_SPEED = -.75;
 	
 	public CANTalon climbingWinchLeft;
 	public CANTalon climbingWinchRight;
@@ -20,15 +20,15 @@ public class ClimbingMech {
 	
 	public void startClimbing() {
 		isActive = true;
-		flinger.set(DoubleSolenoid.Value.kForward);
-	}
-	
-	public void grabMech() {
 		flinger.set(DoubleSolenoid.Value.kReverse);
 	}
 	
-	public void releaseMech() {
+	public void grabMech() {
 		flinger.set(DoubleSolenoid.Value.kForward);
+	}
+	
+	public void releaseMech() {
+		flinger.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void raiseHook() {

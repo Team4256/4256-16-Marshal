@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
 	
 	//Solenoid
 	static DoubleSolenoid turretLifter = new DoubleSolenoid(0, 2, 3);
-	static DoubleSolenoid flinger = new DoubleSolenoid(0, 5, 6); // TODO
+	static DoubleSolenoid flinger = new DoubleSolenoid(0, 6, 7); // TODO
 	
 	//Relays
 	static Relay light;
@@ -123,10 +123,10 @@ public class Robot extends IterativeRobot {
 			AutoModes.exeSrvc.execute(new Runnable() {
 				@Override
 				public void run() {
-					AutoModes.test();
-//					long startTime = System.currentTimeMillis();
-//					AutoModes.start();
-//					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
+//					AutoModes.test();
+					long startTime = System.currentTimeMillis();
+					AutoModes.start();
+					SmartDashboard.putNumber("Auto Run Time", System.currentTimeMillis()-startTime);
 				}});
 		}
 	}
@@ -225,11 +225,12 @@ public class Robot extends IterativeRobot {
 				intake.stop();
 			}
 		}
-		
+		boolean xboxGunBackPreviousState = false;
 		{//climbing
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK)) {//count the number of times that back has been pressed
+			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK) && !xboxGunBackPreviousState) {//count the number of times that back has been pressed
 				climbingSafety++;
 			}
+			xboxGunBackPreviousState = xboxGun.getRawButton(DBJoystick.BUTTON_BACK);
 			if (climbingSafety == 2) {//if I have hit it twice, then release the mechanism and get ready to climb
 				climbingMech.startClimbing();
 			}
@@ -243,7 +244,6 @@ public class Robot extends IterativeRobot {
 			}else{
 				climbingMech.stopHook();
 			}
-			//TODO need a way to toggle the "start climbing" solenoid while in the pit
 		}
 	}
 

@@ -163,12 +163,13 @@ public class AutoModes {
 			
 			//Mount cheval de frise
 //			syncIntakeLifterDownHalf();
-			Robot.shooter.lower();
+//			Robot.shooter.lower();
 //			moveForwardToRamp(speed, new Range(100, 5000));
 //			moveForwardForTime(speed, DISTANCE_TO_TIME(5, speed));
 //			moveForwardOffRamp(speed, 2500);
-			moveForwardForTime(speed, DISTANCE_TO_TIME(92.5, speed));//156 in slow gear//was 105 in high gear
-			//Drive to tower and fire
+			moveForwardForTime(speed, DISTANCE_TO_TIME(105, speed));//156 in slow gear//was 105 in high gear   /was 92.5
+			Robot.shooter.lower();
+//Drive to tower and fire
 			Timer.delay(.15);
 			if(startPosition != 4) {
 				syncLifterDownHalf();
@@ -358,7 +359,7 @@ public class AutoModes {
 		Robot.drive.slowGear();
 		//Final angle to turn to based on robot orientation
 		double finalAngleForLeftTarget = (speed<0? 180+60: 60);
-		double finalAngleForCenterTarget = (speed<0? 180-5:0);
+		double finalAngleForCenterTarget = (speed<0? 180-10:0);     // 175 works for position 3, not for position 4
 		double finalAngleForRightTarget = (speed<0? 180-60: -60);
 		if (goal == 1) {//change for this one
 			if(startPosition == 2) {//needs testing, should go to left goal
@@ -389,7 +390,7 @@ public class AutoModes {
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);
 			}else if(startPosition == 4) {
-				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -20);//rotate to 340 degrees by turning counter-clockwise
+				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, -10);//rotate to 340 degrees by turning counter-clockwise (4/25 changed to 350)
 				syncLifterDownHalf();
 				moveForwardForTime(speed, DISTANCE_TO_TIME(60, speed));
 				rotateToGyroPosition(TURN_SLOW_SPEED_RANGE, finalAngleForCenterTarget);	

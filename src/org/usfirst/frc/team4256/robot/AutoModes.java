@@ -146,6 +146,7 @@ public class AutoModes {
 			Timer.delay(.2);
 			moveForwardForTime(.5, 400);//back up a tiny bit to get ready for lifter
 			intakeLifterDown();
+//			private_syncIntakeLifter(-LIFTER_DOWN_SPEED, 450);//JUST ADDED DURING WORLD COMPETITION ON 4/28
 			Timer.delay(.5);
 			
 			//Cross barrier
@@ -890,6 +891,33 @@ public class AutoModes {
 			
 		while(System.currentTimeMillis()-startTime < 75 && inAutonomous()) {
 			Robot.drive.arcadeDrive(.7, 0);
+		}
+	}
+	
+	
+	public static final double MIN_SPEED = .3;
+	
+	public static void accelToSpeedSimple(double desiredSpeed) {
+		accelToSpeed(MIN_SPEED, desiredSpeed);
+	}
+	
+	public static void accelToSpeedAligned(double desiredSpeed) {
+		if(desiredSpeed > .5) {
+			accelToSpeedAligned(MIN_SPEED, .5, .01);
+		}
+		accelToSpeedAligned(.5, desiredSpeed, .02);
+	}
+
+	public static void accelToSpeed(double startSpeed, double desiredSpeed) {
+		for(double speed=startSpeed; speed<desiredSpeed; speed+=.01) {
+			moveForwardForTime(speed, 10);
+		}
+	}
+
+	public static void accelToSpeedAligned(double startSpeed, double desiredSpeed, double inc) {
+		double startAngle = Robot.gyro.getRawAngle();
+		for(double speed=startSpeed; speed<desiredSpeed; speed+=inc) {
+			moveForwardForTime(speed, (startAngle-Robot.gyro.getRawAngle())/20, 10);
 		}
 	}
 

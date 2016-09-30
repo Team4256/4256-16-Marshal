@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 	static Compressor compressor = new Compressor();
 	
 	//Solenoid
-	static DoubleSolenoid turretLifter = new DoubleSolenoid(0, 2, 3);
+	static DoubleSolenoid defensePlayer = new DoubleSolenoid(0, 2, 3);
 	static DoubleSolenoid flinger = new DoubleSolenoid(0, 6, 7); // TODO
 	
 	//Relays
@@ -58,14 +58,14 @@ public class Robot extends IterativeRobot {
 	
 	//Systems
 	static Intake intake;
-//	static CANTalon turret = new CANTalon(15);
 	static IntakeLifter intakeLifter;
 	static Launcher shooter;
-//	static Turret shooter;
+	static Defense defense;
 	static ClimbingMech climbingMech;
  
 
 	static NetworkTable visionTable;
+	//static NetworkTable gunnerTable = NetworkTable.getTable("gunnerTable");
 	
 	static Gamemode gamemode;
 	static enum Gamemode {AUTONOMOUS, TELEOP};
@@ -77,6 +77,7 @@ public class Robot extends IterativeRobot {
 	static TargetPID targetPID;
 	int climbingSafety = 0;
 	
+	//izzi is hawtttt ;) --ricky
 	//static Launcher robotLauncher;
 	
 	public void robotInit() {
@@ -86,11 +87,12 @@ public class Robot extends IterativeRobot {
 			
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1));
-			shooter = new Launcher(shooterLeft, shooterRight, turretLifter);
+			shooter = new Launcher(shooterLeft, shooterRight, defensePlayer);
 			intake = new Intake(0, 5, 8, 0);
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(climbingWinchLeft, climbingWinchRight, flinger);
 			//PID
+			defense = new Defense(defensePlayer);
 			targetPID = new TargetPID("Target PID", 0.8, 0.01, 5.0);
 		}
 		
@@ -152,8 +154,9 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	static Toggle shifterToggle_Driver = new Toggle(xboxDriver, DBJoystick.BUTTON_LB);
+//	Toggle defenseToggle_Driver = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
 	Toggle shotMotorToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_Y);
-	Toggle shotAngleToggle_Gunner = new Toggle(xboxGun, DBJoystick.AXIS_LT, false);
+	Toggle shotAngleToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_RB);
 	Toggle climbToggle_Gunner = new Toggle(xboxGun, DBJoystick.BUTTON_START);
 	
 	public void teleopPeriodic() {
@@ -189,14 +192,6 @@ public class Robot extends IterativeRobot {
 				shooter.stop();
 				SmartDashboard.putString("Shooter Wheels", "Stopped");
 			}
-			
-			if(shotAngleToggle_Gunner.getState()) {//toggle shot angle
-				shooter.raise();
-				SmartDashboard.putString("Shooter Position", "Up");
-			}else{
-				shooter.lower();
-				SmartDashboard.putString("Shooter Position", "Down");
-			}
 		}
 
 		{//intake lifter
@@ -219,34 +214,25 @@ public class Robot extends IterativeRobot {
 		{//intake
 			if (xboxGun.getRawButton(DBJoystick.BUTTON_A)){
 				intake.intakeIn();
+				intakeLifter.liftDownManual();//JUST ADDED DURING WORLD COMPETITION ON 4/28
 			}else if (xboxGun.getRawButton(DBJoystick.BUTTON_X)){
 				intake.intakeOut();
-			}else if (xboxGun.axisPressed(DBJoystick.AXIS_RT)){
+			}else if (xboxGun.axisPressed(DBJoystick.AXIS_RT)/* || gunnerTable.getBoolean("m Pinching?", false)*/){
 				intake.loadTurret();
 			}else{
 				intake.stop();
 			}
 		}
-		boolean xboxGunBackPreviousState = false;
-		{//climbing
-			if (xboxGun.getRawButton(DBJoystick.BUTTON_BACK) && !xboxGunBackPreviousState) {//count the number of times that back has been pressed
-				climbingSafety++;
-			}
-			xboxGunBackPreviousState = xboxGun.getRawButton(DBJoystick.BUTTON_BACK);
-			if (climbingSafety == 2) {//if I have hit it twice, then release the mechanism and get ready to climb
-				climbingMech.startClimbing();
-			}
-			if (climbingSafety > 2 && DBJoystick.viscousize("climbing piston", xboxGun.getRawButton(DBJoystick.BUTTON_BACK), 500)) {
-				climbingMech.releaseMech();//after the first two presses, the piston will remain out while the button is held down, then go back in after 500ms
-			}else if (climbingSafety > 2){
-				climbingMech.grabMech();
-			}
-			if (climbToggle_Gunner.getState()) {//reel it in
-				climbingMech.raiseHook();
+		
+		{//shot angle
+			if(shotAngleToggle_Gunner.getState()) {//toggle shot angle
+				shooter.raise();
 			}else{
-				climbingMech.stopHook();
+				shooter.lower();
 			}
 		}
+		
+		
 	}
 
 	//Automated teleop variables

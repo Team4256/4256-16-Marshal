@@ -11,7 +11,7 @@ public class Launcher {
 //	Range shootingYRangeShort = new Range(155, 170);//changed in Cinc competition from 150
 //	Range shootingYRangeShort = new Range(168, 183);//was 165, 175
 //	Range shootingYRangeShort = new Range(132, 147);//stem symposium (pilot's right belt was loose) //was 150, 170
-	Range shootingYRangeShort = new Range(147, 162);
+	Range shootingYRangeShort = new Range(160, 185);
 	Range shootingYRangeLong = new Range(187, 221);  //  This is the long shot (shooter up position)
 
 //	Range shootingYRangeShort = new Range(146, 182);

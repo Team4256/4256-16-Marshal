@@ -50,7 +50,7 @@ public class Robot extends IterativeRobot {
 	static CANTalon intakeLifterRight = new CANTalon(19);
 	
 	static CANTalon shooterLeft = new CANTalon(21);
-	static CANTalon shooterRight = new CANTalon(20);
+	static CANTalon shooterRight = new CANTalon(20);//20
 	
 	static CANTalon climbingWinchLeft = new CANTalon(15);
 	static CANTalon climbingWinchRight = new CANTalon(16);
@@ -75,7 +75,7 @@ public class Robot extends IterativeRobot {
 	static CameraServer camera = CameraServer.getInstance();  
 	
 	static TargetPID targetPID;
-	int climbingSafety = 0;
+	//int climbingSafety = 0;
 	
 	//izzi is hawtttt ;) --ricky
 	//static Launcher robotLauncher;
@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
 			drive = new Drive4256(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight, 
 					new DoubleSolenoid(0, 0, 1));
 			shooter = new Launcher(shooterLeft, shooterRight, defensePlayer);
-			intake = new Intake(0, 5, 8, 0);
+			intake = new Intake(0, 5, 8, 0);//was 0 for first robot
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(climbingWinchLeft, climbingWinchRight, flinger);
 			//PID
@@ -180,10 +180,10 @@ public class Robot extends IterativeRobot {
 			if(xboxGun.getRawButton(DBJoystick.BUTTON_LB)) {//toggle old alignment
 				drive.alignToTarget();
 			}
-			if(xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {//run new alignment
-	    		targetPID.enable();
-				drive.arcadeDrive(0.0, targetPID.getOutput());//TODO have it get in range automatically using inches
-	    	}
+//			if(xboxGun.getRawButton(DBJoystick.BUTTON_RB)) {//run new alignment
+//	    		targetPID.enable();
+//				drive.arcadeDrive(0.0, targetPID.getOutput());//TODO have it get in range automatically using inches
+//	    	}
 			
 			if(shotMotorToggle_Gunner.getState()) {//toggle shot motors
 				shooter.start();
@@ -232,17 +232,17 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		
 	}
 
 	//Automated teleop variables
-	public static AutomatedTeleopState automatedTeleopStage = AutomatedTeleopState.collectBall;
-	public static enum AutomatedTeleopState {
-			collectBall,
-			crossBarrier,
-			fire,
-			returnToNeutralZone
-		}
+	
+//	public static enum AutomatedTeleopState {
+//			collectBall,
+//			crossBarrier,
+//			fire,
+//			returnToNeutralZone
+//	}
+//	public static AutomatedTeleopState automatedTeleopStage = AutomatedTeleopState.collectBall;
 	
 	/**
 	 * This function should be toggled on button press to enter an autonomous loop when in teleop

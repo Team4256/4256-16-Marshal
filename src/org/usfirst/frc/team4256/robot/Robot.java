@@ -89,6 +89,7 @@ public class Robot extends IterativeRobot {
 					new DoubleSolenoid(0, 0, 1));
 			shooter = new Launcher(shooterLeft, shooterRight, defensePlayer);
 			intake = new Intake(0, 5, 8, 0);//was 0 for first robot
+			
 			intakeLifter = new IntakeLifter(intakeLifterLeft, intakeLifterRight, frontLimitSwitch);
 			climbingMech = new ClimbingMech(climbingWinchLeft, climbingWinchRight, flinger);
 			//PID

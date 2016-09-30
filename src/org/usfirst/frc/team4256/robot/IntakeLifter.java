@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeLifter {
-	static final double LIFTER_MOTOR_SPEED = .4;
+	static final double LIFTER_MOTOR_SPEED = -1;
 	
 	public CANTalon lifterLeft;
 	public CANTalon lifterRight;
